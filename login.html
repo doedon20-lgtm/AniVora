@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Log In — AniVora</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(168,85,247,0.14), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(236,72,153,0.10), transparent 35%),
+        #08080d;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =========================
+       NAVBAR
+    ========================== */
+
+    .navbar {
+      width: 100%;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8,8,13,0.90);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-container {
+      max-width: 1150px;
+      min-height: 70px;
+      margin: auto;
+      padding: 0 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #a855f7;
+    }
+
+    .back-home {
+      color: #aaaab8;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .back-home:hover {
+      color: #fff;
+    }
+
+    /* =========================
+       MAIN
+    ========================== */
+
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 55px 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(16,16,23,0.94);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 22px;
+      padding: 38px;
+      box-shadow:
+        0 30px 90px rgba(0,0,0,0.55),
+        0 0 70px rgba(168,85,247,0.08);
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 15px;
+      background: rgba(168,85,247,0.13);
+      border: 1px solid rgba(168,85,247,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d8b4fe;
+      font-size: 23px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: 35px;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #858593;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    /* =========================
+       FORM
+    ========================== */
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      color: #c7c7d2;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      height: 50px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: #0c0c13;
+      border-radius: 11px;
+      color: #fff;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input::placeholder {
+      color: #5f5f6c;
+    }
+
+    input:focus {
+      border-color: rgba(168,85,247,0.65);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.08);
+    }
+
+    .password-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .password-row label {
+      margin-bottom: 0;
+    }
+
+    .forgot-link {
+      font-size: 12px;
+      color: #c084fc;
+      cursor: pointer;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    /* =========================
+       BUTTON
+    ========================== */
+
+    .login-button {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 12px;
+      background: #a855f7;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s;
+      margin-top: 8px;
+    }
+
+    .login-button:hover {
+      background: #9333ea;
+      transform: translateY(-1px);
+    }
+
+    .login-button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* =========================
+       MESSAGE
+    ========================== */
+
+    .message {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 17px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(239,68,68,0.10);
+      border: 1px solid rgba(239,68,68,0.22);
+      color: #fca5a5;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(34,197,94,0.10);
+      border: 1px solid rgba(34,197,94,0.22);
+      color: #86efac;
+    }
+
+    /* =========================
+       SIGNUP
+    ========================== */
+
+    .signup-text {
+      text-align: center;
+      margin-top: 25px;
+      color: #777786;
+      font-size: 13px;
+    }
+
+    .signup-text a {
+      color: #c084fc;
+      font-weight: 700;
+    }
+
+    .signup-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #555563;
+      font-size: 11px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================== */
+
+    @media (max-width: 520px) {
+
+      .nav-container {
+        min-height: 64px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .main {
+        padding: 35px 15px;
+      }
+
+      .login-card {
+        padding: 28px 21px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: 31px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <header class="navbar">
+
+    <div class="nav-container">
+
+      <a href="./index.html" class="logo">
+        Ani<span>Vora</span>
+      </a>
+
+      <a href="./index.html" class="back-home">
+        ← Back to Home
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       LOGIN
+  ========================== -->
+
+  <main class="main">
+
+    <div class="login-card">
+
+      <div class="icon">
+        ✦
+      </div>
+
+      <h1>
+        Welcome back.
+      </h1>
+
+      <p class="subtitle">
+        Log in to continue creating with AniVora.
+      </p>
+
+
+      <!-- MESSAGE -->
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+
+      <!-- LOGIN FORM -->
+
+      <form id="loginForm">
+
+        <div class="form-group">
+
+          <label for="email">
+            Email address
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <div class="password-row">
+
+            <label for="password">
+              Password
+            </label>
+
+            <a
+              href="#"
+              class="forgot-link"
+              id="forgotPassword"
+            >
+              Forgot password?
+            </a>
+
+          </div>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="login-button"
+          id="loginButton"
+        >
+          Log In
+        </button>
+
+      </form>
+
+
+      <div class="signup-text">
+
+        Don't have an account?
+
+        <a href="./create-account.html">
+          Create Account
+        </a>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <footer>
+    © 2026 AniVora. Create something unforgettable.
+  </footer>
+
+
+  <!-- =========================
+       SUPABASE AUTH
+  ========================== -->
+
+  <script>
+
+    /*
+      IMPORTANT:
+      Put the SAME Supabase URL and
+      Publishable/Anon Key here that
+      you used in create-account.html.
+    */
+
+    const SUPABASE_URL =
+      "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+
+    const { createClient } =
+      window.supabase;
+
+
+    const supabaseClient =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    /* =========================
+       ELEMENTS
+    ========================== */
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const message =
+      document.getElementById("message");
+
+    const forgotPassword =
+      document.getElementById("forgotPassword");
+
+
+    /* =========================
+       MESSAGE FUNCTION
+    ========================== */
+
+    function showMessage(
+      text,
+      type
+    ) {
+
+      message.textContent = text;
+
+      message.className =
+        "message " + type;
+
+    }
+
+
+    function clearMessage() {
+
+      message.textContent = "";
+
+      message.className =
+        "message";
+
+    }
+
+
+    /* =========================
+       LOGIN
+    ========================== */
+
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        clearMessage();
+
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("password")
+            .value;
+
+
+        if (!email || !password) {
+
+          showMessage(
+            "Please enter your email and password.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+          "Logging in...";
+
+
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth.signInWithPassword({
+
+              email: email,
+
+              password: password
+
+            });
+
+
+          if (error) {
+
+            throw error;
+
+          }
+
+
+          if (!data.session) {
+
+            throw new Error(
+              "Login completed, but no active session was created."
+            );
+
+          }
+
+
+          showMessage(
+            "Login successful! Opening AniVora...",
+            "success"
+          );
+
+
+          /*
+            Give Supabase a moment to save
+            the session before redirecting.
+          */
+
+          setTimeout(function() {
+
+            window.location.href =
+              "./dashboard.html";
+
+          }, 700);
+
+
+        } catch (error) {
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          let errorMessage =
+            "Unable to log in. Please check your details and try again.";
+
+
+          if (
+            error.message &&
+            error.message.toLowerCase()
+              .includes("invalid login credentials")
+          ) {
+
+            errorMessage =
+              "Incorrect email or password.";
+
+          }
+
+
+          if (
+            error.message &&
+            error.message.toLowerCase()
+              .includes("email not confirmed")
+          ) {
+
+            errorMessage =
+              "Please confirm your email address before logging in.";
+
+          }
+
+
+          showMessage(
+            errorMessage,
+            "error"
+          );
+
+
+          loginButton.disabled = false;
+
+          loginButton.textContent =
+            "Log In";
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       FORGOT PASSWORD
+    ========================== */
+
+    forgotPassword.addEventListener(
+      "click",
+      async function(event) {
+
+        event.preventDefault();
+
+        clearMessage();
+
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+        if (!email) {
+
+          showMessage(
+            "Enter your email address first, then tap Forgot password.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        try {
+
+          const {
+            error
+          } =
+            await supabaseClient.auth
+              .resetPasswordForEmail(
+                email,
+                {
+                  redirectTo:
+                    window.location.origin +
+                    "/reset-password.html"
+                }
+              );
+
+
+          if (error) {
+
+            throw error;
+
+          }
+
+
+          showMessage(
+            "Password reset instructions have been sent to your email.",
+            "success"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Password reset error:",
+            error
+          );
+
+
+          showMessage(
+            "Unable to send the reset email. Please check your email address.",
+            "error"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       CHECK EXISTING SESSION
+    ========================== */
+
+    async function checkExistingSession() {
+
+      try {
+
+        const {
+          data
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if (data.session) {
+
+          window.location.href =
+            "./dashboard.html";
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Session check failed:",
+          error
+        );
+
+      }
+
+    }
+
+
+    checkExistingSession();
+
+  </script>
+
+</body>
+                                                                       </html>
