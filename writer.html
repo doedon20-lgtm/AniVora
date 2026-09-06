@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AniVora Writer</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#08080d;
+    --panel:#111119;
+    --panel2:#171720;
+    --border:rgba(255,255,255,.08);
+    --text:#f7f7fb;
+    --muted:#9696a8;
+    --accent:#8b5cf6;
+    --accent2:#ec4899;
+    --green:#22c55e;
+    --red:#ef4444;
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 15% 0%,rgba(139,92,246,.14),transparent 30%),
+        radial-gradient(circle at 90% 15%,rgba(236,72,153,.10),transparent 25%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:245px;
+    background:rgba(11,11,17,.96);
+    border-right:1px solid var(--border);
+    padding:24px 16px;
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 10px 28px;
+    font-size:23px;
+    font-weight:800;
+}
+
+.logo-icon{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 30px rgba(139,92,246,.25);
+}
+
+.nav-title{
+    color:#666678;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.4px;
+    padding:0 12px 9px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:#a5a5b5;
+    padding:12px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:14px;
+    border:1px solid transparent;
+    transition:.2s;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#fff;
+    background:rgba(139,92,246,.10);
+    border-color:rgba(139,92,246,.15);
+}
+
+.nav-icon{
+    width:20px;
+    text-align:center;
+}
+
+.sidebar-bottom{
+    margin-top:auto;
+}
+
+.logout{
+    width:100%;
+    border:1px solid transparent;
+    background:none;
+    color:#a5a5b5;
+    padding:12px;
+    border-radius:11px;
+    cursor:pointer;
+    text-align:left;
+    font-size:14px;
+}
+
+.logout:hover{
+    color:#fff;
+    background:rgba(139,92,246,.10);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    margin-left:245px;
+    min-height:100vh;
+    padding:25px 30px 50px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.mobile-menu{
+    display:none;
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#12121a;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.launch{
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:11px;
+    color:#7ee2a0;
+    background:rgba(34,197,94,.07);
+    border:1px solid rgba(34,197,94,.15);
+}
+
+.avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.writer-header{
+    margin-bottom:25px;
+}
+
+.writer-header h1{
+    font-size:32px;
+    letter-spacing:-1px;
+    margin-bottom:8px;
+}
+
+.writer-header h1 span{
+    background:linear-gradient(90deg,#a78bfa,#f472b6);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.writer-header p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* =========================
+   WRITER LAYOUT
+========================= */
+
+.writer-grid{
+    display:grid;
+    grid-template-columns:390px 1fr;
+    gap:18px;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+.panel{
+    background:rgba(17,17,25,.86);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.panel-title h2{
+    font-size:17px;
+}
+
+.panel-title span{
+    color:#777789;
+    font-size:11px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    color:#b0b0c0;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+textarea,
+input,
+select{
+    width:100%;
+    background:#0c0c13;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:11px;
+    color:white;
+    outline:none;
+    padding:12px;
+    font-family:inherit;
+    font-size:13px;
+    transition:.2s;
+}
+
+textarea:focus,
+input:focus,
+select:focus{
+    border-color:rgba(139,92,246,.55);
+}
+
+textarea{
+    min-height:145px;
+    resize:vertical;
+    line-height:1.55;
+}
+
+input{
+    height:44px;
+}
+
+select{
+    height:44px;
+}
+
+.generate-btn{
+    width:100%;
+    border:0;
+    padding:14px;
+    border-radius:12px;
+    color:white;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    cursor:pointer;
+    box-shadow:0 12px 30px rgba(139,92,246,.20);
+    transition:.2s;
+}
+
+.generate-btn:hover{
+    transform:translateY(-2px);
+}
+
+.generate-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.small-note{
+    color:#666678;
+    font-size:10px;
+    line-height:1.5;
+    margin-top:10px;
+}
+
+/* =========================
+   OUTPUT
+========================= */
+
+.output-panel{
+    min-height:620px;
+    display:flex;
+    flex-direction:column;
+}
+
+.output-toolbar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.tool-btn{
+    border:1px solid var(--border);
+    background:#171720;
+    color:#aaaabb;
+    padding:8px 11px;
+    border-radius:9px;
+    font-size:11px;
+    cursor:pointer;
+}
+
+.tool-btn:hover{
+    color:#fff;
+    border-color:rgba(139,92,246,.3);
+}
+
+.editor{
+    flex:1;
+    background:#0c0c13;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:13px;
+    padding:20px;
+    min-height:500px;
+    color:#d8d8e3;
+    line-height:1.7;
+    font-size:14px;
+    white-space:pre-wrap;
+    overflow:auto;
+}
+
+.editor.empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:#656577;
+}
+
+.empty-content{
+    max-width:330px;
+}
+
+.empty-icon{
+    width:58px;
+    height:58px;
+    margin:0 auto 16px;
+    border-radius:18px;
+    background:rgba(139,92,246,.10);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+}
+
+.empty-content h3{
+    color:#d8d8e3;
+    font-size:16px;
+    margin-bottom:7px;
+}
+
+.empty-content p{
+    color:#69697b;
+    font-size:12px;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status-message{
+    display:none;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:12px;
+    font-size:11px;
+}
+
+.status-message.show{
+    display:block;
+}
+
+.status-message.success{
+    color:#86efac;
+    background:rgba(34,197,94,.08);
+    border:1px solid rgba(34,197,94,.14);
+}
+
+.status-message.error{
+    color:#fca5a5;
+    background:rgba(239,68,68,.08);
+    border:1px solid rgba(239,68,68,.14);
+}
+
+/* =========================
+   PROJECT SELECT
+========================= */
+
+.project-info{
+    margin-bottom:16px;
+    padding:11px 12px;
+    border-radius:10px;
+    background:rgba(139,92,246,.06);
+    border:1px solid rgba(139,92,246,.10);
+}
+
+.project-info small{
+    display:block;
+    color:#777789;
+    font-size:10px;
+    margin-bottom:3px;
+}
+
+.project-info strong{
+    font-size:12px;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:#777789;
+    font-size:12px;
+}
+
+.spinner{
+    width:18px;
+    height:18px;
+    border:2px solid rgba(255,255,255,.10);
+    border-top-color:#a78bfa;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1000px){
+
+    .writer-grid{
+        grid-template-columns:1fr;
+    }
+
+    .output-panel{
+        min-height:550px;
+    }
+
+}
+
+@media(max-width:760px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+        box-shadow:20px 0 50px rgba(0,0,0,.4);
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        padding:18px 14px 40px;
+    }
+
+    .mobile-menu{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .launch{
+        display:none;
+    }
+
+    .writer-header h1{
+        font-size:27px;
+    }
+
+    .writer-grid{
+        gap:14px;
+    }
+
+    .panel{
+        padding:16px;
+    }
+
+    .editor{
+        min-height:420px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">✦</div>
+        <span>AniVora</span>
+    </div>
+
+
+    <div class="nav-title">
+        Studio
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="dashboard.html">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+        <a href="dashboard.html#projects">
+            <span class="nav-icon">▣</span>
+            My Projects
+        </a>
+
+        <a href="writer.html" class="active">
+            <span class="nav-icon">✎</span>
+            AniVora Writer
+        </a>
+
+    </nav>
+
+
+    <div class="nav-title" style="margin-top:25px;">
+        Create
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="#" onclick="comingSoon('Character Creator');return false;">
+            <span class="nav-icon">♙</span>
+            Characters
+        </a>
+
+        <a href="#" onclick="comingSoon('Scene Builder');return false;">
+            <span class="nav-icon">◈</span>
+            Scene Builder
+        </a>
+
+        <a href="#" onclick="comingSoon('AniVora Art');return false;">
+            <span class="nav-icon">✦</span>
+            AI Art
+        </a>
+
+        <a href="#" onclick="comingSoon('Video Creator');return false;">
+            <span class="nav-icon">▶</span>
+            Video Creator
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <button class="logout" onclick="logout()">
+            ↪ &nbsp; Log Out
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+    <div class="topbar">
+
+        <button class="mobile-menu" onclick="toggleSidebar()">
+            ☰
+        </button>
+
+        <div></div>
+
+        <div class="top-right">
+
+            <div class="launch">
+                ● 30-Day Launch
+            </div>
+
+            <div class="avatar" id="avatar">
+                A
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HEADER -->
+
+    <section class="writer-header">
+
+        <h1>
+            AniVora <span>Writer</span>
+        </h1>
+
+        <p>
+            Turn your imagination into stories, scripts and cinematic scenes.
+        </p>
+
+    </section>
+
+
+    <!-- WRITER -->
+
+    <section class="writer-grid">
+
+
+        <!-- LEFT -->
+
+        <div class="panel">
+
+            <div class="panel-title">
+
+                <h2>Story Idea</h2>
+
+                <span>Start here</span>
+
+            </div>
+
+
+            <div id="statusMessage" class="status-message"></div>
+
+
+            <div class="form-group">
+
+                <label for="projectSelect">
+                    Project
+                </label>
+
+                <select id="projectSelect">
+
+                    <option value="">
+                        Select a project
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="project-info" id="selectedProject">
+
+                <small>
+                    Selected project
+                </small>
+
+                <strong>
+                    No project selected
+                </strong>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="storyIdea">
+                    What is your story about?
+                </label>
+
+                <textarea
+                    id="storyIdea"
+                    placeholder="Example: A young warrior discovers that the mysterious power inside him is connected to an ancient kingdom..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="contentType">
+                    Content Type
+                </label>
+
+                <select id="contentType">
+
+                    <option value="story">
+                        Full Story
+                    </option>
+
+                    <option value="youtube">
+                        YouTube Script
+                    </option>
+
+                    <option value="short">
+                        YouTube Short
+                    </option>
+
+                    <option value="tiktok">
+                        TikTok Script
+                    </option>
+
+                    <option value="episode">
+                        Anime Episode
+                    </option>
+
+                    <option value="scene">
+                        Cinematic Scene
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="tone">
+                    Story Tone
+                </label>
+
+                <select id="tone">
+
+                    <option value="cinematic">
+                        Cinematic
+                    </option>
+
+                    <option value="dramatic">
+                        Dramatic
+                    </option>
+
+                    <option value="dark">
+                        Dark
+                    </option>
+
+                    <option value="funny">
+                        Funny
+                    </option>
+
+                    <option value="emotional">
+                        Emotional
+                    </option>
+
+                    <option value="adventure">
+                        Adventure
+                    </option>
+
+                    <option value="mysterious">
+                        Mysterious
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="length">
+                    Length
+                </label>
+
+                <select id="length">
+
+                    <option value="short">
+                        Short
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="long">
+                        Long
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                class="generate-btn"
+                id="generateBtn"
+                onclick="generateDraft()"
+            >
+                ✦ Generate Story
+            </button>
+
+
+            <div class="small-note">
+                Your draft will be saved to the selected project.
+                AI generation will be connected securely through the AniVora backend.
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+
+        <div class="panel output-panel">
+
+            <div class="panel-title">
+
+                <h2>Writer Canvas</h2>
+
+                <div class="output-toolbar">
+
+                    <button
+                        class="tool-btn"
+                        onclick="copyDraft()"
+                    >
+                        Copy
+                    </button>
+
+                    <button
+                        class="tool-btn"
+                        onclick="clearDraft()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="editor empty"
+                id="editor"
+            >
+
+                <div class="empty-content">
+
+                    <div class="empty-icon">
+                        ✎
+                    </div>
+
+                    <h3>
+                        Your story starts here
+                    </h3>
+
+                    <p>
+                        Select a project, describe your idea,
+                        then generate your first AniVora draft.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+
+const { createClient } = supabase;
+
+const supabaseClient =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+let currentUser = null;
+let projects = [];
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initialize(){
+
+    const {
+        data:{
+            session
+        }
+    } =
+    await supabaseClient.auth.getSession();
+
+
+    if(!session){
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    currentUser =
+        session.user;
+
+
+    updateAvatar();
+
+    await loadProjects();
+
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+function updateAvatar(){
+
+    const name =
+        currentUser.user_metadata?.full_name ||
+        currentUser.email?.split("@")[0] ||
+        "A";
+
+
+    document
+        .getElementById("avatar")
+        .textContent =
+        name.charAt(0).toUpperCase();
+
+}
+
+
+/* =========================================================
+   LOAD PROJECTS
+========================================================= */
+
+async function loadProjects(){
+
+    const select =
+        document.getElementById("projectSelect");
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("projects")
+        .select(
+            "id,title,description,status"
+        )
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load your projects.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    projects =
+        data || [];
+
+
+    select.innerHTML =
+        `<option value="">
+            Select a project
+        </option>`;
+
+
+    projects.forEach(project => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            project.id;
+
+        option.textContent =
+            project.title;
+
+        select.appendChild(option);
+
+    });
+
+
+    if(projects.length === 0){
+
+        showMessage(
+            "Create a project in your Dashboard before using the Writer.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PROJECT CHANGE
+========================================================= */
+
+document
+    .getElementById("projectSelect")
+    .addEventListener(
+        "change",
+        function(){
+
+            const project =
+                projects.find(
+                    item =>
+                    item.id === this.value
+                );
+
+
+            const box =
+                document.getElementById(
+                    "selectedProject"
+                );
+
+
+            if(!project){
+
+                box.innerHTML = `
+                    <small>
+                        Selected project
+                    </small>
+
+                    <strong>
+                        No project selected
+                    </strong>
+                `;
+
+                return;
+
+            }
+
+
+            box.innerHTML = `
+                <small>
+                    Selected project
+                </small>
+
+                <strong>
+                    ${escapeHtml(project.title)}
+                </strong>
+            `;
+
+        }
+    );
+
+
+/* =========================================================
+   GENERATE DRAFT
+========================================================= */
+
+async function generateDraft(){
+
+    const projectId =
+        document
+            .getElementById("projectSelect")
+            .value;
+
+
+    const idea =
+        document
+            .getElementById("storyIdea")
+            .value
+            .trim();
+
+
+    const type =
+        document
+            .getElementById("contentType")
+            .value;
+
+
+    const tone =
+        document
+            .getElementById("tone")
+            .value;
+
+
+    const length =
+        document
+            .getElementById("length")
+            .value;
+
+
+    if(!projectId){
+
+        showMessage(
+            "Please select a project first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!idea){
+
+        showMessage(
+            "Tell AniVora what your story is about.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const project =
+        projects.find(
+            item =>
+            item.id === projectId
+        );
+
+
+    const button =
+        document.getElementById(
+            "generateBtn"
+        );
+
+
+    button.disabled =
+        true;
+
+    button.innerHTML =
+        `<span class="loading">
+            <span class="spinner"></span>
+            Creating draft...
+        </span>`;
+
+
+    const editor =
+        document.getElementById(
+            "editor"
+        );
+
+
+    editor.classList.remove(
+        "empty"
+    );
+
+
+    editor.textContent =
+        "Creating your AniVora draft...\n\n";
+
+
+    /*
+       TEMPORARY LOCAL DRAFT GENERATOR
+
+       This creates a structured draft so the
+       Writer interface can already be tested.
+
+       The real AI model will be connected
+       through the secure AniVora backend later.
+    */
+
+    await wait(900);
+
+
+    const draft =
+        buildDraft(
+            project.title,
+            idea,
+            type,
+            tone,
+            length
+        );
+
+
+    editor.textContent =
+        draft;
+
+
+    /* SAVE TO SUPABASE */
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("scripts")
+        .insert({
+
+            project_id:
+                projectId,
+
+            user_id:
+                currentUser.id,
+
+            title:
+                createScriptTitle(
+                    project.title
+                ),
+
+            content:
+                draft
+
+        });
+
+
+    if(error){
+
+        console.error(
+            "Script save error:",
+            error
+        );
+
+        showMessage(
+            "Draft created, but it could not be saved: " +
+            error.message,
+            "error"
+        );
+
+    }else{
+
+        showMessage(
+            "Draft created and saved to your project.",
+            "success"
+        );
+
+    }
+
+
+    button.disabled =
+        false;
+
+    button.innerHTML =
+        "✦ Generate Story";
+
+}
+
+
+/* =========================================================
+   DRAFT BUILDER
+========================================================= */
+
+function buildDraft(
+    projectTitle,
+    idea,
+    type,
+    tone,
+    length
+){
+
+    const typeName =
+        formatType(type);
+
+
+    const toneName =
+        formatType(tone);
+
+
+    let body =
+`ANIVORA WRITER
+==============================
+
+PROJECT
+${projectTitle}
+
+CONTENT TYPE
+${typeName}
+
+TONE
+${toneName}
+
+STORY IDEA
+${idea}
+
+
+TITLE
+The Beginning of Something Greater
+
+
+LOGLINE
+A character is pulled into an extraordinary situation and must confront a challenge that could completely change their world.
+
+
+OPENING
+The world was quiet.
+
+For a moment, everything seemed normal.
+
+Then something changed.
+
+Our protagonist stood alone, unaware that this ordinary moment was about to become the beginning of a much larger story.
+
+The atmosphere suddenly shifted.
+
+A strange feeling filled the air, as though something ancient had awakened.
+
+"What is happening?"
+
+There was no answer.
+
+Only silence.
+
+Then the first sign appeared.
+
+
+STORY DIRECTION
+The protagonist begins discovering that the event surrounding them is connected to a much older mystery. As the story develops, new characters, conflicts and secrets will be introduced.
+
+The central conflict should gradually become larger while keeping the protagonist emotionally connected to the audience.
+
+
+CHARACTER DEVELOPMENT
+The protagonist should begin with a clear personal goal.
+
+Throughout the story, that goal should be challenged by unexpected events.
+
+Their decisions should have consequences, allowing the character to grow naturally.
+
+
+KEY SCENES
+
+1. THE DISCOVERY
+The protagonist encounters the first clue that something unusual is happening.
+
+2. THE FIRST CONFLICT
+An unexpected obstacle forces the protagonist to make a difficult decision.
+
+3. THE REVELATION
+A hidden truth changes the protagonist's understanding of the situation.
+
+4. THE ESCALATION
+The conflict becomes larger and more dangerous.
+
+5. THE CHOICE
+The protagonist must decide what they are willing to sacrifice.
+
+6. THE CLIFFHANGER
+A final revelation creates a strong reason to continue the story.
+
+
+ENDING DIRECTION
+The story should end with emotional impact while leaving room for future scenes or episodes.
+
+
+CREATOR NOTES
+Tone: ${toneName}
+Length: ${formatType(length)}
+Style: Original AniVora story
+`;
+
+    return body;
+
+}
+
+
+/* =========================================================
+   SCRIPT TITLE
+========================================================= */
+
+function createScriptTitle(projectTitle){
+
+    return projectTitle +
+        " — New Draft";
+
+}
+
+
+/* =========================================================
+   FORMAT
+========================================================= */
+
+function formatType(value){
+
+    return value
+        .replaceAll("_"," ")
+        .replace(/\b\w/g, letter =>
+            letter.toUpperCase()
+        );
+
+}
+
+
+/* =========================================================
+   COPY
+========================================================= */
+
+async function copyDraft(){
+
+    const editor =
+        document.getElementById(
+            "editor"
+        );
+
+
+    const text =
+        editor.textContent;
+
+
+    if(
+        !text ||
+        editor.classList.contains("empty")
+    ){
+
+        showMessage(
+            "There is no draft to copy yet.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+
+        showMessage(
+            "Draft copied to clipboard.",
+            "success"
+        );
+
+    }catch(error){
+
+        showMessage(
+            "Unable to copy the draft.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+function clearDraft(){
+
+    const editor =
+        document.getElementById(
+            "editor"
+        );
+
+
+    editor.className =
+        "editor empty";
+
+
+    editor.innerHTML = `
+
+        <div class="empty-content">
+
+            <div class="empty-icon">
+                ✎
+            </div>
+
+            <h3>
+                Your story starts here
+            </h3>
+
+            <p>
+                Select a project, describe your idea,
+                then generate your first AniVora draft.
+            </p>
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById("storyIdea")
+        .focus();
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const box =
+        document.getElementById(
+            "statusMessage"
+        );
+
+
+    box.textContent =
+        text;
+
+    box.className =
+        "status-message show " +
+        type;
+
+
+    setTimeout(() => {
+
+        box.className =
+            "status-message";
+
+    },5000);
+
+}
+
+
+/* =========================================================
+   WAIT
+========================================================= */
+
+function wait(ms){
+
+    return new Promise(
+        resolve =>
+        setTimeout(
+            resolve,
+            ms
+        )
+    );
+
+}
+
+
+/* =========================================================
+   COMING SOON
+========================================================= */
+
+function comingSoon(name){
+
+    alert(
+        name +
+        " will be connected in the next AniVora feature."
+    );
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+function toggleSidebar(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    function(event){
+
+        if(event === "SIGNED_OUT"){
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+initialize();
+
+</script>
+
+</body>
+  </html>
