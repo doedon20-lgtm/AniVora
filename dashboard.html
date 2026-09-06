@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AniVora Studio Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#08090d;
+    color:#f5f5f5;
+    min-height:100vh;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    display:flex;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:270px;
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    background:#0c0d12;
+    border-right:1px solid #20222c;
+    padding:24px 18px;
+    z-index:100;
+    overflow-y:auto;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:5px 10px 30px;
+    font-size:25px;
+    font-weight:800;
+}
+
+.logo-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    box-shadow:0 0 25px rgba(139,92,246,.25);
+    font-size:20px;
+}
+
+.logo span{
+    color:#a78bfa;
+}
+
+.section-label{
+    color:#606573;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    padding:0 12px;
+    margin:16px 0 9px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:#9297a5;
+    padding:13px 13px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    transition:.2s;
+}
+
+.nav a:hover{
+    background:#151720;
+    color:#fff;
+}
+
+.nav a.active{
+    background:#181522;
+    color:#fff;
+    border-left:3px solid #8b5cf6;
+}
+
+.nav-icon{
+    width:21px;
+    text-align:center;
+    font-size:17px;
+}
+
+.sidebar-bottom{
+    margin-top:35px;
+    padding:15px 5px 0;
+    border-top:1px solid #20222c;
+}
+
+.logout{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    background:#15171f;
+    border:1px solid #292c37;
+    color:#c8cad2;
+}
+
+.logout:hover{
+    background:#1d2029;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:270px;
+    width:calc(100% - 270px);
+    min-height:100vh;
+}
+
+.topbar{
+    height:72px;
+    border-bottom:1px solid #20222c;
+    background:#0a0b10;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 32px;
+    position:sticky;
+    top:0;
+    z-index:50;
+}
+
+.page-title{
+    font-size:18px;
+    font-weight:700;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.user-badge{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+}
+
+.menu-btn{
+    display:none;
+    border:0;
+    background:none;
+    color:#fff;
+    font-size:26px;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    padding:35px;
+    max-width:1450px;
+    margin:auto;
+}
+
+.welcome{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:25px;
+    margin-bottom:30px;
+}
+
+.welcome h1{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.welcome p{
+    color:#858b99;
+    line-height:1.6;
+}
+
+.primary-btn{
+    border:0;
+    background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+    color:#fff;
+    padding:13px 19px;
+    border-radius:10px;
+    font-weight:700;
+    box-shadow:0 8px 25px rgba(109,40,217,.18);
+}
+
+.primary-btn:hover{
+    transform:translateY(-1px);
+}
+
+/* ================= STATS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:30px;
+}
+
+.stat-card{
+    background:#101219;
+    border:1px solid #242731;
+    border-radius:15px;
+    padding:20px;
+}
+
+.stat-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
+}
+
+.stat-icon{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:#181522;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.stat-label{
+    color:#858b99;
+    font-size:13px;
+}
+
+.stat-number{
+    font-size:28px;
+    font-weight:800;
+}
+
+/* ================= FEATURE CARDS ================= */
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:30px;
+}
+
+.feature-card{
+    background:#101219;
+    border:1px solid #242731;
+    border-radius:16px;
+    padding:23px;
+    position:relative;
+    overflow:hidden;
+    transition:.2s;
+}
+
+.feature-card:hover{
+    border-color:#3b3450;
+    transform:translateY(-2px);
+}
+
+.feature-card::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    right:-55px;
+    bottom:-60px;
+    border-radius:50%;
+    background:rgba(139,92,246,.08);
+}
+
+.feature-icon{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    background:#181522;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+    margin-bottom:17px;
+}
+
+.feature-card h3{
+    margin-bottom:8px;
+    font-size:17px;
+}
+
+.feature-card p{
+    color:#7e8491;
+    font-size:13px;
+    line-height:1.55;
+}
+
+.feature-link{
+    display:inline-block;
+    margin-top:17px;
+    color:#a78bfa;
+    font-size:13px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+/* ================= PROJECTS ================= */
+
+.projects-section{
+    background:#101219;
+    border:1px solid #242731;
+    border-radius:17px;
+    padding:24px;
+}
+
+.section-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.section-heading h2{
+    font-size:19px;
+}
+
+.section-heading span{
+    color:#777d8a;
+    font-size:13px;
+}
+
+.projects-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.project-card{
+    background:#0b0c11;
+    border:1px solid #242731;
+    border-radius:13px;
+    padding:18px;
+    min-height:155px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.project-status{
+    display:inline-block;
+    width:max-content;
+    background:#241d38;
+    color:#b9a5ff;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+}
+
+.project-card h3{
+    font-size:16px;
+    margin-top:15px;
+}
+
+.project-card p{
+    color:#737986;
+    font-size:12px;
+    margin-top:6px;
+}
+
+.project-bottom{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:18px;
+}
+
+.open-project{
+    color:#a78bfa;
+    border:0;
+    background:none;
+    font-size:12px;
+    font-weight:600;
+}
+
+.empty-projects{
+    padding:45px 20px;
+    text-align:center;
+    border:1px dashed #292d38;
+    border-radius:12px;
+    color:#777d8a;
+}
+
+.empty-projects h3{
+    color:#ddd;
+    margin-bottom:8px;
+}
+
+.empty-projects button{
+    margin-top:17px;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    align-items:center;
+    justify-content:center;
+    z-index:300;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:500px;
+    background:#11131a;
+    border:1px solid #292d38;
+    border-radius:17px;
+    padding:25px;
+    box-shadow:0 20px 70px rgba(0,0,0,.45);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    font-size:20px;
+}
+
+.close-modal{
+    border:0;
+    background:none;
+    color:#888;
+    font-size:25px;
+}
+
+.field{
+    margin-bottom:17px;
+}
+
+.field label{
+    display:block;
+    font-size:13px;
+    color:#aeb2bd;
+    margin-bottom:8px;
+}
+
+.field input,
+.field textarea{
+    width:100%;
+    background:#090a0f;
+    border:1px solid #292d38;
+    color:#fff;
+    border-radius:10px;
+    padding:13px;
+    outline:none;
+}
+
+.field textarea{
+    resize:vertical;
+    min-height:100px;
+}
+
+.field input:focus,
+.field textarea:focus{
+    border-color:#8b5cf6;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.modal-actions button{
+    flex:1;
+    padding:13px;
+    border-radius:10px;
+}
+
+.cancel-btn{
+    background:#171920;
+    border:1px solid #292d38;
+    color:#ccc;
+}
+
+.create-btn{
+    background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+    border:0;
+    color:#fff;
+    font-weight:700;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1050px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .feature-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .projects-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+        box-shadow:20px 0 50px rgba(0,0,0,.45);
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .topbar{
+        padding:0 17px;
+    }
+
+    .content{
+        padding:25px 15px 50px;
+    }
+
+    .welcome{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .welcome h1{
+        font-size:27px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .feature-grid{
+        grid-template-columns:1fr;
+    }
+
+    .projects-grid{
+        grid-template-columns:1fr;
+    }
+
+    .projects-section{
+        padding:18px;
+    }
+}
+
+@media(max-width:430px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .stat-card{
+        padding:17px;
+    }
+
+    .user-badge{
+        width:34px;
+        height:34px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">✦</div>
+        Ani<span>Vora</span>
+    </div>
+
+    <div class="section-label">Studio</div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html" class="active">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+        <a href="#projects">
+            <span class="nav-icon">▣</span>
+            My Projects
+        </a>
+
+        <a href="#" id="newProjectNav">
+            <span class="nav-icon">＋</span>
+            New Project
+        </a>
+
+    </nav>
+
+    <div class="section-label">Create</div>
+
+    <nav class="nav">
+
+        <!-- REAL WRITER LINK -->
+        <a href="writer.html">
+            <span class="nav-icon">✎</span>
+            AniVora Writer
+        </a>
+
+        <a href="#" onclick="comingSoon('Character Creator'); return false;">
+            <span class="nav-icon">♙</span>
+            Characters
+        </a>
+
+        <a href="#" onclick="comingSoon('Scene Builder'); return false;">
+            <span class="nav-icon">◇</span>
+            Scene Builder
+        </a>
+
+        <a href="#" onclick="comingSoon('AniVora Art'); return false;">
+            <span class="nav-icon">✧</span>
+            AniVora Art
+        </a>
+
+        <a href="#" onclick="comingSoon('AI Voice'); return false;">
+            <span class="nav-icon">♬</span>
+            AI Voice
+        </a>
+
+        <a href="#" onclick="comingSoon('Music & SFX'); return false;">
+            <span class="nav-icon">♫</span>
+            Music & SFX
+        </a>
+
+        <a href="#" onclick="comingSoon('Video Creator'); return false;">
+            <span class="nav-icon">▶</span>
+            Video Creator
+        </a>
+
+        <a href="#" onclick="comingSoon('Story Memory'); return false;">
+            <span class="nav-icon">◈</span>
+            Story Memory
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <button class="logout" id="logoutBtn">
+            Log out
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <button class="menu-btn" id="menuBtn">
+            ☰
+        </button>
+
+        <div class="page-title">
+            Creator Dashboard
+        </div>
+
+        <div class="topbar-right">
+            <div class="user-badge" id="userBadge">
+                A
+            </div>
+        </div>
+
+    </header>
+
+
+    <section class="content">
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <div>
+
+                <h1 id="welcomeTitle">
+                    Welcome back 👋
+                </h1>
+
+                <p>
+                    Build stories, characters and worlds with AniVora.
+                </p>
+
+            </div>
+
+            <button
+                class="primary-btn"
+                id="newProjectBtn"
+            >
+                + New Project
+            </button>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Projects
+                    </span>
+
+                    <div class="stat-icon">
+                        📁
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="projectCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Scripts
+                    </span>
+
+                    <div class="stat-icon">
+                        ✍️
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="scriptCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Characters
+                    </span>
+
+                    <div class="stat-icon">
+                        👤
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="characterCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Videos
+                    </span>
+
+                    <div class="stat-icon">
+                        🎥
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="videoCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CREATOR TOOLS -->
+
+        <div class="feature-grid">
+
+            <!-- WRITER -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    ✍️
+                </div>
+
+                <h3>
+                    AniVora Writer
+                </h3>
+
+                <p>
+                    Turn your ideas into original cinematic stories,
+                    episodes and scripts with AI.
+                </p>
+
+                <a
+                    href="writer.html"
+                    class="feature-link"
+                >
+                    Open Writer →
+                </a>
+
+            </div>
+
+
+            <!-- ART -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🎨
+                </div>
+
+                <h3>
+                    AniVora Art
+                </h3>
+
+                <p>
+                    Create original anime-inspired visuals for
+                    your stories and characters.
+                </p>
+
+                <a
+                    href="#"
+                    class="feature-link"
+                    onclick="comingSoon('AniVora Art'); return false;"
+                >
+                    Coming soon →
+                </a>
+
+            </div>
+
+
+            <!-- VIDEO -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🎥
+                </div>
+
+                <h3>
+                    Video Creator
+                </h3>
+
+                <p>
+                    Bring scripts, scenes, images and voices
+                    together into videos.
+                </p>
+
+                <a
+                    href="#"
+                    class="feature-link"
+                    onclick="comingSoon('Video Creator'); return false;"
+                >
+                    Coming soon →
+                </a>
+
+            </div>
+
+
+            <!-- STORY MEMORY -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🧠
+                </div>
+
+                <h3>
+                    Story Memory
+                </h3>
+
+                <p>
+                    Keep characters, worlds and story details
+                    consistent across episodes.
+                </p>
+
+                <a
+                    href="#"
+                    class="feature-link"
+                    onclick="comingSoon('Story Memory'); return false;"
+                >
+                    Coming soon →
+                </a>
+
+            </div>
+
+
+            <!-- CHARACTER -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    👤
+                </div>
+
+                <h3>
+                    Character Creator
+                </h3>
+
+                <p>
+                    Build detailed original characters with
+                    personalities, appearances and backstories.
+                </p>
+
+                <a
+                    href="#"
+                    class="feature-link"
+                    onclick="comingSoon('Character Creator'); return false;"
+                >
+                    Coming soon →
+                </a>
+
+            </div>
+
+
+            <!-- SCENE -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🎬
+                </div>
+
+                <h3>
+                    Scene Builder
+                </h3>
+
+                <p>
+                    Turn your story into structured scenes ready
+                    for future artwork and animation.
+                </p>
+
+                <a
+                    href="#"
+                    class="feature-link"
+                    onclick="comingSoon('Scene Builder'); return false;"
+                >
+                    Coming soon →
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROJECTS -->
+
+        <div
+            class="projects-section"
+            id="projects"
+        >
+
+            <div class="section-heading">
+
+                <h2>
+                    My Projects
+                </h2>
+
+                <span>
+                    Your latest creations
+                </span>
+
+            </div>
+
+            <div
+                class="projects-grid"
+                id="projectsGrid"
+            >
+
+                <div class="empty-projects">
+
+                    <h3>
+                        Loading projects...
+                    </h3>
+
+                    <p>
+                        Your projects will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</div>
+
+
+<!-- ================= NEW PROJECT MODAL ================= -->
+
+<div
+    class="modal"
+    id="projectModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                Create New Project
+            </h2>
+
+            <button
+                class="close-modal"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Project Title
+            </label>
+
+            <input
+                type="text"
+                id="projectTitle"
+                placeholder="e.g. The Dream Walker"
+            >
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Description
+            </label>
+
+            <textarea
+                id="projectDescription"
+                placeholder="Describe your story or project..."
+            ></textarea>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                id="cancelProject"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="create-btn"
+                id="createProject"
+            >
+                Create Project
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const sidebar =
+    document.getElementById("sidebar");
+
+const menuBtn =
+    document.getElementById("menuBtn");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const newProjectBtn =
+    document.getElementById("newProjectBtn");
+
+const newProjectNav =
+    document.getElementById("newProjectNav");
+
+const projectModal =
+    document.getElementById("projectModal");
+
+const closeModal =
+    document.getElementById("closeModal");
+
+const cancelProject =
+    document.getElementById("cancelProject");
+
+const createProject =
+    document.getElementById("createProject");
+
+const projectTitle =
+    document.getElementById("projectTitle");
+
+const projectDescription =
+    document.getElementById("projectDescription");
+
+const projectsGrid =
+    document.getElementById("projectsGrid");
+
+
+let currentUser = null;
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+menuBtn.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.toggle("open");
+
+    }
+);
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+function openProjectModal(){
+
+    projectModal.classList.add("show");
+
+    projectTitle.focus();
+
+}
+
+function closeProjectModal(){
+
+    projectModal.classList.remove("show");
+
+    projectTitle.value = "";
+
+    projectDescription.value = "";
+
+}
+
+
+newProjectBtn.addEventListener(
+    "click",
+    openProjectModal
+);
+
+newProjectNav.addEventListener(
+    "click",
+    function(event){
+
+        event.preventDefault();
+
+        openProjectModal();
+
+    }
+);
+
+closeModal.addEventListener(
+    "click",
+    closeProjectModal
+);
+
+cancelProject.addEventListener(
+    "click",
+    closeProjectModal
+);
+
+projectModal.addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === projectModal){
+
+            closeProjectModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+
+async function checkAuth(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if(error){
+
+        console.error(error);
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    if(!data.session){
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    currentUser =
+        data.session.user;
+
+
+    setUserInformation();
+
+    await loadDashboard();
+
+}
+
+
+/* =========================================================
+   USER INFORMATION
+   ========================================================= */
+
+function setUserInformation(){
+
+    const metadata =
+        currentUser.user_metadata || {};
+
+    const name =
+        metadata.full_name ||
+        metadata.username ||
+        currentUser.email?.split("@")[0] ||
+        "Creator";
+
+
+    document.getElementById(
+        "welcomeTitle"
+    ).textContent =
+        `Welcome back, ${name} 👋`;
+
+
+    document.getElementById(
+        "userBadge"
+    ).textContent =
+        name.charAt(0).toUpperCase();
+
+}
+
+
+/* =========================================================
+   LOAD DASHBOARD
+   ========================================================= */
+
+async function loadDashboard(){
+
+    await loadProjects();
+
+    await loadStats();
+
+}
+
+
+/* =========================================================
+   LOAD PROJECTS
+   ========================================================= */
+
+async function loadProjects(){
+
+    projectsGrid.innerHTML = `
+        <div class="empty-projects">
+            <h3>Loading projects...</h3>
+            <p>Please wait.</p>
+        </div>
+    `;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("projects")
+            .select(
+                "id,title,description,status,created_at"
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+    if(error){
+
+        console.error(
+            "Projects error:",
+            error
+        );
+
+        projectsGrid.innerHTML = `
+            <div class="empty-projects">
+                <h3>Could not load projects</h3>
+                <p>${escapeHtml(error.message)}</p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const projects =
+        data || [];
+
+
+    document.getElementById(
+        "projectCount"
+    ).textContent =
+        projects.length;
+
+
+    if(projects.length === 0){
+
+        projectsGrid.innerHTML = `
+            <div class="empty-projects">
+                <h3>No projects yet</h3>
+                <p>Create your first AniVora project and start building.</p>
+
+                <button
+                    class="primary-btn"
+                    onclick="openProjectModal()"
+                >
+                    + Create Project
+                </button>
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    projectsGrid.innerHTML =
+        projects.map(
+            project => {
+
+                const status =
+                    project.status ||
+                    "draft";
+
+
+                return `
+                    <div class="project-card">
+
+                        <div>
+
+                            <span class="project-status">
+                                ${escapeHtml(
+                                    status.charAt(0).toUpperCase()
+                                    + status.slice(1)
+                                )}
+                            </span>
+
+                            <h3>
+                                ${escapeHtml(
+                                    project.title
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHtml(
+                                    project.description ||
+                                    "No description added."
+                                )}
+                            </p>
+
+                        </div>
+
+                        <div class="project-bottom">
+
+                            <button
+                                class="open-project"
+                                onclick="openProject('${project.id}')"
+                            >
+                                Open →
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   LOAD STATS
+   ========================================================= */
+
+async function loadStats(){
+
+    await loadTableCount(
+        "scripts",
+        "scriptCount"
+    );
+
+    await loadTableCount(
+        "characters",
+        "characterCount"
+    );
+
+    await loadTableCount(
+        "videos",
+        "videoCount"
+    );
+
+}
+
+
+async function loadTableCount(
+    tableName,
+    elementId
+){
+
+    const {
+        count,
+        error
+    } =
+        await supabaseClient
+            .from(tableName)
+            .select(
+                "*",
+                {
+                    count:"exact",
+                    head:true
+                }
+            )
+            .eq(
+                "user_id",
+                currentUser.id
+            );
+
+
+    if(error){
+
+        console.error(
+            `${tableName} count error:`,
+            error
+        );
+
+        document.getElementById(
+            elementId
+        ).textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        elementId
+    ).textContent =
+        count || 0;
+
+}
+
+
+/* =========================================================
+   CREATE PROJECT
+   ========================================================= */
+
+createProject.addEventListener(
+    "click",
+    async function(){
+
+        const title =
+            projectTitle.value.trim();
+
+        const description =
+            projectDescription.value.trim();
+
+
+        if(!title){
+
+            alert(
+                "Please enter a project title."
+            );
+
+            projectTitle.focus();
+
+            return;
+
+        }
+
+
+        createProject.disabled =
+            true;
+
+        createProject.textContent =
+            "Creating...";
+
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("projects")
+                    .insert({
+
+                        user_id:
+                            currentUser.id,
+
+                        title:
+                            title,
+
+                        description:
+                            description,
+
+                        status:
+                            "draft"
+
+                    })
+                    .select()
+                    .single();
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            closeProjectModal();
+
+            await loadProjects();
+
+            await loadStats();
+
+
+            /*
+             * After creating the project,
+             * take the creator directly to Writer.
+             */
+
+            window.location.href =
+                "writer.html";
+
+
+        }
+        catch(error){
+
+            console.error(
+                "Create project error:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Could not create the project."
+            );
+
+        }
+        finally{
+
+            createProject.disabled =
+                false;
+
+            createProject.textContent =
+                "Create Project";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   OPEN PROJECT
+   ========================================================= */
+
+function openProject(projectId){
+
+    /*
+     * Project Studio is not built yet.
+     * Writer is already available.
+     *
+     * For now, open Writer instead of
+     * showing the old broken alert.
+     */
+
+    window.location.href =
+        "writer.html";
+
+}
+
+
+/* =========================================================
+   COMING SOON
+   ========================================================= */
+
+function comingSoon(toolName){
+
+    alert(
+        `${toolName} is coming next in the AniVora Studio.`
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+logoutBtn.addEventListener(
+    "click",
+    async function(){
+
+        logoutBtn.disabled =
+            true;
+
+        logoutBtn.textContent =
+            "Logging out...";
+
+
+        await supabaseClient.auth.signOut();
+
+
+        window.location.href =
+            "login.html";
+
+    }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+checkAuth();
+
+</script>
+
+</body>
+  </html>
