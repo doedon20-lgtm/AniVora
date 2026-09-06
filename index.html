@@ -1,1420 +1,2196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AniVora — Create. Imagine. Bring It to Life.</title>
+  <title>AniVora — AI Storytelling & Animation Studio</title>
 
-<meta name="description" content="AniVora is an AI-powered storytelling and animation studio for creating original stories, characters, images and videos.">
+  <!-- =======================================================
+       SUPABASE
+  ======================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+  <style>
 
-:root{
-    --bg:#07070d;
-    --bg-soft:#0d0d16;
-    --card:#11111d;
-    --card-hover:#171727;
-    --text:#ffffff;
-    --muted:#a5a5b5;
-    --purple:#8b5cf6;
-    --purple-light:#a78bfa;
-    --pink:#ec4899;
-    --border:rgba(255,255,255,.09);
-}
+    /* =======================================================
+       RESET
+    ======================================================== */
 
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    overflow-x:hidden;
-}
-
-a{
-    color:inherit;
-    text-decoration:none;
-}
-
-button{
-    font:inherit;
-}
-
-.container{
-    width:min(1160px,92%);
-    margin:auto;
-}
-
-/* ================= NAVBAR ================= */
-
-.navbar{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:1000;
-    backdrop-filter:blur(18px);
-    background:rgba(7,7,13,.72);
-    border-bottom:1px solid rgba(255,255,255,.06);
-}
-
-.nav-inner{
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:1.35rem;
-    font-weight:800;
-    letter-spacing:-.5px;
-}
-
-.logo-mark{
-    width:36px;
-    height:36px;
-    border-radius:12px;
-    display:grid;
-    place-items:center;
-    background:linear-gradient(135deg,var(--purple),var(--pink));
-    box-shadow:0 0 28px rgba(139,92,246,.35);
-}
-
-.logo-mark span{
-    font-size:18px;
-    font-weight:900;
-}
-
-.nav-links{
-    display:flex;
-    align-items:center;
-    gap:30px;
-}
-
-.nav-links a{
-    color:#c7c7d4;
-    font-size:.92rem;
-    transition:.25s;
-}
-
-.nav-links a:hover{
-    color:#fff;
-}
-
-.nav-actions{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.btn{
-    border:0;
-    cursor:pointer;
-    border-radius:12px;
-    padding:12px 18px;
-    font-weight:700;
-    transition:.25s;
-}
-
-.btn-login{
-    background:transparent;
-    color:#ddd;
-}
-
-.btn-login:hover{
-    background:rgba(255,255,255,.06);
-}
-
-.btn-primary{
-    color:#fff;
-    background:linear-gradient(135deg,var(--purple),var(--pink));
-    box-shadow:0 10px 35px rgba(139,92,246,.24);
-}
-
-.btn-primary:hover{
-    transform:translateY(-2px);
-    box-shadow:0 14px 40px rgba(139,92,246,.35);
-}
-
-.mobile-menu{
-    display:none;
-    border:0;
-    background:transparent;
-    color:#fff;
-    font-size:25px;
-    cursor:pointer;
-}
-
-/* ================= HERO ================= */
-
-.hero{
-    min-height:100vh;
-    padding-top:72px;
-    position:relative;
-    display:flex;
-    align-items:center;
-    overflow:hidden;
-}
-
-.hero::before{
-    content:"";
-    position:absolute;
-    width:600px;
-    height:600px;
-    background:radial-gradient(circle,rgba(139,92,246,.22),transparent 68%);
-    top:-180px;
-    left:-150px;
-    pointer-events:none;
-}
-
-.hero::after{
-    content:"";
-    position:absolute;
-    width:600px;
-    height:600px;
-    background:radial-gradient(circle,rgba(236,72,153,.14),transparent 68%);
-    right:-180px;
-    bottom:-200px;
-    pointer-events:none;
-}
-
-.hero-grid{
-    position:relative;
-    z-index:2;
-    display:grid;
-    grid-template-columns:1.05fr .95fr;
-    gap:70px;
-    align-items:center;
-    padding:80px 0 90px;
-}
-
-.badge{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 13px;
-    border:1px solid rgba(167,139,250,.25);
-    border-radius:999px;
-    background:rgba(139,92,246,.08);
-    color:#c4b5fd;
-    font-size:.82rem;
-    font-weight:700;
-    margin-bottom:24px;
-}
-
-.badge-dot{
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#a78bfa;
-    box-shadow:0 0 12px #a78bfa;
-}
-
-.hero h1{
-    font-size:clamp(3rem,6vw,5.5rem);
-    line-height:.98;
-    letter-spacing:-4px;
-    max-width:720px;
-}
-
-.gradient-text{
-    background:linear-gradient(90deg,#c4b5fd,#f0abfc,#f9a8d4);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-}
-
-.hero-description{
-    color:var(--muted);
-    font-size:1.08rem;
-    line-height:1.8;
-    max-width:600px;
-    margin:26px 0 32px;
-}
-
-.hero-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:13px;
-}
-
-.btn-large{
-    padding:15px 23px;
-    border-radius:14px;
-}
-
-.btn-outline{
-    color:#eee;
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.035);
-}
-
-.btn-outline:hover{
-    background:rgba(255,255,255,.08);
-}
-
-.hero-note{
-    margin-top:18px;
-    color:#777789;
-    font-size:.8rem;
-}
-
-/* ================= CREATOR PREVIEW ================= */
-
-.creator-preview{
-    position:relative;
-    min-height:470px;
-}
-
-.glow{
-    position:absolute;
-    width:330px;
-    height:330px;
-    background:radial-gradient(circle,rgba(139,92,246,.32),transparent 68%);
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    filter:blur(5px);
-}
-
-.editor{
-    position:absolute;
-    width:min(100%,500px);
-    right:0;
-    top:30px;
-    background:rgba(15,15,25,.9);
-    border:1px solid var(--border);
-    border-radius:22px;
-    padding:18px;
-    box-shadow:0 35px 90px rgba(0,0,0,.5);
-    backdrop-filter:blur(20px);
-    transform:rotate(2deg);
-}
-
-.editor-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:17px;
-}
-
-.window-dots{
-    display:flex;
-    gap:6px;
-}
-
-.window-dots span{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#555;
-}
-
-.editor-title{
-    color:#999;
-    font-size:.72rem;
-}
-
-.editor-body{
-    display:grid;
-    grid-template-columns:130px 1fr;
-    gap:13px;
-}
-
-.editor-sidebar{
-    background:#0a0a12;
-    border-radius:14px;
-    padding:12px;
-}
-
-.side-item{
-    padding:11px 9px;
-    border-radius:9px;
-    color:#8f8f9e;
-    font-size:.72rem;
-    margin-bottom:5px;
-}
-
-.side-item.active{
-    color:#fff;
-    background:rgba(139,92,246,.18);
-}
-
-.editor-main{
-    background:#0a0a12;
-    border-radius:14px;
-    padding:17px;
-}
-
-.fake-title{
-    width:65%;
-    height:13px;
-    border-radius:8px;
-    background:#29293b;
-    margin-bottom:20px;
-}
-
-.fake-line{
-    height:9px;
-    border-radius:8px;
-    background:#202030;
-    margin:9px 0;
-}
-
-.fake-line.short{
-    width:65%;
-}
-
-.fake-image{
-    height:155px;
-    border-radius:14px;
-    margin-top:18px;
-    background:
-        radial-gradient(circle at 65% 35%,rgba(236,72,153,.65),transparent 18%),
-        radial-gradient(circle at 30% 55%,rgba(139,92,246,.75),transparent 25%),
-        linear-gradient(135deg,#161226,#090910);
-    position:relative;
-    overflow:hidden;
-}
-
-.fake-image::after{
-    content:"AI SCENE";
-    position:absolute;
-    bottom:12px;
-    left:12px;
-    font-size:.65rem;
-    letter-spacing:2px;
-    color:#ddd;
-}
-
-.floating-card{
-    position:absolute;
-    background:rgba(18,18,29,.94);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:14px;
-    box-shadow:0 20px 50px rgba(0,0,0,.4);
-    backdrop-filter:blur(16px);
-}
-
-.floating-card strong{
-    display:block;
-    font-size:.78rem;
-    margin-bottom:5px;
-}
-
-.floating-card small{
-    color:#888899;
-    font-size:.68rem;
-}
-
-.card-one{
-    left:-20px;
-    bottom:80px;
-}
-
-.card-two{
-    right:-15px;
-    bottom:15px;
-}
-
-/* ================= SECTION ================= */
-
-.section{
-    padding:105px 0;
-}
-
-.section-header{
-    text-align:center;
-    max-width:700px;
-    margin:0 auto 55px;
-}
-
-.section-label{
-    color:#a78bfa;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    font-size:.72rem;
-    font-weight:800;
-    margin-bottom:13px;
-}
-
-.section-title{
-    font-size:clamp(2.2rem,4vw,3.5rem);
-    letter-spacing:-2px;
-    margin-bottom:16px;
-}
-
-.section-description{
-    color:var(--muted);
-    line-height:1.75;
-}
-
-/* ================= FEATURES ================= */
-
-.features{
-    background:linear-gradient(180deg,#07070d,#0a0a11);
-}
-
-.feature-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-}
-
-.feature-card{
-    padding:27px;
-    border:1px solid var(--border);
-    border-radius:20px;
-    background:linear-gradient(145deg,#10101b,#0d0d16);
-    transition:.3s;
-}
-
-.feature-card:hover{
-    transform:translateY(-5px);
-    background:var(--card-hover);
-    border-color:rgba(167,139,250,.2);
-}
-
-.feature-icon{
-    width:48px;
-    height:48px;
-    border-radius:14px;
-    display:grid;
-    place-items:center;
-    background:rgba(139,92,246,.12);
-    margin-bottom:21px;
-    font-size:22px;
-}
-
-.feature-card h3{
-    font-size:1.05rem;
-    margin-bottom:10px;
-}
-
-.feature-card p{
-    color:#9292a2;
-    line-height:1.7;
-    font-size:.9rem;
-}
-
-/* ================= WORKFLOW ================= */
-
-.workflow{
-    position:relative;
-}
-
-.steps{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:12px;
-}
-
-.step{
-    position:relative;
-    padding:24px 17px;
-    border:1px solid var(--border);
-    border-radius:18px;
-    background:#0d0d15;
-}
-
-.step-number{
-    color:#a78bfa;
-    font-size:.7rem;
-    font-weight:900;
-    letter-spacing:1px;
-    margin-bottom:25px;
-}
-
-.step h3{
-    font-size:.98rem;
-    margin-bottom:8px;
-}
-
-.step p{
-    color:#858594;
-    font-size:.78rem;
-    line-height:1.6;
-}
-
-/* ================= CREATOR SECTION ================= */
-
-.creator-section{
-    background:#0b0b13;
-}
-
-.creator-box{
-    border:1px solid var(--border);
-    border-radius:30px;
-    padding:60px;
-    background:
-        radial-gradient(circle at 85% 30%,rgba(139,92,246,.15),transparent 30%),
-        linear-gradient(135deg,#11111d,#0b0b12);
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:50px;
-    align-items:center;
-}
-
-.creator-box h2{
-    font-size:clamp(2rem,4vw,3.4rem);
-    letter-spacing:-2px;
-    margin-bottom:18px;
-}
-
-.creator-box p{
-    color:var(--muted);
-    line-height:1.8;
-    margin-bottom:25px;
-}
-
-.creator-list{
-    list-style:none;
-    display:grid;
-    gap:13px;
-}
-
-.creator-list li{
-    color:#c8c8d3;
-    font-size:.9rem;
-}
-
-.creator-list li::before{
-    content:"✓";
-    color:#a78bfa;
-    margin-right:10px;
-    font-weight:800;
-}
-
-.mini-studio{
-    border:1px solid var(--border);
-    border-radius:22px;
-    padding:20px;
-    background:#090910;
-}
-
-.mini-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-}
-
-.mini-top span{
-    font-size:.78rem;
-    color:#999;
-}
-
-.status{
-    padding:6px 9px;
-    border-radius:20px;
-    font-size:.62rem;
-    color:#c4b5fd;
-    background:rgba(139,92,246,.1);
-}
-
-.timeline{
-    display:grid;
-    gap:9px;
-}
-
-.timeline-item{
-    display:grid;
-    grid-template-columns:45px 1fr;
-    gap:10px;
-    align-items:center;
-}
-
-.timeline-number{
-    height:34px;
-    border-radius:9px;
-    display:grid;
-    place-items:center;
-    background:#151522;
-    color:#999;
-    font-size:.65rem;
-}
-
-.timeline-bar{
-    height:34px;
-    border-radius:9px;
-    background:linear-gradient(90deg,#181827,#101019);
-    border:1px solid rgba(255,255,255,.04);
-}
-
-/* ================= PRICING ================= */
-
-.pricing-card{
-    max-width:780px;
-    margin:auto;
-    padding:45px;
-    border:1px solid rgba(167,139,250,.18);
-    border-radius:25px;
-    text-align:center;
-    background:
-        radial-gradient(circle at 50% 0%,rgba(139,92,246,.13),transparent 45%),
-        #0d0d16;
-}
-
-.free-badge{
-    display:inline-block;
-    padding:7px 13px;
-    border-radius:20px;
-    background:rgba(139,92,246,.1);
-    color:#c4b5fd;
-    font-size:.75rem;
-    font-weight:800;
-    margin-bottom:18px;
-}
-
-.pricing-card h2{
-    font-size:2.5rem;
-    margin-bottom:12px;
-}
-
-.pricing-card p{
-    color:#90909f;
-    line-height:1.7;
-    max-width:570px;
-    margin:0 auto 25px;
-}
-
-/* ================= CTA ================= */
-
-.cta{
-    padding:110px 0 120px;
-    text-align:center;
-}
-
-.cta-inner{
-    max-width:800px;
-    margin:auto;
-}
-
-.cta h2{
-    font-size:clamp(2.5rem,5vw,4.4rem);
-    letter-spacing:-3px;
-    line-height:1;
-    margin-bottom:20px;
-}
-
-.cta p{
-    color:#9696a6;
-    line-height:1.8;
-    margin-bottom:28px;
-}
-
-/* ================= FOOTER ================= */
-
-footer{
-    border-top:1px solid var(--border);
-    padding:35px 0;
-    background:#050509;
-}
-
-.footer-inner{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-}
-
-.footer-copy{
-    color:#696978;
-    font-size:.78rem;
-}
-
-.footer-links{
-    display:flex;
-    gap:22px;
-}
-
-.footer-links a{
-    color:#777787;
-    font-size:.78rem;
-}
-
-.footer-links a:hover{
-    color:#fff;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:900px){
-
-    .nav-links,
-    .nav-actions{
-        display:none;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .mobile-menu{
-        display:block;
+
+    html {
+      scroll-behavior: smooth;
     }
 
-    .hero-grid{
-        grid-template-columns:1fr;
-        gap:30px;
-        padding-top:55px;
+
+    body {
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 10% 10%,
+          rgba(124, 58, 237, 0.18),
+          transparent 30%
+        ),
+
+        radial-gradient(
+          circle at 90% 30%,
+          rgba(168, 85, 247, 0.14),
+          transparent 30%
+        ),
+
+        #07070d;
+
+      color: #ffffff;
+
+      min-height: 100vh;
+
+      overflow-x: hidden;
     }
 
-    .hero h1{
-        letter-spacing:-2.5px;
+
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .creator-preview{
-        min-height:410px;
+
+    button {
+      font-family: inherit;
     }
 
-    .editor{
-        position:relative;
-        top:0;
-        right:auto;
-        margin:auto;
-        transform:rotate(0);
+
+    /* =======================================================
+       NAVBAR
+    ======================================================== */
+
+    .navbar {
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 1000;
+
+      width: 100%;
+
+      background:
+        rgba(7, 7, 13, 0.82);
+
+      backdrop-filter: blur(18px);
+
+      border-bottom:
+        1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .card-one{
-        left:-5px;
-        bottom:35px;
+
+    .nav-container {
+
+      max-width: 1180px;
+
+      margin: auto;
+
+      padding:
+        16px 22px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
     }
 
-    .card-two{
-        right:-5px;
-        bottom:0;
+
+    .logo {
+
+      font-size: 25px;
+
+      font-weight: 900;
+
+      letter-spacing: -1px;
     }
 
-    .feature-grid{
-        grid-template-columns:repeat(2,1fr);
+
+    .logo span {
+      color: #a855f7;
     }
 
-    .steps{
-        grid-template-columns:repeat(2,1fr);
+
+    .nav-links {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 28px;
     }
 
-    .creator-box{
-        grid-template-columns:1fr;
-        padding:35px;
-    }
-}
 
-@media(max-width:600px){
+    .nav-links a {
 
-    .container{
-        width:90%;
+      color: #b7b7c5;
+
+      font-size: 14px;
+
+      transition: 0.2s;
     }
 
-    .hero{
-        min-height:auto;
+
+    .nav-links a:hover {
+      color: #ffffff;
     }
 
-    .hero-grid{
-        padding:55px 0 65px;
+
+    .nav-actions {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
     }
 
-    .hero h1{
-        font-size:3rem;
+
+    .nav-button {
+
+      border: 0;
+
+      padding:
+        10px 16px;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      transition: 0.2s;
     }
 
-    .hero-description{
-        font-size:.98rem;
+
+    .login-button {
+
+      background: transparent;
+
+      color: #d4d4dc;
+
+      border:
+        1px solid rgba(255,255,255,0.12);
     }
 
-    .hero-buttons{
-        flex-direction:column;
+
+    .login-button:hover {
+      background: rgba(255,255,255,0.06);
     }
 
-    .hero-buttons .btn{
-        width:100%;
+
+    .signup-button {
+
+      background:
+        linear-gradient(
+          135deg,
+          #a855f7,
+          #7c3aed
+        );
+
+      color: white;
     }
 
-    .creator-preview{
-        min-height:350px;
+
+    .signup-button:hover {
+      transform: translateY(-1px);
     }
 
-    .editor{
-        padding:12px;
+
+    .dashboard-button {
+
+      background:
+        linear-gradient(
+          135deg,
+          #a855f7,
+          #7c3aed
+        );
+
+      color: white;
     }
 
-    .editor-body{
-        grid-template-columns:85px 1fr;
+
+    .logout-button {
+
+      background: transparent;
+
+      color: #d4d4dc;
+
+      border:
+        1px solid rgba(255,255,255,0.12);
     }
 
-    .editor-sidebar{
-        padding:7px;
+
+    .logout-button:hover {
+      background: rgba(255,255,255,0.06);
     }
 
-    .side-item{
-        padding:8px 5px;
-        font-size:.62rem;
+
+    .mobile-menu {
+
+      display: none;
+
+      background: transparent;
+
+      border: none;
+
+      color: white;
+
+      font-size: 25px;
+
+      cursor: pointer;
     }
 
-    .fake-image{
-        height:120px;
+
+    /* =======================================================
+       HERO
+    ======================================================== */
+
+    .hero {
+
+      max-width: 1180px;
+
+      margin: auto;
+
+      min-height: 720px;
+
+      padding:
+        100px 22px 80px;
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 60px;
+
+      align-items: center;
     }
 
-    .floating-card{
-        padding:10px;
+
+    .launch-badge {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      padding:
+        8px 13px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(168, 85, 247, 0.10);
+
+      border:
+        1px solid rgba(168, 85, 247, 0.25);
+
+      color: #d8b4fe;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      margin-bottom: 22px;
     }
 
-    .floating-card strong{
-        font-size:.67rem;
+
+    .launch-dot {
+
+      width: 7px;
+
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: #a855f7;
+
+      box-shadow:
+        0 0 12px #a855f7;
     }
 
-    .floating-card small{
-        font-size:.58rem;
+
+    .hero h1 {
+
+      font-size:
+        clamp(44px, 6vw, 76px);
+
+      line-height: 0.98;
+
+      letter-spacing: -4px;
+
+      margin-bottom: 25px;
     }
 
-    .section{
-        padding:75px 0;
+
+    .gradient-text {
+
+      background:
+        linear-gradient(
+          90deg,
+          #ffffff,
+          #c084fc,
+          #a855f7
+        );
+
+      -webkit-background-clip: text;
+
+      background-clip: text;
+
+      color: transparent;
     }
 
-    .feature-grid{
-        grid-template-columns:1fr;
+
+    .hero-description {
+
+      max-width: 570px;
+
+      color: #a1a1aa;
+
+      font-size: 17px;
+
+      line-height: 1.7;
+
+      margin-bottom: 30px;
     }
 
-    .steps{
-        grid-template-columns:1fr;
+
+    .hero-buttons {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 12px;
     }
 
-    .creator-box{
-        padding:27px;
-        border-radius:22px;
+
+    .primary-button {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding:
+        14px 21px;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #a855f7,
+          #7c3aed
+        );
+
+      color: white;
+
+      font-size: 14px;
+
+      font-weight: 800;
+
+      border: none;
+
+      cursor: pointer;
+
+      transition: 0.2s;
     }
 
-    .pricing-card{
-        padding:32px 22px;
+
+    .primary-button:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 12px 30px rgba(124,58,237,0.25);
     }
 
-    .footer-inner{
-        flex-direction:column;
-        text-align:center;
+
+    .secondary-button {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding:
+        14px 21px;
+
+      border-radius: 12px;
+
+      background:
+        rgba(255,255,255,0.04);
+
+      border:
+        1px solid rgba(255,255,255,0.11);
+
+      color: white;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      cursor: pointer;
     }
 
-    .footer-links{
-        flex-wrap:wrap;
-        justify-content:center;
+
+    .secondary-button:hover {
+      background:
+        rgba(255,255,255,0.08);
     }
-}
-</style>
+
+
+    /* =======================================================
+       STUDIO PREVIEW
+    ======================================================== */
+
+    .studio-wrapper {
+      position: relative;
+    }
+
+
+    .studio-card {
+
+      border-radius: 24px;
+
+      padding: 15px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,0.08),
+          rgba(255,255,255,0.025)
+        );
+
+      border:
+        1px solid rgba(255,255,255,0.10);
+
+      box-shadow:
+        0 30px 90px rgba(0,0,0,0.5);
+
+      transform:
+        perspective(1200px)
+        rotateY(-4deg);
+    }
+
+
+    .studio-top {
+
+      height: 36px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 0 8px;
+    }
+
+
+    .window-dot {
+
+      width: 8px;
+
+      height: 8px;
+
+      border-radius: 50%;
+
+      background: #52525b;
+    }
+
+
+    .studio-body {
+
+      border-radius: 16px;
+
+      background:
+        #101019;
+
+      padding: 18px;
+
+      min-height: 420px;
+    }
+
+
+    .studio-title {
+
+      font-size: 13px;
+
+      color: #d4d4d8;
+
+      margin-bottom: 17px;
+
+      font-weight: 700;
+    }
+
+
+    .studio-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        0.8fr 1.2fr;
+
+      gap: 12px;
+    }
+
+
+    .studio-panel {
+
+      border:
+        1px solid rgba(255,255,255,0.07);
+
+      border-radius: 12px;
+
+      padding: 13px;
+
+      background:
+        rgba(255,255,255,0.025);
+    }
+
+
+    .panel-heading {
+
+      color: #a1a1aa;
+
+      font-size: 10px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 12px;
+    }
+
+
+    .fake-line {
+
+      height: 9px;
+
+      border-radius: 10px;
+
+      background:
+        #272737;
+
+      margin-bottom: 9px;
+    }
+
+
+    .fake-line.short {
+      width: 60%;
+    }
+
+
+    .fake-line.medium {
+      width: 78%;
+    }
+
+
+    .fake-line.long {
+      width: 92%;
+    }
+
+
+    .fake-image {
+
+      min-height: 170px;
+
+      border-radius: 12px;
+
+      background:
+        radial-gradient(
+          circle at 50% 35%,
+          rgba(192,132,252,0.55),
+          transparent 22%
+        ),
+
+        radial-gradient(
+          circle at 30% 70%,
+          rgba(124,58,237,0.4),
+          transparent 30%
+        ),
+
+        linear-gradient(
+          145deg,
+          #171226,
+          #251a3b,
+          #101019
+        );
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: #ddd6fe;
+
+      font-weight: 800;
+
+      font-size: 14px;
+
+      text-align: center;
+    }
+
+
+    /* =======================================================
+       SECTION
+    ======================================================== */
+
+    .section {
+
+      max-width: 1180px;
+
+      margin: auto;
+
+      padding:
+        95px 22px;
+    }
+
+
+    .section-heading {
+
+      max-width: 680px;
+
+      margin-bottom: 45px;
+    }
+
+
+    .section-heading .eyebrow {
+
+      color: #c084fc;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1.5px;
+
+      margin-bottom: 12px;
+    }
+
+
+    .section-heading h2 {
+
+      font-size:
+        clamp(30px, 5vw, 50px);
+
+      letter-spacing: -2px;
+
+      margin-bottom: 15px;
+    }
+
+
+    .section-heading p {
+
+      color: #92929e;
+
+      line-height: 1.7;
+
+      font-size: 15px;
+    }
+
+
+    /* =======================================================
+       FEATURES
+    ======================================================== */
+
+    .features {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 15px;
+    }
+
+
+    .feature-card {
+
+      padding: 25px;
+
+      min-height: 205px;
+
+      border-radius: 18px;
+
+      background:
+        rgba(255,255,255,0.035);
+
+      border:
+        1px solid rgba(255,255,255,0.07);
+
+      transition: 0.25s;
+    }
+
+
+    .feature-card:hover {
+
+      transform:
+        translateY(-5px);
+
+      border-color:
+        rgba(168,85,247,0.30);
+
+      background:
+        rgba(168,85,247,0.055);
+    }
+
+
+    .feature-icon {
+
+      width: 45px;
+
+      height: 45px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 13px;
+
+      background:
+        rgba(168,85,247,0.12);
+
+      font-size: 20px;
+
+      margin-bottom: 18px;
+    }
+
+
+    .feature-card h3 {
+
+      font-size: 17px;
+
+      margin-bottom: 9px;
+    }
+
+
+    .feature-card p {
+
+      color: #8f8f9b;
+
+      font-size: 13px;
+
+      line-height: 1.65;
+    }
+
+
+    /* =======================================================
+       WORKFLOW
+    ======================================================== */
+
+    .workflow {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      gap: 10px;
+    }
+
+
+    .workflow-step {
+
+      padding: 20px 14px;
+
+      text-align: center;
+
+      border:
+        1px solid rgba(255,255,255,0.07);
+
+      border-radius: 16px;
+
+      background:
+        rgba(255,255,255,0.025);
+    }
+
+
+    .workflow-number {
+
+      width: 32px;
+
+      height: 32px;
+
+      margin:
+        0 auto 13px;
+
+      border-radius: 50%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(168,85,247,0.14);
+
+      color: #d8b4fe;
+
+      font-weight: 800;
+
+      font-size: 12px;
+    }
+
+
+    .workflow-step h3 {
+
+      font-size: 13px;
+
+      margin-bottom: 6px;
+    }
+
+
+    .workflow-step p {
+
+      color: #777783;
+
+      font-size: 11px;
+
+      line-height: 1.5;
+    }
+
+
+    /* =======================================================
+       CREATOR SECTION
+    ======================================================== */
+
+    .creator-section {
+
+      border:
+        1px solid rgba(168,85,247,0.15);
+
+      border-radius: 25px;
+
+      padding: 50px;
+
+      background:
+        radial-gradient(
+          circle at 85% 20%,
+          rgba(168,85,247,0.14),
+          transparent 35%
+        ),
+
+        rgba(255,255,255,0.025);
+    }
+
+
+    .creator-section h2 {
+
+      max-width: 700px;
+
+      font-size:
+        clamp(30px, 5vw, 52px);
+
+      letter-spacing: -2px;
+
+      margin-bottom: 15px;
+    }
+
+
+    .creator-section p {
+
+      color: #9999a5;
+
+      max-width: 680px;
+
+      line-height: 1.7;
+
+      font-size: 15px;
+
+      margin-bottom: 25px;
+    }
+
+
+    /* =======================================================
+       PRICING
+    ======================================================== */
+
+    .pricing-card {
+
+      max-width: 650px;
+
+      margin: auto;
+
+      text-align: center;
+
+      padding: 45px 30px;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(168,85,247,0.11),
+          rgba(255,255,255,0.025)
+        );
+
+      border:
+        1px solid rgba(168,85,247,0.22);
+    }
+
+
+    .pricing-card .small {
+
+      color: #c084fc;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 12px;
+    }
+
+
+    .pricing-card h2 {
+
+      font-size: 38px;
+
+      margin-bottom: 12px;
+    }
+
+
+    .pricing-card p {
+
+      color: #9696a2;
+
+      line-height: 1.6;
+
+      font-size: 14px;
+
+      margin-bottom: 22px;
+    }
+
+
+    /* =======================================================
+       FOOTER
+    ======================================================== */
+
+    footer {
+
+      border-top:
+        1px solid rgba(255,255,255,0.07);
+
+      margin-top: 30px;
+    }
+
+
+    .footer-container {
+
+      max-width: 1180px;
+
+      margin: auto;
+
+      padding:
+        28px 22px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+
+    .footer-copy {
+
+      color: #666671;
+
+      font-size: 12px;
+    }
+
+
+    .footer-logo {
+
+      font-weight: 900;
+
+      font-size: 18px;
+    }
+
+
+    .footer-logo span {
+      color: #a855f7;
+    }
+
+
+    /* =======================================================
+       MOBILE
+    ======================================================== */
+
+    @media (max-width: 850px) {
+
+      .nav-links,
+      .nav-actions {
+        display: none;
+      }
+
+
+      .mobile-menu {
+        display: block;
+      }
+
+
+      .hero {
+
+        grid-template-columns: 1fr;
+
+        padding-top: 70px;
+
+        min-height: auto;
+      }
+
+
+      .studio-card {
+
+        transform: none;
+      }
+
+
+      .features {
+
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+
+      .workflow {
+
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+
+    @media (max-width: 550px) {
+
+      .hero {
+
+        padding:
+          65px 18px 55px;
+      }
+
+
+      .section {
+
+        padding:
+          70px 18px;
+      }
+
+
+      .hero h1 {
+
+        letter-spacing: -2.5px;
+      }
+
+
+      .hero-description {
+
+        font-size: 15px;
+      }
+
+
+      .hero-buttons {
+
+        flex-direction: column;
+      }
+
+
+      .primary-button,
+      .secondary-button {
+
+        width: 100%;
+      }
+
+
+      .features {
+
+        grid-template-columns: 1fr;
+      }
+
+
+      .workflow {
+
+        grid-template-columns: 1fr;
+      }
+
+
+      .creator-section {
+
+        padding: 30px 22px;
+      }
+
+
+      .studio-grid {
+
+        grid-template-columns: 1fr;
+      }
+
+
+      .footer-container {
+
+        flex-direction: column;
+
+        text-align: center;
+      }
+
+    }
+
+  </style>
 </head>
+
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
 
-<header class="navbar">
-    <div class="container nav-inner">
+  <!-- =======================================================
+       NAVBAR
+  ======================================================== -->
 
-        <a href="#" class="logo">
-            <div class="logo-mark">
-                <span>A</span>
-            </div>
-            AniVora
+  <nav class="navbar">
+
+    <div class="nav-container">
+
+      <a href="index.html" class="logo">
+        Ani<span>Vora</span>
+      </a>
+
+
+      <div class="nav-links">
+
+        <a href="#features">
+          Features
         </a>
 
-        <nav class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#workflow">How It Works</a>
-            <a href="#creator">Creators</a>
-            <a href="#pricing">Pricing</a>
-        </nav>
+        <a href="#how-it-works">
+          How It Works
+        </a>
 
-        <div class="nav-actions">
-            <a href="#" class="btn btn-login">Log in</a>
-            <a href="#" class="btn btn-primary">Start Creating</a>
-        </div>
+        <a href="#creators">
+          Creators
+        </a>
 
-        <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+        <a href="#pricing">
+          Pricing
+        </a>
+
+      </div>
+
+
+      <div class="nav-actions" id="navActions">
+
+        <!-- Logged-out buttons -->
+
+        <a
+          href="login.html"
+          class="nav-button login-button"
+          id="loginNavButton"
+        >
+          Log In
+        </a>
+
+
+        <a
+          href="create-account.html"
+          class="nav-button signup-button"
+          id="signupNavButton"
+        >
+          Create Account
+        </a>
+
+
+        <!-- Logged-in buttons -->
+
+        <a
+          href="dashboard.html"
+          class="nav-button dashboard-button"
+          id="dashboardNavButton"
+          style="display:none;"
+        >
+          Dashboard
+        </a>
+
+
+        <button
+          class="nav-button logout-button"
+          id="logoutButton"
+          style="display:none;"
+        >
+          Log Out
+        </button>
+
+      </div>
+
+
+      <button
+        class="mobile-menu"
+        id="mobileMenuButton"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
 
     </div>
-</header>
 
-<!-- ================= HERO ================= -->
+  </nav>
 
-<main>
 
-<section class="hero">
+  <!-- =======================================================
+       MOBILE MENU
+  ======================================================== -->
 
-    <div class="container hero-grid">
+  <div
+    id="mobileMenu"
+    style="
+      display:none;
+      padding:20px;
+      background:#0d0d16;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    "
+  >
 
-        <div>
+    <div
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:18px;
+      "
+    >
 
-            <div class="badge">
-                <span class="badge-dot"></span>
-                The AI storytelling studio
-            </div>
+      <a href="#features">
+        Features
+      </a>
 
-            <h1>
-                Turn your
-                <span class="gradient-text">imagination</span>
-                into stories.
-            </h1>
+      <a href="#how-it-works">
+        How It Works
+      </a>
 
-            <p class="hero-description">
-                Create original anime-inspired stories, characters,
-                scenes, images and videos with AniVora — your creative
-                studio for bringing ideas to life.
-            </p>
+      <a href="#creators">
+        Creators
+      </a>
 
-            <div class="hero-buttons">
-                <a href="#" class="btn btn-primary btn-large">
-                    ✨ Start Creating
-                </a>
+      <a href="#pricing">
+        Pricing
+      </a>
 
-                <a href="#features" class="btn btn-outline btn-large">
-                    Explore Features
-                </a>
-            </div>
+      <a href="login.html">
+        Log In
+      </a>
 
-            <div class="hero-note">
-                Free during our first 30-day launch period.
-            </div>
+      <a href="create-account.html">
+        Create Account
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       HERO
+  ======================================================== -->
+
+  <main>
+
+    <section class="hero">
+
+
+      <div class="hero-content">
+
+        <div class="launch-badge">
+
+          <span class="launch-dot"></span>
+
+          Free during our first 30-day launch
 
         </div>
 
-        <div class="creator-preview">
 
-            <div class="glow"></div>
+        <h1>
 
-            <div class="editor">
+          Turn your
+          <span class="gradient-text">
+            imagination
+          </span>
+          into stories.
 
-                <div class="editor-top">
+        </h1>
 
-                    <div class="window-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
 
-                    <div class="editor-title">
-                        AniVora Studio
-                    </div>
+        <p class="hero-description">
 
+          AniVora is an AI-powered storytelling
+          and animation studio for creators.
+          Turn an idea into scripts, characters,
+          scenes, artwork and eventually complete
+          animated videos.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+          <a
+            href="create-account.html"
+            class="primary-button"
+            id="heroCreateButton"
+          >
+            Start Creating
+          </a>
+
+
+          <a
+            href="#features"
+            class="secondary-button"
+          >
+            Explore Features
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- STUDIO PREVIEW -->
+
+      <div class="studio-wrapper">
+
+        <div class="studio-card">
+
+          <div class="studio-top">
+
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+
+          </div>
+
+
+          <div class="studio-body">
+
+            <div class="studio-title">
+              AniVora Studio
+            </div>
+
+
+            <div class="studio-grid">
+
+              <div class="studio-panel">
+
+                <div class="panel-heading">
+                  Story
                 </div>
 
-                <div class="editor-body">
+                <div class="fake-line long"></div>
+                <div class="fake-line medium"></div>
+                <div class="fake-line short"></div>
 
-                    <div class="editor-sidebar">
+                <br>
 
-                        <div class="side-item active">
-                            ✍ Writer
-                        </div>
-
-                        <div class="side-item">
-                            👤 Characters
-                        </div>
-
-                        <div class="side-item">
-                            🎞 Scenes
-                        </div>
-
-                        <div class="side-item">
-                            🎨 Art
-                        </div>
-
-                        <div class="side-item">
-                            🎬 Video
-                        </div>
-
-                    </div>
-
-                    <div class="editor-main">
-
-                        <div class="fake-title"></div>
-
-                        <div class="fake-line"></div>
-                        <div class="fake-line"></div>
-                        <div class="fake-line short"></div>
-
-                        <div class="fake-image"></div>
-
-                    </div>
-
+                <div class="panel-heading">
+                  Characters
                 </div>
 
-            </div>
+                <div class="fake-line medium"></div>
+                <div class="fake-line long"></div>
+                <div class="fake-line short"></div>
 
-            <div class="floating-card card-one">
-                <strong>✍ Script Generated</strong>
-                <small>Original story ready</small>
-            </div>
+              </div>
 
-            <div class="floating-card card-two">
-                <strong>🎨 Scene Created</strong>
-                <small>Ready for animation</small>
-            </div>
 
-        </div>
+              <div class="studio-panel">
 
-    </div>
-
-</section>
-
-<!-- ================= FEATURES ================= -->
-
-<section class="section features" id="features">
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <div class="section-label">
-                Everything in one place
-            </div>
-
-            <h2 class="section-title">
-                Your entire creative workflow.
-            </h2>
-
-            <p class="section-description">
-                From a simple idea to a complete video,
-                AniVora is designed to keep your creative
-                process in one place.
-            </p>
-
-        </div>
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-                <div class="feature-icon">💡</div>
-                <h3>Idea Generator</h3>
-                <p>
-                    Turn a simple thought into exciting
-                    original story concepts.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">✍️</div>
-                <h3>AI Writer</h3>
-                <p>
-                    Create stories, YouTube scripts,
-                    dialogue and episode concepts.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">👤</div>
-                <h3>Character Creator</h3>
-                <p>
-                    Build original characters with
-                    personalities, powers and backgrounds.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎞️</div>
-                <h3>Scene Builder</h3>
-                <p>
-                    Break your story into organized,
-                    visual scenes ready for creation.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>AI Art Studio</h3>
-                <p>
-                    Generate original anime-inspired
-                    artwork for your stories and videos.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎬</div>
-                <h3>Video Creator</h3>
-                <p>
-                    Combine scenes, images, voices and
-                    sound into finished video projects.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= WORKFLOW ================= -->
-
-<section class="section workflow" id="workflow">
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <div class="section-label">
-                Simple workflow
-            </div>
-
-            <h2 class="section-title">
-                From idea to video.
-            </h2>
-
-            <p class="section-description">
-                You bring the imagination. AniVora helps
-                turn it into something people can watch.
-            </p>
-
-        </div>
-
-        <div class="steps">
-
-            <div class="step">
-                <div class="step-number">01</div>
-                <h3>Idea</h3>
-                <p>
-                    Start with a simple concept or prompt.
-                </p>
-            </div>
-
-            <div class="step">
-                <div class="step-number">02</div>
-                <h3>Script</h3>
-                <p>
-                    Develop your idea into a complete story.
-                </p>
-            </div>
-
-            <div class="step">
-                <div class="step-number">03</div>
-                <h3>Scenes</h3>
-                <p>
-                    Turn the story into individual scenes.
-                </p>
-            </div>
-
-            <div class="step">
-                <div class="step-number">04</div>
-                <h3>Visuals</h3>
-                <p>
-                    Create original artwork for your scenes.
-                </p>
-            </div>
-
-            <div class="step">
-                <div class="step-number">05</div>
-                <h3>Video</h3>
-                <p>
-                    Bring everything together into a video.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= CREATOR ================= -->
-
-<section class="section creator-section" id="creator">
-
-    <div class="container">
-
-        <div class="creator-box">
-
-            <div>
-
-                <div class="section-label">
-                    Built for creators
+                <div class="panel-heading">
+                  Scene Preview
                 </div>
 
-                <h2>
-                    Create content without needing a whole production team.
-                </h2>
-
-                <p>
-                    AniVora is designed for YouTubers, storytellers,
-                    anime fans and creators who want to turn ideas
-                    into original visual content.
-                </p>
-
-                <ul class="creator-list">
-                    <li>Original stories and characters</li>
-                    <li>YouTube-ready scripts</li>
-                    <li>Scene-by-scene creation</li>
-                    <li>Original visual generation</li>
-                    <li>Video production workflow</li>
-                </ul>
-
-            </div>
-
-            <div class="mini-studio">
-
-                <div class="mini-top">
-                    <span>My Project</span>
-                    <span class="status">Creating</span>
+                <div class="fake-image">
+                  AI SCENE
                 </div>
 
-                <div class="timeline">
+                <br>
 
-                    <div class="timeline-item">
-                        <div class="timeline-number">01</div>
-                        <div class="timeline-bar"></div>
-                    </div>
+                <div class="fake-line long"></div>
+                <div class="fake-line medium"></div>
 
-                    <div class="timeline-item">
-                        <div class="timeline-number">02</div>
-                        <div class="timeline-bar"></div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-number">03</div>
-                        <div class="timeline-bar"></div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-number">04</div>
-                        <div class="timeline-bar"></div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-number">05</div>
-                        <div class="timeline-bar"></div>
-                    </div>
-
-                </div>
+              </div>
 
             </div>
 
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= PRICING ================= -->
-
-<section class="section" id="pricing">
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <div class="section-label">
-                Launching soon
-            </div>
-
-            <h2 class="section-title">
-                Start free. Create first.
-            </h2>
-
-            <p class="section-description">
-                We're giving creators a chance to experience
-                AniVora before introducing our full premium
-                creator plans.
-            </p>
+          </div>
 
         </div>
 
-        <div class="pricing-card">
+      </div>
 
-            <div class="free-badge">
-                FIRST 30 DAYS
-            </div>
+    </section>
 
-            <h2>Free for everyone.</h2>
 
-            <p>
-                Explore the platform, build stories and
-                discover what you can create with AniVora
-                during our launch period.
-            </p>
+    <!-- =====================================================
+         FEATURES
+    ====================================================== -->
 
-            <a href="#" class="btn btn-primary btn-large">
-                Start Creating Free
-            </a>
+    <section
+      class="section"
+      id="features"
+    >
 
+      <div class="section-heading">
+
+        <div class="eyebrow">
+          Everything in one studio
         </div>
-
-    </div>
-
-</section>
-
-<!-- ================= CTA ================= -->
-
-<section class="cta">
-
-    <div class="container cta-inner">
 
         <h2>
-            Your next story starts
-            <span class="gradient-text">here.</span>
+          From a simple idea to a complete story.
         </h2>
 
         <p>
-            Take an idea from your mind and begin turning
-            it into an original world.
+          AniVora brings the creative process together
+          so you can build original worlds without
+          jumping between countless tools.
         </p>
 
-        <a href="#" class="btn btn-primary btn-large">
-            ✨ Create with AniVora
+      </div>
+
+
+      <div class="features">
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            💡
+          </div>
+
+          <h3>
+            Idea Generator
+          </h3>
+
+          <p>
+            Turn a simple concept into story ideas,
+            characters, conflicts and exciting plots.
+          </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            ✍️
+          </div>
+
+          <h3>
+            AI Writer
+          </h3>
+
+          <p>
+            Create scripts, dialogue and scenes
+            designed for YouTube, Shorts and other
+            storytelling formats.
+          </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            🧑‍🎨
+          </div>
+
+          <h3>
+            Character Creator
+          </h3>
+
+          <p>
+            Build original characters with personalities,
+            appearances, backgrounds and abilities.
+          </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            🎬
+          </div>
+
+          <h3>
+            Scene Builder
+          </h3>
+
+          <p>
+            Break your story into organized scenes
+            with locations, dialogue and visual direction.
+          </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            🖼️
+          </div>
+
+          <h3>
+            AI Art Studio
+          </h3>
+
+          <p>
+            Create original anime-inspired visuals
+            for characters, scenes and story worlds.
+          </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+          <div class="feature-icon">
+            🎥
+          </div>
+
+          <h3>
+            Video Creator
+          </h3>
+
+          <p>
+            Bring your scripts, visuals, voices and
+            sounds together into animated videos.
+          </p>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HOW IT WORKS
+    ====================================================== -->
+
+    <section
+      class="section"
+      id="how-it-works"
+    >
+
+      <div class="section-heading">
+
+        <div class="eyebrow">
+          Simple workflow
+        </div>
+
+        <h2>
+          Your story, step by step.
+        </h2>
+
+        <p>
+          Start with an idea and build it into a
+          complete creative project.
+        </p>
+
+      </div>
+
+
+      <div class="workflow">
+
+
+        <div class="workflow-step">
+
+          <div class="workflow-number">
+            1
+          </div>
+
+          <h3>
+            Idea
+          </h3>
+
+          <p>
+            Describe what you want to create.
+          </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+          <div class="workflow-number">
+            2
+          </div>
+
+          <h3>
+            Script
+          </h3>
+
+          <p>
+            Develop the story and dialogue.
+          </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+          <div class="workflow-number">
+            3
+          </div>
+
+          <h3>
+            Scenes
+          </h3>
+
+          <p>
+            Organize the story visually.
+          </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+          <div class="workflow-number">
+            4
+          </div>
+
+          <h3>
+            Visuals
+          </h3>
+
+          <p>
+            Create original artwork.
+          </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+          <div class="workflow-number">
+            5
+          </div>
+
+          <h3>
+            Video
+          </h3>
+
+          <p>
+            Bring everything together.
+          </p>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CREATORS
+    ====================================================== -->
+
+    <section
+      class="section"
+      id="creators"
+    >
+
+      <div class="creator-section">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Built for creators
+          </div>
+
+          <h2>
+            Create more. Switch between fewer tools.
+          </h2>
+
+          <p>
+            Whether you're creating YouTube stories,
+            short animations, anime-inspired worlds,
+            character series or completely original
+            ideas, AniVora is designed to keep your
+            creative process together.
+          </p>
+
+        </div>
+
+
+        <a
+          href="create-account.html"
+          class="primary-button"
+          id="creatorButton"
+        >
+          Start Creating
         </a>
 
-    </div>
+      </div>
 
-</section>
+    </section>
 
-</main>
 
-<!-- ================= FOOTER ================= -->
+    <!-- =====================================================
+         PRICING
+    ====================================================== -->
 
-<footer>
+    <section
+      class="section"
+      id="pricing"
+    >
 
-    <div class="container footer-inner">
+      <div class="pricing-card">
 
-        <div class="footer-copy">
-            © 2026 AniVora. Create original. Imagine more.
+        <div class="small">
+          Launch Offer
         </div>
 
-        <div class="footer-links">
-            <a href="#">About</a>
-            <a href="#">Features</a>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-        </div>
+        <h2>
+          First 30 Days Free
+        </h2>
+
+        <p>
+          We're opening AniVora with a free launch
+          period so creators can explore the platform,
+          build projects and help shape what comes next.
+        </p>
+
+
+        <a
+          href="create-account.html"
+          class="primary-button"
+          id="pricingButton"
+        >
+          Join AniVora
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =======================================================
+       FOOTER
+  ======================================================== -->
+
+  <footer>
+
+    <div class="footer-container">
+
+      <div class="footer-logo">
+        Ani<span>Vora</span>
+      </div>
+
+
+      <div class="footer-copy">
+        © 2026 AniVora. Create original stories.
+      </div>
 
     </div>
 
-</footer>
+  </footer>
 
-<script>
 
-function toggleMenu(){
+  <!-- =======================================================
+       SUPABASE AUTH SCRIPT
+  ======================================================== -->
 
-    const nav = document.querySelector(".nav-links");
+  <script>
 
-    if(nav.style.display === "flex"){
-        nav.style.display = "none";
-    }else{
-        nav.style.display = "flex";
-        nav.style.position = "absolute";
-        nav.style.top = "72px";
-        nav.style.left = "0";
-        nav.style.right = "0";
-        nav.style.padding = "20px";
-        nav.style.flexDirection = "column";
-        nav.style.background = "rgba(7,7,13,.97)";
-        nav.style.borderBottom = "1px solid rgba(255,255,255,.08)";
+    // =========================================================
+    // SUPABASE CONFIGURATION
+    // Use the SAME values from create-account.html
+    // =========================================================
+
+    const SUPABASE_URL =
+      "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+
+    const { createClient } =
+      supabase;
+
+
+    const supabaseClient =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    // =========================================================
+    // ELEMENTS
+    // =========================================================
+
+    const loginNavButton =
+      document.getElementById(
+        "loginNavButton"
+      );
+
+
+    const signupNavButton =
+      document.getElementById(
+        "signupNavButton"
+      );
+
+
+    const dashboardNavButton =
+      document.getElementById(
+        "dashboardNavButton"
+      );
+
+
+    const logoutButton =
+      document.getElementById(
+        "logoutButton"
+      );
+
+
+    const heroCreateButton =
+      document.getElementById(
+        "heroCreateButton"
+      );
+
+
+    const creatorButton =
+      document.getElementById(
+        "creatorButton"
+      );
+
+
+    const pricingButton =
+      document.getElementById(
+        "pricingButton"
+      );
+
+
+    // =========================================================
+    // UPDATE PAGE FOR LOGGED-IN USER
+    // =========================================================
+
+    function showLoggedInState() {
+
+      loginNavButton.style.display =
+        "none";
+
+
+      signupNavButton.style.display =
+        "none";
+
+
+      dashboardNavButton.style.display =
+        "inline-flex";
+
+
+      logoutButton.style.display =
+        "inline-flex";
+
+
+      heroCreateButton.href =
+        "dashboard.html";
+
+
+      heroCreateButton.textContent =
+        "Open Studio";
+
+
+      creatorButton.href =
+        "dashboard.html";
+
+
+      creatorButton.textContent =
+        "Open Studio";
+
+
+      pricingButton.href =
+        "dashboard.html";
+
+
+      pricingButton.textContent =
+        "Open Studio";
+
     }
 
-}
 
-</script>
+    // =========================================================
+    // UPDATE PAGE FOR LOGGED-OUT USER
+    // =========================================================
+
+    function showLoggedOutState() {
+
+      loginNavButton.style.display =
+        "inline-flex";
+
+
+      signupNavButton.style.display =
+        "inline-flex";
+
+
+      dashboardNavButton.style.display =
+        "none";
+
+
+      logoutButton.style.display =
+        "none";
+
+
+      heroCreateButton.href =
+        "create-account.html";
+
+
+      heroCreateButton.textContent =
+        "Start Creating";
+
+
+      creatorButton.href =
+        "create-account.html";
+
+
+      creatorButton.textContent =
+        "Start Creating";
+
+
+      pricingButton.href =
+        "create-account.html";
+
+
+      pricingButton.textContent =
+        "Join AniVora";
+
+    }
+
+
+    // =========================================================
+    // CHECK CURRENT SESSION
+    // =========================================================
+
+    async function checkAuth() {
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if (error) {
+
+          console.error(
+            "Session error:",
+            error
+          );
+
+          showLoggedOutState();
+
+          return;
+        }
+
+
+        if (data.session) {
+
+          showLoggedInState();
+
+        } else {
+
+          showLoggedOutState();
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Authentication check failed:",
+          error
+        );
+
+        showLoggedOutState();
+
+      }
+
+    }
+
+
+    // =========================================================
+    // LISTEN FOR AUTH CHANGES
+    // =========================================================
+
+    supabaseClient.auth.onAuthStateChange(
+      function(event, session) {
+
+        if (session) {
+
+          showLoggedInState();
+
+        } else {
+
+          showLoggedOutState();
+
+        }
+
+      }
+    );
+
+
+    // =========================================================
+    // LOGOUT
+    // =========================================================
+
+    logoutButton.addEventListener(
+      "click",
+      async function() {
+
+        logoutButton.disabled = true;
+
+        logoutButton.textContent =
+          "Logging out...";
+
+
+        const {
+          error
+        } =
+          await supabaseClient.auth.signOut();
+
+
+        if (error) {
+
+          console.error(
+            "Logout error:",
+            error
+          );
+
+          alert(
+            "Unable to log out. Please try again."
+          );
+
+          logoutButton.disabled = false;
+
+          logoutButton.textContent =
+            "Log Out";
+
+          return;
+        }
+
+
+        window.location.href =
+          "index.html";
+
+      }
+    );
+
+
+    // =========================================================
+    // MOBILE MENU
+    // =========================================================
+
+    const mobileMenuButton =
+      document.getElementById(
+        "mobileMenuButton"
+      );
+
+
+    const mobileMenu =
+      document.getElementById(
+        "mobileMenu"
+      );
+
+
+    mobileMenuButton.addEventListener(
+      "click",
+      function() {
+
+        if (
+          mobileMenu.style.display ===
+          "none" ||
+          mobileMenu.style.display === ""
+        ) {
+
+          mobileMenu.style.display =
+            "block";
+
+        } else {
+
+          mobileMenu.style.display =
+            "none";
+
+        }
+
+      }
+    );
+
+
+    // =========================================================
+    // CLOSE MOBILE MENU AFTER CLICK
+    // =========================================================
+
+    mobileMenu
+      .querySelectorAll("a")
+      .forEach(function(link) {
+
+        link.addEventListener(
+          "click",
+          function() {
+
+            mobileMenu.style.display =
+              "none";
+
+          }
+        );
+
+      });
+
+
+    // =========================================================
+    // INITIAL AUTH CHECK
+    // =========================================================
+
+    checkAuth();
+
+  </script>
 
 </body>
-  </html>
+    </html>
