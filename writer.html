@@ -1,1708 +1,1257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AniVora Writer</title>
+  <title>AniVora Writer</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-:root{
-    --bg:#08080d;
-    --panel:#111119;
-    --panel2:#171720;
-    --border:rgba(255,255,255,.08);
-    --text:#f7f7fb;
-    --muted:#9696a8;
-    --accent:#8b5cf6;
-    --accent2:#ec4899;
-    --green:#22c55e;
-    --red:#ef4444;
-}
-
-body{
-    font-family:Inter,Arial,sans-serif;
-    background:
-        radial-gradient(circle at 15% 0%,rgba(139,92,246,.14),transparent 30%),
-        radial-gradient(circle at 90% 15%,rgba(236,72,153,.10),transparent 25%),
-        var(--bg);
-    color:var(--text);
-    min-height:100vh;
-}
-
-/* =========================
-   SIDEBAR
-========================= */
-
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    bottom:0;
-    width:245px;
-    background:rgba(11,11,17,.96);
-    border-right:1px solid var(--border);
-    padding:24px 16px;
-    z-index:100;
-    display:flex;
-    flex-direction:column;
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:0 10px 28px;
-    font-size:23px;
-    font-weight:800;
-}
-
-.logo-icon{
-    width:38px;
-    height:38px;
-    border-radius:12px;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 8px 30px rgba(139,92,246,.25);
-}
-
-.nav-title{
-    color:#666678;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:1.4px;
-    padding:0 12px 9px;
-}
-
-.nav{
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-}
-
-.nav a{
-    text-decoration:none;
-    color:#a5a5b5;
-    padding:12px;
-    border-radius:11px;
-    display:flex;
-    align-items:center;
-    gap:11px;
-    font-size:14px;
-    border:1px solid transparent;
-    transition:.2s;
-}
-
-.nav a:hover,
-.nav a.active{
-    color:#fff;
-    background:rgba(139,92,246,.10);
-    border-color:rgba(139,92,246,.15);
-}
-
-.nav-icon{
-    width:20px;
-    text-align:center;
-}
-
-.sidebar-bottom{
-    margin-top:auto;
-}
-
-.logout{
-    width:100%;
-    border:1px solid transparent;
-    background:none;
-    color:#a5a5b5;
-    padding:12px;
-    border-radius:11px;
-    cursor:pointer;
-    text-align:left;
-    font-size:14px;
-}
-
-.logout:hover{
-    color:#fff;
-    background:rgba(139,92,246,.10);
-}
-
-/* =========================
-   MAIN
-========================= */
-
-.main{
-    margin-left:245px;
-    min-height:100vh;
-    padding:25px 30px 50px;
-}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:28px;
-}
-
-.mobile-menu{
-    display:none;
-    width:38px;
-    height:38px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:#12121a;
-    color:white;
-    cursor:pointer;
-    font-size:18px;
-}
-
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.launch{
-    padding:7px 11px;
-    border-radius:20px;
-    font-size:11px;
-    color:#7ee2a0;
-    background:rgba(34,197,94,.07);
-    border:1px solid rgba(34,197,94,.15);
-}
-
-.avatar{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.writer-header{
-    margin-bottom:25px;
-}
-
-.writer-header h1{
-    font-size:32px;
-    letter-spacing:-1px;
-    margin-bottom:8px;
-}
-
-.writer-header h1 span{
-    background:linear-gradient(90deg,#a78bfa,#f472b6);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-}
-
-.writer-header p{
-    color:var(--muted);
-    font-size:14px;
-}
-
-/* =========================
-   WRITER LAYOUT
-========================= */
-
-.writer-grid{
-    display:grid;
-    grid-template-columns:390px 1fr;
-    gap:18px;
-}
-
-/* =========================
-   PANELS
-========================= */
-
-.panel{
-    background:rgba(17,17,25,.86);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:20px;
-}
-
-.panel-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-}
-
-.panel-title h2{
-    font-size:17px;
-}
-
-.panel-title span{
-    color:#777789;
-    font-size:11px;
-}
-
-/* =========================
-   FORM
-========================= */
-
-.form-group{
-    margin-bottom:16px;
-}
-
-.form-group label{
-    display:block;
-    color:#b0b0c0;
-    font-size:12px;
-    margin-bottom:7px;
-}
-
-textarea,
-input,
-select{
-    width:100%;
-    background:#0c0c13;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:11px;
-    color:white;
-    outline:none;
-    padding:12px;
-    font-family:inherit;
-    font-size:13px;
-    transition:.2s;
-}
-
-textarea:focus,
-input:focus,
-select:focus{
-    border-color:rgba(139,92,246,.55);
-}
-
-textarea{
-    min-height:145px;
-    resize:vertical;
-    line-height:1.55;
-}
-
-input{
-    height:44px;
-}
-
-select{
-    height:44px;
-}
-
-.generate-btn{
-    width:100%;
-    border:0;
-    padding:14px;
-    border-radius:12px;
-    color:white;
-    font-weight:800;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    cursor:pointer;
-    box-shadow:0 12px 30px rgba(139,92,246,.20);
-    transition:.2s;
-}
-
-.generate-btn:hover{
-    transform:translateY(-2px);
-}
-
-.generate-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-    transform:none;
-}
-
-.small-note{
-    color:#666678;
-    font-size:10px;
-    line-height:1.5;
-    margin-top:10px;
-}
-
-/* =========================
-   OUTPUT
-========================= */
-
-.output-panel{
-    min-height:620px;
-    display:flex;
-    flex-direction:column;
-}
-
-.output-toolbar{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.tool-btn{
-    border:1px solid var(--border);
-    background:#171720;
-    color:#aaaabb;
-    padding:8px 11px;
-    border-radius:9px;
-    font-size:11px;
-    cursor:pointer;
-}
-
-.tool-btn:hover{
-    color:#fff;
-    border-color:rgba(139,92,246,.3);
-}
-
-.editor{
-    flex:1;
-    background:#0c0c13;
-    border:1px solid rgba(255,255,255,.07);
-    border-radius:13px;
-    padding:20px;
-    min-height:500px;
-    color:#d8d8e3;
-    line-height:1.7;
-    font-size:14px;
-    white-space:pre-wrap;
-    overflow:auto;
-}
-
-.editor.empty{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    color:#656577;
-}
-
-.empty-content{
-    max-width:330px;
-}
-
-.empty-icon{
-    width:58px;
-    height:58px;
-    margin:0 auto 16px;
-    border-radius:18px;
-    background:rgba(139,92,246,.10);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:25px;
-}
-
-.empty-content h3{
-    color:#d8d8e3;
-    font-size:16px;
-    margin-bottom:7px;
-}
-
-.empty-content p{
-    color:#69697b;
-    font-size:12px;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status-message{
-    display:none;
-    padding:10px 12px;
-    border-radius:10px;
-    margin-bottom:12px;
-    font-size:11px;
-}
-
-.status-message.show{
-    display:block;
-}
-
-.status-message.success{
-    color:#86efac;
-    background:rgba(34,197,94,.08);
-    border:1px solid rgba(34,197,94,.14);
-}
-
-.status-message.error{
-    color:#fca5a5;
-    background:rgba(239,68,68,.08);
-    border:1px solid rgba(239,68,68,.14);
-}
-
-/* =========================
-   PROJECT SELECT
-========================= */
-
-.project-info{
-    margin-bottom:16px;
-    padding:11px 12px;
-    border-radius:10px;
-    background:rgba(139,92,246,.06);
-    border:1px solid rgba(139,92,246,.10);
-}
-
-.project-info small{
-    display:block;
-    color:#777789;
-    font-size:10px;
-    margin-bottom:3px;
-}
-
-.project-info strong{
-    font-size:12px;
-}
-
-/* =========================
-   LOADING
-========================= */
-
-.loading{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    color:#777789;
-    font-size:12px;
-}
-
-.spinner{
-    width:18px;
-    height:18px;
-    border:2px solid rgba(255,255,255,.10);
-    border-top-color:#a78bfa;
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:1000px){
-
-    .writer-grid{
-        grid-template-columns:1fr;
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .output-panel{
-        min-height:550px;
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #09090f;
+      color: #f5f5f7;
+      min-height: 100vh;
     }
 
-}
-
-@media(max-width:760px){
-
-    .sidebar{
-        transform:translateX(-100%);
-        transition:.25s;
-        box-shadow:20px 0 50px rgba(0,0,0,.4);
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
     }
 
-    .sidebar.open{
-        transform:translateX(0);
+    button {
+      cursor: pointer;
     }
 
-    .main{
-        margin-left:0;
-        padding:18px 14px 40px;
+    /* SIDEBAR */
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background: #101018;
+      border-right: 1px solid #242432;
+      padding: 24px 16px;
+      z-index: 100;
     }
 
-    .mobile-menu{
-        display:flex;
-        align-items:center;
-        justify-content:center;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 35px;
+      padding: 0 10px;
     }
 
-    .launch{
-        display:none;
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
     }
 
-    .writer-header h1{
-        font-size:27px;
+    .logo-text {
+      font-size: 21px;
+      font-weight: 800;
     }
 
-    .writer-grid{
-        gap:14px;
+    .logo-text span {
+      color: #a855f7;
     }
 
-    .panel{
-        padding:16px;
+    .nav-title {
+      font-size: 11px;
+      color: #6f7080;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 0 10px 10px;
     }
 
-    .editor{
-        min-height:420px;
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #a6a6b3;
+      text-decoration: none;
+      padding: 13px 12px;
+      border-radius: 12px;
+      margin-bottom: 5px;
+      transition: .2s;
     }
 
-}
+    .nav-link:hover,
+    .nav-link.active {
+      color: white;
+      background: #1c1829;
+    }
 
-</style>
+    .nav-link.active {
+      border-left: 3px solid #a855f7;
+    }
+
+    .nav-icon {
+      width: 25px;
+      text-align: center;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 20px;
+    }
+
+    .logout {
+      width: 100%;
+      background: transparent;
+      color: #a6a6b3;
+      border: 1px solid #292936;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .logout:hover {
+      color: #fff;
+      border-color: #a855f7;
+    }
+
+    /* MAIN */
+
+    .main {
+      margin-left: 250px;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .topbar h1 {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .topbar p {
+      color: #858592;
+      font-size: 14px;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #12121b;
+      border: 1px solid #282836;
+      border-radius: 30px;
+      padding: 8px 14px;
+      color: #c6c6d0;
+      font-size: 13px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* GRID */
+
+    .writer-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: #101018;
+      border: 1px solid #242432;
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #9a9aa7;
+      margin-bottom: 7px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #0a0a10;
+      color: #fff;
+      border: 1px solid #2a2a38;
+      border-radius: 11px;
+      padding: 12px 13px;
+      outline: none;
+      transition: .2s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, .1);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    select {
+      appearance: auto;
+    }
+
+    .generate-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      transition: .2s;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(168, 85, 247, .2);
+    }
+
+    .generate-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.loading {
+      background: #17142a;
+      color: #c4b5fd;
+      border: 1px solid #31245b;
+    }
+
+    .status.success {
+      background: #102218;
+      color: #86efac;
+      border: 1px solid #1d5b32;
+    }
+
+    .status.error {
+      background: #241313;
+      color: #fca5a5;
+      border: 1px solid #652626;
+    }
+
+    /* EDITOR */
+
+    .editor-card {
+      min-height: 650px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      background: #171720;
+      color: #b8b8c5;
+      border: 1px solid #2c2c39;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .small-btn:hover {
+      color: white;
+      border-color: #7c3aed;
+    }
+
+    #editor {
+      flex: 1;
+      min-height: 540px;
+      background: #0a0a10;
+      border: 1px solid #242432;
+      border-radius: 14px;
+      padding: 22px;
+      color: #dedee7;
+      line-height: 1.8;
+      font-size: 15px;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      outline: none;
+    }
+
+    #editor:focus {
+      border-color: #7c3aed;
+    }
+
+    .editor-empty {
+      color: #5f606d;
+    }
+
+    .word-count {
+      margin-top: 10px;
+      color: #666775;
+      font-size: 11px;
+      text-align: right;
+    }
+
+    /* MOBILE */
+
+    .mobile-header {
+      display: none;
+    }
+
+    @media (max-width: 950px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: .25s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 75px;
+      }
+
+      .mobile-header {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #101018;
+        border-bottom: 1px solid #242432;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        z-index: 90;
+      }
+
+      .menu-btn {
+        border: none;
+        background: #1b1b25;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        font-size: 20px;
+      }
+
+      .writer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-card {
+        min-height: 500px;
+      }
+
+      #editor {
+        min-height: 400px;
+      }
+
+      .user-badge {
+        display: none;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .main {
+        padding: 15px;
+        padding-top: 70px;
+      }
+
+      .topbar h1 {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .editor-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .editor-actions {
+        width: 100%;
+      }
+
+      .small-btn {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
-
 
 <body>
 
-
-<!-- SIDEBAR -->
-
-<aside class="sidebar" id="sidebar">
+  <!-- MOBILE HEADER -->
+  <div class="mobile-header">
+    <button class="menu-btn" id="menuBtn">☰</button>
 
     <div class="logo">
-        <div class="logo-icon">✦</div>
-        <span>AniVora</span>
+      <div class="logo-icon">A</div>
+      <div class="logo-text">Ani<span>Vora</span></div>
     </div>
 
+    <div style="width:40px;"></div>
+  </div>
 
-    <div class="nav-title">
-        Studio
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">A</div>
+      <div class="logo-text">Ani<span>Vora</span></div>
     </div>
 
+    <div class="nav-title">Workspace</div>
 
-    <nav class="nav">
+    <a href="dashboard.html" class="nav-link">
+      <span class="nav-icon">⌂</span>
+      Dashboard
+    </a>
 
-        <a href="dashboard.html">
-            <span class="nav-icon">⌂</span>
-            Dashboard
-        </a>
+    <a href="writer.html" class="nav-link active">
+      <span class="nav-icon">✎</span>
+      Writer
+    </a>
 
-        <a href="dashboard.html#projects">
-            <span class="nav-icon">▣</span>
-            My Projects
-        </a>
+    <a href="#" class="nav-link" onclick="comingSoon(event)">
+      <span class="nav-icon">♙</span>
+      Characters
+    </a>
 
-        <a href="writer.html" class="active">
-            <span class="nav-icon">✎</span>
-            AniVora Writer
-        </a>
+    <a href="#" class="nav-link" onclick="comingSoon(event)">
+      <span class="nav-icon">▣</span>
+      Scene Builder
+    </a>
 
-    </nav>
+    <a href="#" class="nav-link" onclick="comingSoon(event)">
+      <span class="nav-icon">◈</span>
+      AI Art
+    </a>
 
+    <a href="#" class="nav-link" onclick="comingSoon(event)">
+      <span class="nav-icon">▶</span>
+      Video Creator
+    </a>
 
-    <div class="nav-title" style="margin-top:25px;">
-        Create
-    </div>
-
-
-    <nav class="nav">
-
-        <a href="#" onclick="comingSoon('Character Creator');return false;">
-            <span class="nav-icon">♙</span>
-            Characters
-        </a>
-
-        <a href="#" onclick="comingSoon('Scene Builder');return false;">
-            <span class="nav-icon">◈</span>
-            Scene Builder
-        </a>
-
-        <a href="#" onclick="comingSoon('AniVora Art');return false;">
-            <span class="nav-icon">✦</span>
-            AI Art
-        </a>
-
-        <a href="#" onclick="comingSoon('Video Creator');return false;">
-            <span class="nav-icon">▶</span>
-            Video Creator
-        </a>
-
-    </nav>
-
+    <a href="#" class="nav-link" onclick="comingSoon(event)">
+      <span class="nav-icon">🧠</span>
+      Story Memory
+    </a>
 
     <div class="sidebar-bottom">
-
-        <button class="logout" onclick="logout()">
-            ↪ &nbsp; Log Out
-        </button>
-
+      <button class="logout" id="logoutBtn">
+        Log out
+      </button>
     </div>
 
-</aside>
+  </aside>
 
-
-<!-- MAIN -->
-
-<main class="main">
-
+  <!-- MAIN -->
+  <main class="main">
 
     <div class="topbar">
+      <div>
+        <h1>AniVora Writer</h1>
+        <p>Turn your ideas into original stories with AI.</p>
+      </div>
 
-        <button class="mobile-menu" onclick="toggleSidebar()">
-            ☰
+      <div class="user-badge">
+        <div class="avatar" id="avatar">A</div>
+        <span id="userName">Creator</span>
+      </div>
+    </div>
+
+    <div class="writer-grid">
+
+      <!-- LEFT CONTROLS -->
+      <section class="card">
+
+        <div class="card-title">
+          Story Setup
+        </div>
+
+        <div class="field">
+          <label for="projectSelect">Project</label>
+
+          <select id="projectSelect">
+            <option value="">Loading projects...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="storyIdea">What's your story idea?</label>
+
+          <textarea
+            id="storyIdea"
+            placeholder="Example: A young boy discovers an ancient power hidden beneath his village..."
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="contentType">Content Type</label>
+
+          <select id="contentType">
+            <option value="Anime Story">Anime Story</option>
+            <option value="YouTube Story">YouTube Story</option>
+            <option value="YouTube Script">YouTube Script</option>
+            <option value="Short Film">Short Film</option>
+            <option value="TikTok / Short">TikTok / Short</option>
+            <option value="Narrative Story">Narrative Story</option>
+            <option value="Episode Script">Episode Script</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="tone">Tone</label>
+
+          <select id="tone">
+            <option value="Cinematic">Cinematic</option>
+            <option value="Dark">Dark</option>
+            <option value="Emotional">Emotional</option>
+            <option value="Epic">Epic</option>
+            <option value="Funny">Funny</option>
+            <option value="Mysterious">Mysterious</option>
+            <option value="Romantic">Romantic</option>
+            <option value="Suspenseful">Suspenseful</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="length">Length</label>
+
+          <select id="length">
+            <option value="Short">Short</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Long">Long</option>
+          </select>
+        </div>
+
+        <button class="generate-btn" id="generateBtn">
+          ✨ Generate Story
         </button>
 
-        <div></div>
+        <div class="status" id="status"></div>
 
-        <div class="top-right">
+      </section>
 
-            <div class="launch">
-                ● 30-Day Launch
-            </div>
+      <!-- EDITOR -->
+      <section class="card editor-card">
 
-            <div class="avatar" id="avatar">
-                A
-            </div>
+        <div class="editor-header">
+
+          <div class="card-title" style="margin:0;">
+            Writer Canvas
+          </div>
+
+          <div class="editor-actions">
+            <button class="small-btn" id="copyBtn">
+              Copy
+            </button>
+
+            <button class="small-btn" id="clearBtn">
+              Clear
+            </button>
+          </div>
 
         </div>
+
+        <div
+          id="editor"
+          contenteditable="true"
+        ><span class="editor-empty">
+Your generated story will appear here...
+
+You can edit the story directly in this canvas after AniVora generates it.
+</span></div>
+
+        <div class="word-count" id="wordCount">
+          0 words
+        </div>
+
+      </section>
 
     </div>
 
-
-    <!-- HEADER -->
-
-    <section class="writer-header">
-
-        <h1>
-            AniVora <span>Writer</span>
-        </h1>
-
-        <p>
-            Turn your imagination into stories, scripts and cinematic scenes.
-        </p>
-
-    </section>
-
-
-    <!-- WRITER -->
-
-    <section class="writer-grid">
-
-
-        <!-- LEFT -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-
-                <h2>Story Idea</h2>
-
-                <span>Start here</span>
-
-            </div>
-
-
-            <div id="statusMessage" class="status-message"></div>
-
-
-            <div class="form-group">
-
-                <label for="projectSelect">
-                    Project
-                </label>
-
-                <select id="projectSelect">
-
-                    <option value="">
-                        Select a project
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="project-info" id="selectedProject">
-
-                <small>
-                    Selected project
-                </small>
-
-                <strong>
-                    No project selected
-                </strong>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="storyIdea">
-                    What is your story about?
-                </label>
-
-                <textarea
-                    id="storyIdea"
-                    placeholder="Example: A young warrior discovers that the mysterious power inside him is connected to an ancient kingdom..."
-                ></textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="contentType">
-                    Content Type
-                </label>
-
-                <select id="contentType">
-
-                    <option value="story">
-                        Full Story
-                    </option>
-
-                    <option value="youtube">
-                        YouTube Script
-                    </option>
-
-                    <option value="short">
-                        YouTube Short
-                    </option>
-
-                    <option value="tiktok">
-                        TikTok Script
-                    </option>
-
-                    <option value="episode">
-                        Anime Episode
-                    </option>
-
-                    <option value="scene">
-                        Cinematic Scene
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="tone">
-                    Story Tone
-                </label>
-
-                <select id="tone">
-
-                    <option value="cinematic">
-                        Cinematic
-                    </option>
-
-                    <option value="dramatic">
-                        Dramatic
-                    </option>
-
-                    <option value="dark">
-                        Dark
-                    </option>
-
-                    <option value="funny">
-                        Funny
-                    </option>
-
-                    <option value="emotional">
-                        Emotional
-                    </option>
-
-                    <option value="adventure">
-                        Adventure
-                    </option>
-
-                    <option value="mysterious">
-                        Mysterious
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="length">
-                    Length
-                </label>
-
-                <select id="length">
-
-                    <option value="short">
-                        Short
-                    </option>
-
-                    <option value="medium">
-                        Medium
-                    </option>
-
-                    <option value="long">
-                        Long
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <button
-                class="generate-btn"
-                id="generateBtn"
-                onclick="generateDraft()"
-            >
-                ✦ Generate Story
-            </button>
-
-
-            <div class="small-note">
-                Your draft will be saved to the selected project.
-                AI generation will be connected securely through the AniVora backend.
-            </div>
-
-        </div>
-
-
-        <!-- RIGHT -->
-
-        <div class="panel output-panel">
-
-            <div class="panel-title">
-
-                <h2>Writer Canvas</h2>
-
-                <div class="output-toolbar">
-
-                    <button
-                        class="tool-btn"
-                        onclick="copyDraft()"
-                    >
-                        Copy
-                    </button>
-
-                    <button
-                        class="tool-btn"
-                        onclick="clearDraft()"
-                    >
-                        Clear
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="editor empty"
-                id="editor"
-            >
-
-                <div class="empty-content">
-
-                    <div class="empty-icon">
-                        ✎
-                    </div>
-
-                    <h3>
-                        Your story starts here
-                    </h3>
-
-                    <p>
-                        Select a project, describe your idea,
-                        then generate your first AniVora draft.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<script>
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-    "https://rurwrecfmbsobqsqiepo.supabase.co";
-
-const SUPABASE_ANON_KEY =
-    "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
-
-
-const { createClient } = supabase;
-
-const supabaseClient =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
+  </main>
+
+  <script>
+
+    /* =====================================================
+       SUPABASE CONFIGURATION
+       ===================================================== */
+
+    const SUPABASE_URL = "https://rurwrecfmbsobqsqiepo.supabase.co";
+    const SUPABASE_ANON_KEY ="sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+         
+      
+      const { createClient } = supabase;
+    const supabaseClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
     );
 
 
-let currentUser = null;
-let projects = [];
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
+
+    const projectSelect =
+      document.getElementById("projectSelect");
+
+    const storyIdea =
+      document.getElementById("storyIdea");
+
+    const contentType =
+      document.getElementById("contentType");
+
+    const tone =
+      document.getElementById("tone");
+
+    const length =
+      document.getElementById("length");
+
+    const generateBtn =
+      document.getElementById("generateBtn");
+
+    const editor =
+      document.getElementById("editor");
+
+    const status =
+      document.getElementById("status");
+
+    const wordCount =
+      document.getElementById("wordCount");
+
+    const userName =
+      document.getElementById("userName");
+
+    const avatar =
+      document.getElementById("avatar");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    const menuBtn =
+      document.getElementById("menuBtn");
+
+    const sidebar =
+      document.getElementById("sidebar");
 
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-async function initialize(){
-
-    const {
-        data:{
-            session
-        }
-    } =
-    await supabaseClient.auth.getSession();
+    let currentUser = null;
+    let projects = [];
 
 
-    if(!session){
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
 
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    currentUser =
-        session.user;
-
-
-    updateAvatar();
-
-    await loadProjects();
-
-}
-
-
-/* =========================================================
-   AVATAR
-========================================================= */
-
-function updateAvatar(){
-
-    const name =
-        currentUser.user_metadata?.full_name ||
-        currentUser.email?.split("@")[0] ||
-        "A";
-
-
-    document
-        .getElementById("avatar")
-        .textContent =
-        name.charAt(0).toUpperCase();
-
-}
-
-
-/* =========================================================
-   LOAD PROJECTS
-========================================================= */
-
-async function loadProjects(){
-
-    const select =
-        document.getElementById("projectSelect");
-
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("projects")
-        .select(
-            "id,title,description,status"
-        )
-        .eq(
-            "user_id",
-            currentUser.id
-        )
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
-        );
-
-
-    if(error){
-
-        console.error(error);
-
-        showMessage(
-            "Unable to load your projects.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    projects =
-        data || [];
-
-
-    select.innerHTML =
-        `<option value="">
-            Select a project
-        </option>`;
-
-
-    projects.forEach(project => {
-
-        const option =
-            document.createElement("option");
-
-        option.value =
-            project.id;
-
-        option.textContent =
-            project.title;
-
-        select.appendChild(option);
-
+    menuBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
     });
 
 
-    if(projects.length === 0){
+    /* =====================================================
+       STATUS
+       ===================================================== */
 
-        showMessage(
-            "Create a project in your Dashboard before using the Writer.",
-            "error"
-        );
+    function showStatus(message, type) {
 
-    }
+      status.textContent = message;
 
-}
-
-
-/* =========================================================
-   PROJECT CHANGE
-========================================================= */
-
-document
-    .getElementById("projectSelect")
-    .addEventListener(
-        "change",
-        function(){
-
-            const project =
-                projects.find(
-                    item =>
-                    item.id === this.value
-                );
-
-
-            const box =
-                document.getElementById(
-                    "selectedProject"
-                );
-
-
-            if(!project){
-
-                box.innerHTML = `
-                    <small>
-                        Selected project
-                    </small>
-
-                    <strong>
-                        No project selected
-                    </strong>
-                `;
-
-                return;
-
-            }
-
-
-            box.innerHTML = `
-                <small>
-                    Selected project
-                </small>
-
-                <strong>
-                    ${escapeHtml(project.title)}
-                </strong>
-            `;
-
-        }
-    );
-
-
-/* =========================================================
-   GENERATE DRAFT
-========================================================= */
-
-async function generateDraft(){
-
-    const projectId =
-        document
-            .getElementById("projectSelect")
-            .value;
-
-
-    const idea =
-        document
-            .getElementById("storyIdea")
-            .value
-            .trim();
-
-
-    const type =
-        document
-            .getElementById("contentType")
-            .value;
-
-
-    const tone =
-        document
-            .getElementById("tone")
-            .value;
-
-
-    const length =
-        document
-            .getElementById("length")
-            .value;
-
-
-    if(!projectId){
-
-        showMessage(
-            "Please select a project first.",
-            "error"
-        );
-
-        return;
-
+      status.className = "status show " + type;
     }
 
 
-    if(!idea){
+    function hideStatus() {
 
-        showMessage(
-            "Tell AniVora what your story is about.",
-            "error"
-        );
+      status.textContent = "";
 
-        return;
-
+      status.className = "status";
     }
 
 
-    const project =
-        projects.find(
-            item =>
-            item.id === projectId
-        );
+    /* =====================================================
+       AUTH
+       ===================================================== */
 
+    async function checkAuth() {
 
-    const button =
-        document.getElementById(
-            "generateBtn"
-        );
-
-
-    button.disabled =
-        true;
-
-    button.innerHTML =
-        `<span class="loading">
-            <span class="spinner"></span>
-            Creating draft...
-        </span>`;
-
-
-    const editor =
-        document.getElementById(
-            "editor"
-        );
-
-
-    editor.classList.remove(
-        "empty"
-    );
-
-
-    editor.textContent =
-        "Creating your AniVora draft...\n\n";
-
-
-    /*
-       TEMPORARY LOCAL DRAFT GENERATOR
-
-       This creates a structured draft so the
-       Writer interface can already be tested.
-
-       The real AI model will be connected
-       through the secure AniVora backend later.
-    */
-
-    await wait(900);
-
-
-    const draft =
-        buildDraft(
-            project.title,
-            idea,
-            type,
-            tone,
-            length
-        );
-
-
-    editor.textContent =
-        draft;
-
-
-    /* SAVE TO SUPABASE */
-
-    const {
+      const {
+        data,
         error
-    } =
-    await supabaseClient
-        .from("scripts")
-        .insert({
+      } = await supabaseClient.auth.getSession();
 
-            project_id:
-                projectId,
+      if (error || !data.session) {
 
-            user_id:
-                currentUser.id,
+        window.location.href = "login.html";
 
-            title:
-                createScriptTitle(
-                    project.title
-                ),
+        return false;
+      }
 
-            content:
-                draft
+      currentUser = data.session.user;
 
+      const metadata =
+        currentUser.user_metadata || {};
+
+      const name =
+        metadata.username ||
+        metadata.full_name ||
+        currentUser.email?.split("@")[0] ||
+        "Creator";
+
+      userName.textContent = name;
+
+      avatar.textContent =
+        name.charAt(0).toUpperCase();
+
+      return true;
+    }
+
+
+    /* =====================================================
+       LOAD PROJECTS
+       ===================================================== */
+
+    async function loadProjects() {
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("projects")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", {
+          ascending: false
         });
 
+      if (error) {
 
-    if(error){
+        console.error(error);
 
-        console.error(
-            "Script save error:",
-            error
-        );
+        projectSelect.innerHTML =
+          `<option value="">Could not load projects</option>`;
 
-        showMessage(
-            "Draft created, but it could not be saved: " +
-            error.message,
-            "error"
-        );
+        return;
+      }
 
-    }else{
+      projects = data || [];
 
-        showMessage(
-            "Draft created and saved to your project.",
-            "success"
-        );
+      projectSelect.innerHTML = "";
 
+      if (!projects.length) {
+
+        projectSelect.innerHTML =
+          `<option value="">Create a project first</option>`;
+
+        return;
+      }
+
+      projects.forEach(project => {
+
+        const option =
+          document.createElement("option");
+
+        option.value = project.id;
+
+        option.textContent =
+          project.title || "Untitled Project";
+
+        projectSelect.appendChild(option);
+
+      });
     }
 
 
-    button.disabled =
-        false;
+    /* =====================================================
+       GET CURRENT SESSION
+       ===================================================== */
 
-    button.innerHTML =
-        "✦ Generate Story";
+    async function getAccessToken() {
 
-}
+      const {
+        data,
+        error
+      } = await supabaseClient.auth.getSession();
 
+      if (error || !data.session) {
 
-/* =========================================================
-   DRAFT BUILDER
-========================================================= */
-
-function buildDraft(
-    projectTitle,
-    idea,
-    type,
-    tone,
-    length
-){
-
-    const typeName =
-        formatType(type);
-
-
-    const toneName =
-        formatType(tone);
-
-
-    let body =
-`ANIVORA WRITER
-==============================
-
-PROJECT
-${projectTitle}
-
-CONTENT TYPE
-${typeName}
-
-TONE
-${toneName}
-
-STORY IDEA
-${idea}
-
-
-TITLE
-The Beginning of Something Greater
-
-
-LOGLINE
-A character is pulled into an extraordinary situation and must confront a challenge that could completely change their world.
-
-
-OPENING
-The world was quiet.
-
-For a moment, everything seemed normal.
-
-Then something changed.
-
-Our protagonist stood alone, unaware that this ordinary moment was about to become the beginning of a much larger story.
-
-The atmosphere suddenly shifted.
-
-A strange feeling filled the air, as though something ancient had awakened.
-
-"What is happening?"
-
-There was no answer.
-
-Only silence.
-
-Then the first sign appeared.
-
-
-STORY DIRECTION
-The protagonist begins discovering that the event surrounding them is connected to a much older mystery. As the story develops, new characters, conflicts and secrets will be introduced.
-
-The central conflict should gradually become larger while keeping the protagonist emotionally connected to the audience.
-
-
-CHARACTER DEVELOPMENT
-The protagonist should begin with a clear personal goal.
-
-Throughout the story, that goal should be challenged by unexpected events.
-
-Their decisions should have consequences, allowing the character to grow naturally.
-
-
-KEY SCENES
-
-1. THE DISCOVERY
-The protagonist encounters the first clue that something unusual is happening.
-
-2. THE FIRST CONFLICT
-An unexpected obstacle forces the protagonist to make a difficult decision.
-
-3. THE REVELATION
-A hidden truth changes the protagonist's understanding of the situation.
-
-4. THE ESCALATION
-The conflict becomes larger and more dangerous.
-
-5. THE CHOICE
-The protagonist must decide what they are willing to sacrifice.
-
-6. THE CLIFFHANGER
-A final revelation creates a strong reason to continue the story.
-
-
-ENDING DIRECTION
-The story should end with emotional impact while leaving room for future scenes or episodes.
-
-
-CREATOR NOTES
-Tone: ${toneName}
-Length: ${formatType(length)}
-Style: Original AniVora story
-`;
-
-    return body;
-
-}
-
-
-/* =========================================================
-   SCRIPT TITLE
-========================================================= */
-
-function createScriptTitle(projectTitle){
-
-    return projectTitle +
-        " — New Draft";
-
-}
-
-
-/* =========================================================
-   FORMAT
-========================================================= */
-
-function formatType(value){
-
-    return value
-        .replaceAll("_"," ")
-        .replace(/\b\w/g, letter =>
-            letter.toUpperCase()
+        throw new Error(
+          "Your login session has expired. Please log in again."
         );
+      }
 
-}
-
-
-/* =========================================================
-   COPY
-========================================================= */
-
-async function copyDraft(){
-
-    const editor =
-        document.getElementById(
-            "editor"
-        );
+      return data.session.access_token;
+    }
 
 
-    const text =
-        editor.textContent;
+    /* =====================================================
+       GENERATE STORY
+       ===================================================== */
 
+    async function generateStory() {
 
-    if(
-        !text ||
-        editor.classList.contains("empty")
-    ){
+      const idea =
+        storyIdea.value.trim();
 
-        showMessage(
-            "There is no draft to copy yet.",
-            "error"
+      const projectId =
+        projectSelect.value;
+
+      if (!projectId) {
+
+        showStatus(
+          "Please select a project first.",
+          "error"
         );
 
         return;
+      }
 
-    }
+      if (!idea) {
 
-
-    try{
-
-        await navigator.clipboard.writeText(
-            text
+        showStatus(
+          "Please enter your story idea.",
+          "error"
         );
 
+        storyIdea.focus();
 
-        showMessage(
-            "Draft copied to clipboard.",
-            "success"
+        return;
+      }
+
+      const selectedProject =
+        projects.find(
+          project => project.id === projectId
         );
 
-    }catch(error){
+      if (!selectedProject) {
 
-        showMessage(
-            "Unable to copy the draft.",
-            "error"
+        showStatus(
+          "Could not find the selected project.",
+          "error"
         );
 
-    }
-
-}
-
-
-/* =========================================================
-   CLEAR
-========================================================= */
-
-function clearDraft(){
-
-    const editor =
-        document.getElementById(
-            "editor"
-        );
+        return;
+      }
 
 
-    editor.className =
-        "editor empty";
+      /* BUTTON STATE */
+
+      generateBtn.disabled = true;
+
+      generateBtn.textContent =
+        "✨ AniVora is writing...";
+
+      showStatus(
+        "AniVora is creating your story. This may take a moment...",
+        "loading"
+      );
 
 
-    editor.innerHTML = `
+      try {
 
-        <div class="empty-content">
-
-            <div class="empty-icon">
-                ✎
-            </div>
-
-            <h3>
-                Your story starts here
-            </h3>
-
-            <p>
-                Select a project, describe your idea,
-                then generate your first AniVora draft.
-            </p>
-
-        </div>
-
-    `;
+        const accessToken =
+          await getAccessToken();
 
 
-    document
-        .getElementById("storyIdea")
-        .focus();
+        /* CALL OUR VERCEL BACKEND */
 
-}
+        const response =
+          await fetch(
+            "/api/generate-story",
+            {
+              method: "POST",
 
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization":
+                  `Bearer ${accessToken}`
+              },
 
-/* =========================================================
-   MESSAGE
-========================================================= */
+              body: JSON.stringify({
 
-function showMessage(
-    text,
-    type
-){
+                idea: idea,
 
-    const box =
-        document.getElementById(
-            "statusMessage"
-        );
+                contentType:
+                  contentType.value,
 
+                tone:
+                  tone.value,
 
-    box.textContent =
-        text;
+                length:
+                  length.value,
 
-    box.className =
-        "status-message show " +
-        type;
+                projectTitle:
+                  selectedProject.title
 
-
-    setTimeout(() => {
-
-        box.className =
-            "status-message";
-
-    },5000);
-
-}
+              })
+            }
+          );
 
 
-/* =========================================================
-   WAIT
-========================================================= */
-
-function wait(ms){
-
-    return new Promise(
-        resolve =>
-        setTimeout(
-            resolve,
-            ms
-        )
-    );
-
-}
+        const result =
+          await response.json();
 
 
-/* =========================================================
-   COMING SOON
-========================================================= */
+        if (!response.ok) {
 
-function comingSoon(name){
-
-    alert(
-        name +
-        " will be connected in the next AniVora feature."
-    );
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logout(){
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href =
-        "index.html";
-
-}
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-function toggleSidebar(){
-
-    document
-        .getElementById("sidebar")
-        .classList.toggle("open");
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value){
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabaseClient.auth.onAuthStateChange(
-    function(event){
-
-        if(event === "SIGNED_OUT"){
-
-            window.location.href =
-                "index.html";
-
+          throw new Error(
+            result.error ||
+            "AniVora could not generate the story."
+          );
         }
 
+
+        if (!result.content) {
+
+          throw new Error(
+            "The AI returned an empty story."
+          );
+        }
+
+
+        /* PUT STORY INTO EDITOR */
+
+        editor.textContent =
+          result.content;
+
+
+        updateWordCount();
+
+
+        /* SAVE TO SUPABASE */
+
+        const scriptTitle =
+          createScriptTitle(
+            selectedProject.title
+          );
+
+
+        const {
+          error: saveError
+        } = await supabaseClient
+          .from("scripts")
+          .insert({
+
+            project_id:
+              projectId,
+
+            user_id:
+              currentUser.id,
+
+            title:
+              scriptTitle,
+
+            content:
+              result.content
+
+          });
+
+
+        if (saveError) {
+
+          console.error(
+            "Script save error:",
+            saveError
+          );
+
+          showStatus(
+            "Story generated successfully, but it could not be saved to your project.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        showStatus(
+          "✨ Story generated and saved successfully!",
+          "success"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Generation error:",
+          error
+        );
+
+        showStatus(
+          error.message ||
+          "Something went wrong.",
+          "error"
+        );
+
+      } finally {
+
+        generateBtn.disabled = false;
+
+        generateBtn.textContent =
+          "✨ Generate Story";
+
+      }
+
     }
-);
 
 
-/* =========================================================
-   START
-========================================================= */
+    /* =====================================================
+       CREATE SCRIPT TITLE
+       ===================================================== */
 
-initialize();
+    function createScriptTitle(projectTitle) {
 
-</script>
+      const date =
+        new Date().toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }
+        );
+
+      return `${projectTitle} — ${date}`;
+
+    }
+
+
+    /* =====================================================
+       WORD COUNT
+       ===================================================== */
+
+    function updateWordCount() {
+
+      const text =
+        editor.innerText.trim();
+
+      if (!text) {
+
+        wordCount.textContent =
+          "0 words";
+
+        return;
+      }
+
+      const words =
+        text.split(/\s+/).filter(Boolean);
+
+      wordCount.textContent =
+        `${words.length} words`;
+
+    }
+
+
+    editor.addEventListener(
+      "input",
+      updateWordCount
+    );
+
+
+    /* =====================================================
+       COPY
+       ===================================================== */
+
+    document
+      .getElementById("copyBtn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          const text =
+            editor.innerText.trim();
+
+          if (!text) {
+
+            showStatus(
+              "There is nothing to copy.",
+              "error"
+            );
+
+            return;
+          }
+
+          try {
+
+            await navigator.clipboard.writeText(text);
+
+            showStatus(
+              "Story copied to clipboard.",
+              "success"
+            );
+
+          } catch (error) {
+
+            showStatus(
+              "Could not copy the story.",
+              "error"
+            );
+
+          }
+
+        }
+      );
+
+
+    /* =====================================================
+       CLEAR
+       ===================================================== */
+
+    document
+      .getElementById("clearBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          editor.textContent = "";
+
+          updateWordCount();
+
+          hideStatus();
+
+        }
+      );
+
+
+    /* =====================================================
+       GENERATE BUTTON
+       ===================================================== */
+
+    generateBtn.addEventListener(
+      "click",
+      generateStory
+    );
+
+
+    /* =====================================================
+       LOGOUT
+       ===================================================== */
+
+    logoutBtn.addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    /* =====================================================
+       COMING SOON
+       ===================================================== */
+
+    function comingSoon(event) {
+
+      event.preventDefault();
+
+      showStatus(
+        "This AniVora feature is coming soon.",
+        "loading"
+      );
+
+    }
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    async function startWriter() {
+
+      const authenticated =
+        await checkAuth();
+
+      if (!authenticated) return;
+
+      await loadProjects();
+
+    }
+
+
+    startWriter();
+
+  </script>
 
 </body>
-  </html>
+    </html>
