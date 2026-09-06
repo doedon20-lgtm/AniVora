@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AniVora Writer</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080b14;
+      --panel: #101522;
+      --panel2: #151b2b;
+      --border: #252d43;
+      --text: #f5f7ff;
+      --muted: #8d96ad;
+      --primary: #7c5cff;
+      --primary2: #a78bfa;
+      --danger: #ff5f6d;
+      --success: #38d996;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124,92,255,.15), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 250px;
+      background: rgba(12,16,28,.96);
+      border-right: 1px solid var(--border);
+      padding: 25px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px 28px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c5cff, #b26cff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      box-shadow: 0 8px 30px rgba(124,92,255,.25);
+    }
+
+    .brand-name {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .brand-name span {
+      color: var(--primary2);
+    }
+
+    .nav-title {
+      color: #646d83;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 0 12px;
+      margin: 8px 0 10px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav a {
+      color: #aeb6c9;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: .2s;
+      font-size: 14px;
+    }
+
+    .nav a:hover {
+      background: #171d2d;
+      color: white;
+    }
+
+    .nav a.active {
+      background: rgba(124,92,255,.15);
+      color: white;
+      border: 1px solid rgba(124,92,255,.25);
+    }
+
+    .nav-icon {
+      width: 21px;
+      text-align: center;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 20px;
+    }
+
+    .logout {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #111725;
+      color: #b8c0d1;
+      padding: 11px;
+      border-radius: 10px;
+      transition: .2s;
+    }
+
+    .logout:hover {
+      color: white;
+      border-color: #3a4561;
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .mobile-header {
+      display: none;
+    }
+
+    .topbar {
+      max-width: 1150px;
+      margin: 0 auto 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .page-title h1 {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .page-title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .project-badge {
+      background: #111725;
+      border: 1px solid var(--border);
+      color: #aeb7cb;
+      padding: 9px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .workspace {
+      max-width: 1150px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 22px;
+    }
+
+    .card {
+      background: rgba(16,21,34,.94);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 23px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.16);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .card-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #dbe0ec;
+      margin-bottom: 8px;
+    }
+
+    .field textarea,
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #0b101c;
+      color: white;
+      border-radius: 11px;
+      outline: none;
+      padding: 12px 13px;
+      transition: .2s;
+    }
+
+    .field textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field textarea:focus,
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.10);
+    }
+
+    .generate-btn {
+      width: 100%;
+      border: none;
+      color: white;
+      padding: 14px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #7254ff, #a25cff);
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(124,92,255,.22);
+      transition: .2s;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .generate-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255,95,109,.10);
+      border: 1px solid rgba(255,95,109,.25);
+      color: #ff9ba4;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(56,217,150,.10);
+      border: 1px solid rgba(56,217,150,.25);
+      color: #73e8b4;
+    }
+
+    .message.info {
+      display: block;
+      background: rgba(124,92,255,.10);
+      border: 1px solid rgba(124,92,255,.22);
+      color: #c2b6ff;
+    }
+
+    /* OUTPUT */
+    .output-card {
+      min-height: 650px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .output-header h2 {
+      margin: 0;
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--border);
+      background: #111725;
+      color: #b9c2d5;
+      padding: 8px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .small-btn:hover {
+      color: white;
+      border-color: #46516e;
+    }
+
+    .story-output {
+      flex: 1;
+      background: #0a0f1a;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 20px;
+      white-space: pre-wrap;
+      line-height: 1.75;
+      font-size: 14px;
+      color: #dce2ee;
+      overflow-y: auto;
+      min-height: 520px;
+    }
+
+    .empty-output {
+      height: 100%;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #69738a;
+      padding: 30px;
+    }
+
+    .empty-icon {
+      font-size: 45px;
+      margin-bottom: 15px;
+      opacity: .65;
+    }
+
+    .empty-output h3 {
+      color: #aeb7c9;
+      margin-bottom: 8px;
+    }
+
+    .empty-output p {
+      max-width: 350px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .word-count {
+      color: #707a91;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .output-card {
+        min-height: 550px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: .25s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px;
+        padding-top: 75px;
+      }
+
+      .mobile-header {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: rgba(8,11,20,.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        z-index: 90;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 17px;
+      }
+
+      .mobile-brand {
+        font-weight: 800;
+        font-size: 18px;
+      }
+
+      .mobile-brand span {
+        color: var(--primary2);
+      }
+
+      .menu-btn {
+        border: 1px solid var(--border);
+        background: #111725;
+        color: white;
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page-title h1 {
+        font-size: 25px;
+      }
+
+      .card {
+        padding: 17px;
+        border-radius: 14px;
+      }
+
+      .output-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .output-actions {
+        width: 100%;
+      }
+
+      .small-btn {
+        flex: 1;
+      }
+
+      .story-output {
+        min-height: 430px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="mobile-header">
+  <div class="mobile-brand">Ani<span>Vora</span></div>
+  <button class="menu-btn" id="menuBtn">☰</button>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+      <div class="brand-icon">✦</div>
+      <div class="brand-name">Ani<span>Vora</span></div>
+    </div>
+
+    <div class="nav-title">Studio</div>
+
+    <nav class="nav">
+
+      <a href="dashboard.html">
+        <span class="nav-icon">⌂</span>
+        Dashboard
+      </a>
+
+      <a href="writer.html" class="active">
+        <span class="nav-icon">✎</span>
+        AniVora Writer
+      </a>
+
+      <a href="#" onclick="comingSoon(event)">
+        <span class="nav-icon">♙</span>
+        Character Creator
+      </a>
+
+      <a href="#" onclick="comingSoon(event)">
+        <span class="nav-icon">▧</span>
+        Scene Builder
+      </a>
+
+      <a href="#" onclick="comingSoon(event)">
+        <span class="nav-icon">◈</span>
+        AniVora Art
+      </a>
+
+      <a href="video.html">
+        <span class="nav-icon">▶</span>
+        Video Creator
+      </a>
+
+    </nav>
+
+    <div class="nav-title" style="margin-top:25px;">Account</div>
+
+    <nav class="nav">
+      <a href="#" onclick="logout(event)">
+        <span class="nav-icon">⇥</span>
+        Logout
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="logout" onclick="logout(event)">
+        Log out
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+
+      <div class="page-title">
+        <h1>AniVora Writer</h1>
+        <p>Turn your ideas into anime stories, scripts and scenes.</p>
+      </div>
+
+      <div class="project-badge" id="projectBadge">
+        No project selected
+      </div>
+
+    </div>
+
+    <section class="workspace">
+
+      <!-- LEFT -->
+      <div class="card">
+
+        <h2>Create Your Story</h2>
+
+        <p class="card-subtitle">
+          Describe your idea and AniVora will turn it into a structured story or script.
+        </p>
+
+        <div class="field">
+          <label for="storyIdea">Story idea</label>
+
+          <textarea
+            id="storyIdea"
+            placeholder="Example: A young warrior discovers that the mysterious enemy destroying his village is actually his lost brother..."
+          ></textarea>
+        </div>
+
+        <div class="field">
+
+          <label for="contentType">Content type</label>
+
+          <select id="contentType">
+            <option value="anime story">Anime Story</option>
+            <option value="anime screenplay">Anime Screenplay</option>
+            <option value="YouTube script">YouTube Script</option>
+            <option value="YouTube Shorts script">YouTube Shorts Script</option>
+            <option value="TikTok script">TikTok Script</option>
+            <option value="episode">Anime Episode</option>
+            <option value="dialogue">Character Dialogue</option>
+          </select>
+
+        </div>
+
+        <div class="field">
+
+          <label for="tone">Tone</label>
+
+          <select id="tone">
+            <option value="cinematic">Cinematic</option>
+            <option value="emotional">Emotional</option>
+            <option value="dark">Dark</option>
+            <option value="funny">Funny</option>
+            <option value="romantic">Romantic</option>
+            <option value="action-packed">Action-packed</option>
+            <option value="mysterious">Mysterious</option>
+            <option value="inspirational">Inspirational</option>
+          </select>
+
+        </div>
+
+        <div class="field">
+
+          <label for="length">Length</label>
+
+          <select id="length">
+            <option value="short">Short</option>
+            <option value="medium" selected>Medium</option>
+            <option value="long">Long</option>
+          </select>
+
+        </div>
+
+        <button class="generate-btn" id="generateBtn">
+          ✦ Generate Story
+        </button>
+
+        <div class="message" id="message"></div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card output-card">
+
+        <div class="output-header">
+
+          <div>
+            <h2>Generated Story</h2>
+            <div class="word-count" id="wordCount">
+              0 words
+            </div>
+          </div>
+
+          <div class="output-actions">
+
+            <button class="small-btn" id="copyBtn">
+              Copy
+            </button>
+
+            <button class="small-btn" id="clearBtn">
+              Clear
+            </button>
+
+            <button class="small-btn" id="saveBtn">
+              Save Script
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="story-output" id="storyOutput">
+
+          <div class="empty-output">
+
+            <div class="empty-icon">✦</div>
+
+            <h3>Your story will appear here</h3>
+
+            <p>
+              Enter a story idea on the left and click
+              <strong>Generate Story</strong> to begin creating.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+/* =========================================================
+   SUPABASE CONFIGURATION
+   ========================================================= */
+
+const SUPABASE_URL =
+  "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+
+/* =========================================================
+   CREATE SUPABASE CLIENT
+   ========================================================= */
+
+let supabaseClient = null;
+
+try {
+
+  if (
+    typeof window.supabase === "undefined" ||
+    !window.supabase.createClient
+  ) {
+    throw new Error(
+      "Supabase library could not be loaded."
+    );
+  }
+
+  supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+} catch (error) {
+
+  console.error(
+    "Supabase initialization error:",
+    error
+  );
+
+}
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const generateBtn =
+  document.getElementById("generateBtn");
+
+const storyIdea =
+  document.getElementById("storyIdea");
+
+const contentType =
+  document.getElementById("contentType");
+
+const tone =
+  document.getElementById("tone");
+
+const length =
+  document.getElementById("length");
+
+const storyOutput =
+  document.getElementById("storyOutput");
+
+const wordCount =
+  document.getElementById("wordCount");
+
+const message =
+  document.getElementById("message");
+
+const projectBadge =
+  document.getElementById("projectBadge");
+
+const copyBtn =
+  document.getElementById("copyBtn");
+
+const clearBtn =
+  document.getElementById("clearBtn");
+
+const saveBtn =
+  document.getElementById("saveBtn");
+
+const sidebar =
+  document.getElementById("sidebar");
+
+const menuBtn =
+  document.getElementById("menuBtn");
+
+
+/* =========================================================
+   PROJECT ID
+   ========================================================= */
+
+const urlParams =
+  new URLSearchParams(window.location.search);
+
+const projectId =
+  urlParams.get("project");
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+function showMessage(text, type = "info") {
+
+  message.textContent = text;
+
+  message.className =
+    "message " + type;
+
+}
+
+
+/* =========================================================
+   WORD COUNT
+   ========================================================= */
+
+function updateWordCount(text) {
+
+  const cleaned =
+    String(text || "").trim();
+
+  if (!cleaned) {
+    wordCount.textContent = "0 words";
+    return;
+  }
+
+  const words =
+    cleaned.split(/\s+/).length;
+
+  wordCount.textContent =
+    words + (words === 1 ? " word" : " words");
+
+}
+
+
+/* =========================================================
+   EMPTY OUTPUT
+   ========================================================= */
+
+function showEmptyOutput() {
+
+  storyOutput.innerHTML = `
+    <div class="empty-output">
+      <div class="empty-icon">✦</div>
+
+      <h3>Your story will appear here</h3>
+
+      <p>
+        Enter a story idea on the left and click
+        <strong>Generate Story</strong> to begin creating.
+      </p>
+    </div>
+  `;
+
+  updateWordCount("");
+
+}
+
+
+/* =========================================================
+   GET PROJECT TITLE
+   ========================================================= */
+
+async function getProjectTitle() {
+
+  if (!projectId || !supabaseClient) {
+    return "Untitled AniVora Project";
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("projects")
+      .select("title")
+      .eq("id", projectId)
+      .maybeSingle();
+
+    if (error) {
+      console.warn(
+        "Could not load project:",
+        error
+      );
+
+      return "Untitled AniVora Project";
+    }
+
+    return data?.title ||
+      "Untitled AniVora Project";
+
+  } catch (error) {
+
+    console.warn(
+      "Project title error:",
+      error
+    );
+
+    return "Untitled AniVora Project";
+  }
+
+}
+
+
+/* =========================================================
+   LOAD PROJECT
+   ========================================================= */
+
+async function loadProject() {
+
+  if (!projectId) {
+
+    projectBadge.textContent =
+      "New project";
+
+    return;
+
+  }
+
+  if (!supabaseClient) {
+    return;
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("projects")
+      .select("id,title")
+      .eq("id", projectId)
+      .maybeSingle();
+
+    if (error) {
+
+      console.warn(
+        "Project loading error:",
+        error
+      );
+
+      projectBadge.textContent =
+        "Project";
+
+      return;
+    }
+
+    if (data) {
+
+      projectBadge.textContent =
+        data.title || "Untitled Project";
+
+    } else {
+
+      projectBadge.textContent =
+        "Project";
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "Project load exception:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CHECK AUTH
+   ========================================================= */
+
+async function checkAuth() {
+
+  if (!supabaseClient) {
+
+    showMessage(
+      "Supabase could not be initialized. Check that the Supabase script is loading.",
+      "error"
+    );
+
+    generateBtn.disabled = true;
+
+    return false;
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+
+      console.error(
+        "Session error:",
+        error
+      );
+
+      showMessage(
+        "Unable to check your login session.",
+        "error"
+      );
+
+      return false;
+    }
+
+    if (!data.session) {
+
+      window.location.href =
+        "login.html";
+
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+
+    console.error(
+      "Authentication error:",
+      error
+    );
+
+    showMessage(
+      "Authentication error. Please log in again.",
+      "error"
+    );
+
+    return false;
+  }
+
+}
+
+
+/* =========================================================
+   GENERATE STORY
+   ========================================================= */
+
+async function generateStory() {
+
+  const idea =
+    storyIdea.value.trim();
+
+  if (!idea) {
+
+    showMessage(
+      "Please enter a story idea first.",
+      "error"
+    );
+
+    storyIdea.focus();
+
+    return;
+  }
+
+  if (idea.length < 5) {
+
+    showMessage(
+      "Please give AniVora a little more detail about your idea.",
+      "error"
+    );
+
+    storyIdea.focus();
+
+    return;
+  }
+
+  const authenticated =
+    await checkAuth();
+
+  if (!authenticated) {
+    return;
+  }
+
+  generateBtn.disabled = true;
+
+  generateBtn.innerHTML = `
+    <span class="loading">
+      <span class="spinner"></span>
+      Generating Story...
+    </span>
+  `;
+
+  showMessage(
+    "AniVora is creating your story. Please wait...",
+    "info"
+  );
+
+  try {
+
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.getSession();
+
+    if (error || !data.session) {
+
+      throw new Error(
+        "Your login session has expired. Please log in again."
+      );
+
+    }
+
+    const accessToken =
+      data.session.access_token;
+
+    const projectTitle =
+      await getProjectTitle();
+
+
+    /* SEND REQUEST TO VERCEL API */
+
+    const response =
+      await fetch(
+        "/api/generate-story",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              "Bearer " + accessToken
+          },
+
+          body: JSON.stringify({
+
+            idea: idea,
+
+            contentType:
+              contentType.value,
+
+            tone:
+              tone.value,
+
+            length:
+              length.value,
+
+            projectTitle:
+              projectTitle
+
+          })
+        }
+      );
+
+
+    const rawText =
+      await response.text();
+
+    console.log(
+      "Generate Story API status:",
+      response.status
+    );
+
+    console.log(
+      "Generate Story API response:",
+      rawText
+    );
+
+
+    let result;
+
+    try {
+
+      result =
+        JSON.parse(rawText);
+
+    } catch (parseError) {
+
+      throw new Error(
+        "The server returned an invalid response. HTTP status: " +
+        response.status
+      );
+
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        result.error ||
+        "Story generation failed. HTTP status: " +
+        response.status
+      );
+
+    }
+
+
+    if (
+      !result.success ||
+      !result.content
+    ) {
+
+      throw new Error(
+        result.error ||
+        "No story was returned by the AI."
+      );
+
+    }
+
+
+    /* DISPLAY STORY */
+
+    storyOutput.textContent =
+      result.content;
+
+    updateWordCount(
+      result.content
+    );
+
+    showMessage(
+      "Story generated successfully!",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Generate Story Error:",
+      error
+    );
+
+    showMessage(
+      error.message ||
+      "Something went wrong while generating your story.",
+      "error"
+    );
+
+  } finally {
+
+    generateBtn.disabled = false;
+
+    generateBtn.innerHTML =
+      "✦ Generate Story";
+
+  }
+
+}
+
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+async function copyStory() {
+
+  const text =
+    storyOutput.innerText.trim();
+
+  if (
+    !text ||
+    storyOutput.querySelector(".empty-output")
+  ) {
+
+    showMessage(
+      "There is no generated story to copy.",
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    showMessage(
+      "Story copied to clipboard.",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Copy error:",
+      error
+    );
+
+    showMessage(
+      "Could not copy the story.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+function clearStory() {
+
+  showEmptyOutput();
+
+  message.className =
+    "message";
+
+  message.textContent = "";
+
+}
+
+
+/* =========================================================
+   SAVE SCRIPT
+   ========================================================= */
+
+async function saveScript() {
+
+  const text =
+    storyOutput.innerText.trim();
+
+  if (
+    !text ||
+    storyOutput.querySelector(".empty-output")
+  ) {
+
+    showMessage(
+      "Generate a story before saving it.",
+      "error"
+    );
+
+    return;
+  }
+
+  if (!supabaseClient) {
+
+    showMessage(
+      "Supabase is unavailable.",
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+
+    const {
+      data: sessionData
+    } =
+      await supabaseClient.auth.getSession();
+
+    const session =
+      sessionData.session;
+
+    if (!session) {
+
+      window.location.href =
+        "login.html";
+
+      return;
+    }
+
+
+    const title =
+      projectId
+        ? await getProjectTitle()
+        : "AniVora Generated Story";
+
+
+    /*
+      Save to scripts table.
+
+      If your scripts table has these fields,
+      this will save the generated story.
+    */
+
+    const {
+      error
+    } = await supabaseClient
+      .from("scripts")
+      .insert({
+
+        user_id:
+          session.user.id,
+
+        project_id:
+          projectId || null,
+
+        title:
+          title,
+
+        content:
+          text
+
+      });
+
+
+    if (error) {
+
+      console.error(
+        "Save script error:",
+        error
+      );
+
+      showMessage(
+        "The story was generated, but it could not be saved. " +
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Script saved successfully!",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Save exception:",
+      error
+    );
+
+    showMessage(
+      "Could not save the script.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logout(event) {
+
+  if (event) {
+    event.preventDefault();
+  }
+
+  if (!supabaseClient) {
+    window.location.href =
+      "login.html";
+    return;
+  }
+
+  try {
+
+    await supabaseClient.auth.signOut();
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+  window.location.href =
+    "login.html";
+
+}
+
+
+/* =========================================================
+   COMING SOON
+   ========================================================= */
+
+function comingSoon(event) {
+
+  event.preventDefault();
+
+  showMessage(
+    "This AniVora feature is coming soon.",
+    "info"
+  );
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+if (menuBtn) {
+
+  menuBtn.addEventListener(
+    "click",
+    function() {
+
+      sidebar.classList.toggle(
+        "open"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   BUTTON EVENTS
+   ========================================================= */
+
+generateBtn.addEventListener(
+  "click",
+  generateStory
+);
+
+copyBtn.addEventListener(
+  "click",
+  copyStory
+);
+
+clearBtn.addEventListener(
+  "click",
+  clearStory
+);
+
+saveBtn.addEventListener(
+  "click",
+  saveScript
+);
+
+
+/* =========================================================
+   ENTERPRISE-STYLE ENTER SHORTCUT
+   ========================================================= */
+
+storyIdea.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.ctrlKey &&
+      event.key === "Enter"
+    ) {
+
+      generateStory();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+(async function init() {
+
+  console.log(
+    "AniVora Writer starting..."
+  );
+
+  console.log(
+    "Supabase URL:",
+    SUPABASE_URL
+  );
+
+  console.log(
+    "Supabase client:",
+    !!supabaseClient
+  );
+
+  const authenticated =
+    await checkAuth();
+
+  if (!authenticated) {
+    return;
+  }
+
+  await loadProject();
+
+})();
+</script>
+
+</body>
+  </html>
