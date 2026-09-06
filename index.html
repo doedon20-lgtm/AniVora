@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AniVora — AI Storytelling & Animation Studio</title>
+
+  <meta
+    name="description"
+    content="AniVora turns your imagination into stories, characters, scenes, artwork and videos with AI."
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #08080d;
+      color: #ffffff;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* =========================
+       NAVBAR
+    ========================= */
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      background: rgba(8, 8, 13, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: auto;
+      min-height: 72px;
+      padding: 0 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #a855f7;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      color: #c9c9d4;
+      font-size: 14px;
+      transition: 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .login-button,
+    .signup-button {
+      padding: 10px 17px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.25s;
+    }
+
+    .login-button {
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #ffffff;
+    }
+
+    .login-button:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .signup-button {
+      background: #a855f7;
+      color: white;
+    }
+
+    .signup-button:hover {
+      background: #9333ea;
+      transform: translateY(-1px);
+    }
+
+    .dashboard-button {
+      background: #a855f7;
+      color: white;
+      padding: 10px 17px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .logout-button {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #ffffff;
+      padding: 9px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .logout-button:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .menu-button {
+      display: none;
+      background: transparent;
+      border: 0;
+      color: white;
+      font-size: 27px;
+      cursor: pointer;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      position: relative;
+      min-height: 690px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 80px 20px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 550px;
+      height: 550px;
+      background: #7c3aed;
+      opacity: 0.14;
+      filter: blur(130px);
+      border-radius: 50%;
+      top: -180px;
+      left: -150px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: #ec4899;
+      opacity: 0.10;
+      filter: blur(130px);
+      border-radius: 50%;
+      right: -170px;
+      bottom: -200px;
+    }
+
+    .hero-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      width: 100%;
+      margin: auto;
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .launch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(168,85,247,0.10);
+      border: 1px solid rgba(168,85,247,0.28);
+      color: #d8b4fe;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .launch-dot {
+      width: 7px;
+      height: 7px;
+      background: #a855f7;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #a855f7;
+    }
+
+    .hero h1 {
+      font-size: clamp(45px, 7vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -4px;
+      margin-bottom: 24px;
+      max-width: 700px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      color: #aaaab8;
+      font-size: 18px;
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 13px;
+      flex-wrap: wrap;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 22px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.25s;
+    }
+
+    .primary-button {
+      background: #a855f7;
+      color: white;
+      box-shadow: 0 12px 35px rgba(168,85,247,0.22);
+    }
+
+    .primary-button:hover {
+      background: #9333ea;
+      transform: translateY(-2px);
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #ffffff;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .secondary-button:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #777786;
+    }
+
+    /* =========================
+       STUDIO PREVIEW
+    ========================= */
+
+    .studio-window {
+      background: rgba(17,17,25,0.85);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow:
+        0 30px 90px rgba(0,0,0,0.55),
+        0 0 80px rgba(168,85,247,0.08);
+    }
+
+    .window-top {
+      height: 44px;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .window-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #555566;
+    }
+
+    .window-title {
+      margin-left: 8px;
+      font-size: 11px;
+      color: #777786;
+    }
+
+    .studio-body {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      min-height: 390px;
+    }
+
+    .studio-sidebar {
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 15px 10px;
+    }
+
+    .side-item {
+      padding: 11px 7px;
+      border-radius: 8px;
+      color: #777786;
+      font-size: 10px;
+      margin-bottom: 5px;
+    }
+
+    .side-item.active {
+      background: rgba(168,85,247,0.14);
+      color: #d8b4fe;
+    }
+
+    .studio-content {
+      padding: 18px;
+    }
+
+    .studio-heading {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .studio-subheading {
+      font-size: 11px;
+      color: #777786;
+      margin-bottom: 18px;
+    }
+
+    .prompt-box {
+      background: #0d0d14;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 15px;
+    }
+
+    .prompt-label {
+      color: #a855f7;
+      font-size: 10px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .prompt-text {
+      color: #aaaab8;
+      font-size: 11px;
+    }
+
+    .preview-card {
+      height: 170px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background:
+        radial-gradient(circle at 70% 30%, rgba(168,85,247,0.35), transparent 28%),
+        radial-gradient(circle at 30% 70%, rgba(236,72,153,0.20), transparent 30%),
+        linear-gradient(135deg, #17131e, #0b0b11);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .preview-character {
+      width: 80px;
+      height: 115px;
+      border-radius: 50% 50% 40% 40%;
+      background: linear-gradient(#1c1c29, #30203f);
+      position: relative;
+      box-shadow: 0 0 35px rgba(168,85,247,0.22);
+    }
+
+    .preview-character::before {
+      content: "";
+      position: absolute;
+      width: 66px;
+      height: 58px;
+      background: #262638;
+      border-radius: 50%;
+      top: -13px;
+      left: 7px;
+    }
+
+    .preview-character::after {
+      content: "";
+      position: absolute;
+      width: 28px;
+      height: 6px;
+      border-radius: 10px;
+      background: #c084fc;
+      top: 46px;
+      left: 26px;
+      box-shadow: 0 0 14px #a855f7;
+    }
+
+    /* =========================
+       GENERAL SECTIONS
+    ========================= */
+
+    .section {
+      padding: 100px 20px;
+    }
+
+    .section-container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section-heading {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 50px;
+    }
+
+    .section-heading .eyebrow {
+      color: #a855f7;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 15px;
+    }
+
+    .section-heading p {
+      color: #898997;
+      font-size: 15px;
+    }
+
+    /* =========================
+       FEATURES
+    ========================= */
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      padding: 25px;
+      min-height: 210px;
+      background: #101017;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 17px;
+      transition: 0.25s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(168,85,247,0.30);
+      background: #12121b;
+    }
+
+    .feature-icon {
+      width: 43px;
+      height: 43px;
+      border-radius: 12px;
+      background: rgba(168,85,247,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      color: #c084fc;
+      font-size: 19px;
+    }
+
+    .feature-card h3 {
+      font-size: 17px;
+      margin-bottom: 9px;
+    }
+
+    .feature-card p {
+      color: #858593;
+      font-size: 13px;
+    }
+
+    /* =========================
+       WORKFLOW
+    ========================= */
+
+    .workflow {
+      background: #0c0c12;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .workflow-step {
+      text-align: center;
+      position: relative;
+    }
+
+    .workflow-number {
+      width: 46px;
+      height: 46px;
+      margin: 0 auto 13px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(168,85,247,0.12);
+      border: 1px solid rgba(168,85,247,0.25);
+      color: #c084fc;
+      font-weight: 900;
+    }
+
+    .workflow-step h3 {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .workflow-step p {
+      color: #777786;
+      font-size: 11px;
+    }
+
+    /* =========================
+       CREATORS
+    ========================= */
+
+    .creator-box {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(168,85,247,0.13),
+          rgba(236,72,153,0.06)
+        );
+      border: 1px solid rgba(168,85,247,0.18);
+      border-radius: 24px;
+      padding: 50px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .creator-box h2 {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 15px;
+    }
+
+    .creator-box p {
+      color: #9999a8;
+      max-width: 580px;
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .creator-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .creator-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #b6b6c3;
+      font-size: 13px;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(168,85,247,0.14);
+      color: #c084fc;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .creator-visual {
+      min-height: 260px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(168,85,247,0.30), transparent 28%),
+        radial-gradient(circle at 40% 80%, rgba(236,72,153,0.18), transparent 30%),
+        #0b0b11;
+      border: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .visual-orb {
+      width: 125px;
+      height: 125px;
+      border-radius: 50%;
+      border: 1px solid rgba(192,132,252,0.45);
+      box-shadow:
+        0 0 30px rgba(168,85,247,0.25),
+        inset 0 0 35px rgba(168,85,247,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d8b4fe;
+      font-weight: 900;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* =========================
+       PRICING
+    ========================= */
+
+    .pricing-card {
+      max-width: 650px;
+      margin: auto;
+      text-align: center;
+      background: #101017;
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 22px;
+      padding: 45px 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: #a855f7;
+      opacity: 0.08;
+      filter: blur(80px);
+      top: -130px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .pricing-badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(168,85,247,0.13);
+      color: #d8b4fe;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 17px;
+    }
+
+    .pricing-card h2 {
+      font-size: 42px;
+      letter-spacing: -2px;
+      margin-bottom: 8px;
+    }
+
+    .pricing-card p {
+      color: #858593;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* =========================
+       CTA
+    ========================= */
+
+    .final-cta {
+      padding: 100px 20px 110px;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(35px, 6vw, 58px);
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 18px;
+    }
+
+    .final-cta p {
+      color: #858593;
+      max-width: 550px;
+      margin: 0 auto 28px;
+      font-size: 15px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 28px 20px;
+      color: #666674;
+      font-size: 12px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .footer-logo span {
+      color: #a855f7;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 850px) {
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: #0b0b11;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 13px 5px;
+      }
+
+      .nav-actions {
+        display: none;
+      }
+
+      .menu-button {
+        display: block;
+      }
+
+      .hero {
+        padding-top: 60px;
+      }
+
+      .hero-container {
+        grid-template-columns: 1fr;
+        gap: 45px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2.5px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .workflow-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .creator-box {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+      }
+    }
+
+    @media (max-width: 560px) {
+
+      .nav-container {
+        min-height: 65px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 55px 18px 75px;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .primary-button,
+      .secondary-button {
+        width: 100%;
+      }
+
+      .studio-body {
+        grid-template-columns: 75px 1fr;
+      }
+
+      .studio-sidebar {
+        padding: 10px 6px;
+      }
+
+      .side-item {
+        font-size: 9px;
+      }
+
+      .studio-content {
+        padding: 12px;
+      }
+
+      .preview-card {
+        height: 145px;
+      }
+
+      .section {
+        padding: 75px 18px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-step {
+        max-width: 260px;
+        margin: auto;
+      }
+
+      .creator-box {
+        padding: 28px 20px;
+      }
+
+      .creator-visual {
+        min-height: 210px;
+      }
+
+      .pricing-card {
+        padding: 35px 20px;
+      }
+
+      .final-cta {
+        padding: 75px 18px 85px;
+      }
+
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <header class="navbar">
+    <div class="nav-container">
+
+      <a href="./index.html" class="logo">
+        Ani<span>Vora</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#features">Features</a>
+        <a href="#workflow">How It Works</a>
+        <a href="#creators">Creators</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+
+      <div class="nav-actions" id="navActions">
+
+        <!-- LOGGED OUT -->
+        <div id="loggedOutActions">
+          <a href="./login.html" class="login-button">
+            Log In
+          </a>
+
+          <a href="./create-account.html" class="signup-button">
+            Create Account
+          </a>
+        </div>
+
+        <!-- LOGGED IN -->
+        <div
+          id="loggedInActions"
+          style="display:none; align-items:center; gap:10px;"
+        >
+          <a href="./dashboard.html" class="dashboard-button">
+            Dashboard
+          </a>
+
+          <button
+            type="button"
+            class="logout-button"
+            id="logoutButton"
+          >
+            Log Out
+          </button>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="menu-button"
+        id="menuButton"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="hero-container">
+
+        <div class="hero-text">
+
+          <div class="launch-badge">
+            <span class="launch-dot"></span>
+            Free during our first 30-day launch
+          </div>
+
+          <h1>
+            Turn your
+            <span>imagination</span>
+            into stories.
+          </h1>
+
+          <p>
+            AniVora is an AI-powered storytelling and animation studio
+            built to help creators turn simple ideas into scripts,
+            characters, scenes, artwork and videos.
+          </p>
+
+          <div class="hero-buttons">
+
+            <!-- DIRECT LINK -->
+            <a
+              href="./create-account.html"
+              class="primary-button"
+            >
+              Start Creating
+            </a>
+
+            <a
+              href="#features"
+              class="secondary-button"
+            >
+              Explore Features
+            </a>
+
+          </div>
+
+          <div class="hero-note">
+            No complicated setup. Start creating your world with AniVora.
+          </div>
+
+        </div>
+
+
+        <!-- STUDIO PREVIEW -->
+
+        <div class="studio-window">
+
+          <div class="window-top">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+
+            <span class="window-title">
+              AniVora Studio
+            </span>
+          </div>
+
+          <div class="studio-body">
+
+            <aside class="studio-sidebar">
+
+              <div class="side-item active">
+                Studio
+              </div>
+
+              <div class="side-item">
+                Writer
+              </div>
+
+              <div class="side-item">
+                Characters
+              </div>
+
+              <div class="side-item">
+                Scenes
+              </div>
+
+              <div class="side-item">
+                Art
+              </div>
+
+              <div class="side-item">
+                Video
+              </div>
+
+            </aside>
+
+            <div class="studio-content">
+
+              <div class="studio-heading">
+                Create your story
+              </div>
+
+              <div class="studio-subheading">
+                Turn an idea into a complete creative project.
+              </div>
+
+              <div class="prompt-box">
+
+                <div class="prompt-label">
+                  STORY IDEA
+                </div>
+
+                <div class="prompt-text">
+                  A young warrior discovers that the mysterious
+                  power inside him is connected to an ancient world...
+                </div>
+
+              </div>
+
+              <div class="preview-card">
+                <div class="preview-character"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================== -->
+
+    <section class="section" id="features">
+
+      <div class="section-container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            The Studio
+          </div>
+
+          <h2>
+            Everything you need to create.
+          </h2>
+
+          <p>
+            From your first idea to a finished animated story,
+            AniVora brings your creative workflow into one place.
+          </p>
+
+        </div>
+
+
+        <div class="features-grid">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ✦
+            </div>
+
+            <h3>
+              Idea Generator
+            </h3>
+
+            <p>
+              Turn simple thoughts into original story concepts,
+              worlds, characters and plot ideas.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ✎
+            </div>
+
+            <h3>
+              AI Writer
+            </h3>
+
+            <p>
+              Generate stories, scripts, dialogue and scenes
+              designed for creators and video platforms.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ◈
+            </div>
+
+            <h3>
+              Character Creator
+            </h3>
+
+            <p>
+              Build detailed characters with personalities,
+              appearances, backgrounds and abilities.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ▣
+            </div>
+
+            <h3>
+              Scene Builder
+            </h3>
+
+            <p>
+              Break stories into scenes with locations,
+              dialogue, actions and visual descriptions.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ✧
+            </div>
+
+            <h3>
+              AI Art Studio
+            </h3>
+
+            <p>
+              Create original anime-inspired visuals for your
+              characters, environments and story moments.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              ▶
+            </div>
+
+            <h3>
+              Video Creator
+            </h3>
+
+            <p>
+              Bring scripts, images, voices and sound together
+              into engaging animated videos.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         WORKFLOW
+    ========================== -->
+
+    <section class="section workflow" id="workflow">
+
+      <div class="section-container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Simple Workflow
+          </div>
+
+          <h2>
+            From idea to animation.
+          </h2>
+
+          <p>
+            AniVora is designed to make the creative process
+            easier from beginning to end.
+          </p>
+
+        </div>
+
+
+        <div class="workflow-grid">
+
+          <div class="workflow-step">
+
+            <div class="workflow-number">
+              1
+            </div>
+
+            <h3>
+              Idea
+            </h3>
+
+            <p>
+              Start with a thought.
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step">
+
+            <div class="workflow-number">
+              2
+            </div>
+
+            <h3>
+              Script
+            </h3>
+
+            <p>
+              Build the story.
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step">
+
+            <div class="workflow-number">
+              3
+            </div>
+
+            <h3>
+              Scenes
+            </h3>
+
+            <p>
+              Structure every moment.
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step">
+
+            <div class="workflow-number">
+              4
+            </div>
+
+            <h3>
+              Visuals
+            </h3>
+
+            <p>
+              Create original artwork.
+            </p>
+
+          </div>
+
+
+          <div class="workflow-step">
+
+            <div class="workflow-number">
+              5
+            </div>
+
+            <h3>
+              Video
+            </h3>
+
+            <p>
+              Bring it all together.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CREATORS
+    ========================== -->
+
+    <section class="section" id="creators">
+
+      <div class="section-container">
+
+        <div class="creator-box">
+
+          <div>
+
+            <h2>
+              Built for creators who have stories to tell.
+            </h2>
+
+            <p>
+              Whether you're creating anime-inspired stories,
+              YouTube videos, Shorts, TikToks or your own
+              fictional universe, AniVora helps you move from
+              imagination to production.
+            </p>
+
+            <div class="creator-list">
+
+              <div class="creator-list-item">
+                <span class="check">✓</span>
+                YouTubers and video creators
+              </div>
+
+              <div class="creator-list-item">
+                <span class="check">✓</span>
+                Storytellers and writers
+              </div>
+
+              <div class="creator-list-item">
+                <span class="check">✓</span>
+                Anime-inspired creators
+              </div>
+
+              <div class="creator-list-item">
+                <span class="check">✓</span>
+                Short-form content creators
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="creator-visual">
+
+            <div class="visual-orb">
+              YOUR<br>
+              STORY<br>
+              STARTS<br>
+              HERE
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         PRICING
+    ========================== -->
+
+    <section class="section" id="pricing">
+
+      <div class="section-container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Launch
+          </div>
+
+          <h2>
+            Start creating for free.
+          </h2>
+
+          <p>
+            AniVora will be free during the first 30 days
+            of launch while creators explore the studio.
+          </p>
+
+        </div>
+
+
+        <div class="pricing-card">
+
+          <div class="pricing-badge">
+            FIRST 30 DAYS
+          </div>
+
+          <h2>
+            Free
+          </h2>
+
+          <p>
+            Explore AniVora and start building your stories
+            during our launch period.
+          </p>
+
+          <a
+            href="./create-account.html"
+            class="primary-button"
+          >
+            Create Your Account
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FINAL CTA
+    ========================== -->
+
+    <section class="final-cta">
+
+      <h2>
+        Your world.<br>
+        Your story.
+      </h2>
+
+      <p>
+        Start creating with AniVora and turn the ideas
+        in your head into something people can watch.
+      </p>
+
+      <a
+        href="./create-account.html"
+        class="primary-button"
+      >
+        Start Creating
+      </a>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <div class="footer-container">
+
+      <div class="footer-logo">
+        Ani<span>Vora</span>
+      </div>
+
+      <div>
+        © 2026 AniVora. Create something unforgettable.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       SUPABASE + NAVIGATION
+  ========================== -->
+
+  <script>
+
+    /*
+      IMPORTANT:
+      Replace these two values with the SAME
+      Supabase URL and Publishable/Anon Key
+      you used in create-account.html.
+    */
+
+    const SUPABASE_URL = "https://rurwrecfmbsobqsqiepo.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+    let supabaseClient = null;
+
+    /*
+      Only create the Supabase client if the
+      credentials have actually been entered.
+    */
+
+    if (
+      SUPABASE_URL !== "https://rurwrecfmbsobqsqiepo.supabase.coAniVora" &&
+      SUPABASE_ANON_KEY !== "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O"
+    ) {
+
+      const { createClient } = window.supabase;
+
+      supabaseClient = createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+    }
+
+
+    /* =========================
+       MOBILE MENU
+    ========================== */
+
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const navLinks =
+      document.getElementById("navLinks");
+
+    menuButton.addEventListener("click", function () {
+
+      navLinks.classList.toggle("open");
+
+    });
+
+
+    /*
+      Close mobile menu after clicking
+      a navigation link.
+    */
+
+    document.querySelectorAll(".nav-links a")
+      .forEach(function(link) {
+
+        link.addEventListener("click", function() {
+
+          navLinks.classList.remove("open");
+
+        });
+
+      });
+
+
+    /* =========================
+       AUTH STATE
+    ========================== */
+
+    async function checkAuth() {
+
+      /*
+        If Supabase hasn't been configured yet,
+        leave the normal logged-out navigation.
+      */
+
+      if (!supabaseClient) {
+        return;
+      }
+
+
+      try {
+
+        const {
+          data: {
+            session
+          }
+        } = await supabaseClient.auth.getSession();
+
+
+        updateNavigation(session);
+
+      } catch (error) {
+
+        console.error(
+          "Authentication check failed:",
+          error
+        );
+
+      }
+
+    }
+
+
+    function updateNavigation(session) {
+
+      const loggedOutActions =
+        document.getElementById("loggedOutActions");
+
+      const loggedInActions =
+        document.getElementById("loggedInActions");
+
+
+      if (session) {
+
+        loggedOutActions.style.display = "none";
+        loggedInActions.style.display = "flex";
+
+      } else {
+
+        loggedOutActions.style.display = "flex";
+        loggedInActions.style.display = "none";
+
+      }
+
+    }
+
+
+    /* =========================
+       AUTH LISTENER
+    ========================== */
+
+    if (supabaseClient) {
+
+      supabaseClient.auth.onAuthStateChange(
+        function(event, session) {
+
+          updateNavigation(session);
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================== */
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+
+    logoutButton.addEventListener("click", async function() {
+
+      if (!supabaseClient) {
+        window.location.href = "./login.html";
+        return;
+      }
+
+
+      const {
+        error
+      } = await supabaseClient.auth.signOut();
+
+
+      if (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+        return;
+      }
+
+
+      window.location.href = "./index.html";
+
+    });
+
+
+    /* =========================
+       START
+    ========================== */
+
+    checkAuth();
+
+  </script>
+
+</body>
+  </html>
