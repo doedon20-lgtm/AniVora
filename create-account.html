@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Create Account | AniVora</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, #312e81 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #581c87 0%, transparent 35%),
+        #080812;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #a855f7;
+    }
+
+    .card {
+      background: rgba(20, 20, 35, 0.92);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 24px;
+      padding: 30px 25px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+      backdrop-filter: blur(15px);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 27px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #a1a1aa;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .input-group {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #d4d4d8;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 12px;
+      border: 1px solid #33334d;
+      background: #11111f;
+      color: white;
+      outline: none;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.12);
+    }
+
+    input.invalid {
+      border-color: #ef4444;
+    }
+
+    input.valid {
+      border-color: #22c55e;
+    }
+
+    .hint {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #71717a;
+      line-height: 1.4;
+    }
+
+    .validation-message {
+      margin-top: 7px;
+      font-size: 12px;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .validation-message.error {
+      display: block;
+      color: #f87171;
+    }
+
+    .validation-message.success {
+      display: block;
+      color: #4ade80;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 65px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      color: #a855f7;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 11px;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .success {
+      display: block;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+    }
+
+    .error {
+      display: block;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 23px;
+      color: #a1a1aa;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #c084fc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .terms {
+      text-align: center;
+      color: #71717a;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 18px;
+      }
+
+      .card {
+        padding: 27px 20px;
+      }
+
+      .logo {
+        font-size: 29px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="logo">
+      Ani<span>Vora</span>
+    </div>
+
+    <div class="card">
+
+      <h1>Create your account</h1>
+
+      <p class="subtitle">
+        Start creating original stories, characters,
+        scenes and animations with AniVora.
+      </p>
+
+      <form id="signupForm">
+
+        <!-- FULL NAME -->
+        <div class="input-group">
+          <label for="fullName">Full Name</label>
+
+          <input
+            type="text"
+            id="fullName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            required
+          >
+        </div>
+
+
+        <!-- USERNAME -->
+        <div class="input-group">
+
+          <label for="username">Username</label>
+
+          <input
+            type="text"
+            id="username"
+            placeholder="Choose a username"
+            autocomplete="username"
+            maxlength="20"
+            required
+          >
+
+          <div class="hint">
+            3–20 characters. Start with a letter.
+            Use only letters, numbers, and underscores.
+          </div>
+
+          <div
+            id="usernameMessage"
+            class="validation-message"
+          ></div>
+
+        </div>
+
+
+        <!-- EMAIL -->
+        <div class="input-group">
+
+          <label for="email">Email Address</label>
+
+          <input
+            type="email"
+            id="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+
+          <label for="password">Password</label>
+
+          <div class="password-wrapper">
+
+            <input
+              type="password"
+              id="password"
+              placeholder="Create a password"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            >
+
+            <button
+              type="button"
+              class="toggle-password"
+              data-target="password"
+            >
+              Show
+            </button>
+
+          </div>
+
+          <div class="hint">
+            Password must contain at least 6 characters.
+          </div>
+
+        </div>
+
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="input-group">
+
+          <label for="confirmPassword">
+            Confirm Password
+          </label>
+
+          <div class="password-wrapper">
+
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Enter your password again"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            >
+
+            <button
+              type="button"
+              class="toggle-password"
+              data-target="confirmPassword"
+            >
+              Show
+            </button>
+
+          </div>
+
+          <div
+            id="passwordMessage"
+            class="validation-message"
+          ></div>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="button"
+          id="signupButton"
+        >
+          Create Account
+        </button>
+
+      </form>
+
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+
+      <div class="login-link">
+        Already have an account?
+        <a href="login.html">Log in</a>
+      </div>
+
+
+      <div class="terms">
+        By creating an account, you agree to use AniVora
+        responsibly and respect applicable laws and rights.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    // =========================================================
+    // SUPABASE CONFIGURATION
+    // =========================================================
+
+    const SUPABASE_URL =
+      "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+    const { createClient } = supabase;
+
+    const supabaseClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+    // =========================================================
+    // ELEMENTS
+    // =========================================================
+
+    const signupForm =
+      document.getElementById("signupForm");
+
+    const signupButton =
+      document.getElementById("signupButton");
+
+    const message =
+      document.getElementById("message");
+
+    const usernameInput =
+      document.getElementById("username");
+
+    const usernameMessage =
+      document.getElementById("usernameMessage");
+
+    const passwordInput =
+      document.getElementById("password");
+
+    const confirmPasswordInput =
+      document.getElementById("confirmPassword");
+
+    const passwordMessage =
+      document.getElementById("passwordMessage");
+
+
+    // =========================================================
+    // USERNAME VALIDATION
+    // =========================================================
+
+    function validateUsername(username) {
+
+      /*
+        Rules:
+
+        1. 3–20 characters
+        2. Must start with a letter
+        3. Only letters, numbers and underscores
+      */
+
+      const usernameRegex =
+        /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
+
+      return usernameRegex.test(username);
+
+    }
+
+
+    function checkUsername() {
+
+      const username =
+        usernameInput.value.trim();
+
+      if (username === "") {
+
+        usernameInput.classList.remove(
+          "valid",
+          "invalid"
+        );
+
+        usernameMessage.className =
+          "validation-message";
+
+        usernameMessage.textContent = "";
+
+        return false;
+      }
+
+
+      if (!validateUsername(username)) {
+
+        usernameInput.classList.add("invalid");
+
+        usernameInput.classList.remove("valid");
+
+        usernameMessage.className =
+          "validation-message error";
+
+        usernameMessage.textContent =
+          "Username must be 3–20 characters, start with a letter, and contain only letters, numbers, or underscores.";
+
+        return false;
+      }
+
+
+      usernameInput.classList.add("valid");
+
+      usernameInput.classList.remove("invalid");
+
+      usernameMessage.className =
+        "validation-message success";
+
+      usernameMessage.textContent =
+        "Username format looks good.";
+
+      return true;
+
+    }
+
+
+    usernameInput.addEventListener(
+      "input",
+      checkUsername
+    );
+
+
+    // =========================================================
+    // PASSWORD CONFIRMATION
+    // =========================================================
+
+    function checkPasswords() {
+
+      const password =
+        passwordInput.value;
+
+      const confirmPassword =
+        confirmPasswordInput.value;
+
+
+      if (confirmPassword === "") {
+
+        confirmPasswordInput.classList.remove(
+          "valid",
+          "invalid"
+        );
+
+        passwordMessage.className =
+          "validation-message";
+
+        passwordMessage.textContent = "";
+
+        return false;
+      }
+
+
+      if (password !== confirmPassword) {
+
+        confirmPasswordInput.classList.add(
+          "invalid"
+        );
+
+        confirmPasswordInput.classList.remove(
+          "valid"
+        );
+
+        passwordMessage.className =
+          "validation-message error";
+
+        passwordMessage.textContent =
+          "Passwords do not match.";
+
+        return false;
+      }
+
+
+      confirmPasswordInput.classList.add(
+        "valid"
+      );
+
+      confirmPasswordInput.classList.remove(
+        "invalid"
+      );
+
+      passwordMessage.className =
+        "validation-message success";
+
+      passwordMessage.textContent =
+        "Passwords match.";
+
+      return true;
+
+    }
+
+
+    passwordInput.addEventListener(
+      "input",
+      checkPasswords
+    );
+
+    confirmPasswordInput.addEventListener(
+      "input",
+      checkPasswords
+    );
+
+
+    // =========================================================
+    // SHOW / HIDE PASSWORD
+    // =========================================================
+
+    document
+      .querySelectorAll(".toggle-password")
+      .forEach(function(button) {
+
+        button.addEventListener(
+          "click",
+          function() {
+
+            const targetId =
+              button.getAttribute("data-target");
+
+            const target =
+              document.getElementById(targetId);
+
+
+            if (target.type === "password") {
+
+              target.type = "text";
+
+              button.textContent = "Hide";
+
+            } else {
+
+              target.type = "password";
+
+              button.textContent = "Show";
+
+            }
+
+          }
+        );
+
+      });
+
+
+    // =========================================================
+    // MESSAGE FUNCTION
+    // =========================================================
+
+    function showMessage(text, type) {
+
+      message.textContent = text;
+
+      message.className =
+        "message " + type;
+
+    }
+
+
+    // =========================================================
+    // SIGN UP
+    // =========================================================
+
+    signupForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+
+        const fullName =
+          document
+            .getElementById("fullName")
+            .value
+            .trim();
+
+        const username =
+          usernameInput
+            .value
+            .trim();
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const password =
+          passwordInput.value;
+
+        const confirmPassword =
+          confirmPasswordInput.value;
+
+
+        // -----------------------------------------------------
+        // BASIC VALIDATION
+        // -----------------------------------------------------
+
+        if (
+          !fullName ||
+          !username ||
+          !email ||
+          !password ||
+          !confirmPassword
+        ) {
+
+          showMessage(
+            "Please fill in all fields.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // USERNAME VALIDATION
+        // -----------------------------------------------------
+
+        if (!validateUsername(username)) {
+
+          showMessage(
+            "Please enter a valid username.",
+            "error"
+          );
+
+          usernameInput.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // PASSWORD LENGTH
+        // -----------------------------------------------------
+
+        if (password.length < 6) {
+
+          showMessage(
+            "Password must contain at least 6 characters.",
+            "error"
+          );
+
+          passwordInput.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // PASSWORD CONFIRMATION
+        // -----------------------------------------------------
+
+        if (password !== confirmPassword) {
+
+          showMessage(
+            "Passwords do not match.",
+            "error"
+          );
+
+          confirmPasswordInput.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // DISABLE BUTTON
+        // -----------------------------------------------------
+
+        signupButton.disabled = true;
+
+        signupButton.textContent =
+          "Creating account...";
+
+        message.className =
+          "message";
+
+
+        try {
+
+          // ---------------------------------------------------
+          // SUPABASE AUTH SIGNUP
+          // ---------------------------------------------------
+
+          const { data, error } =
+            await supabaseClient.auth.signUp({
+
+              email: email,
+
+              password: password,
+
+              options: {
+
+                data: {
+
+                  full_name: fullName,
+
+                  username: username
+
+                }
+
+              }
+
+            });
+
+
+          if (error) {
+
+            throw error;
+
+          }
+
+
+          // ---------------------------------------------------
+          // SUCCESS WITH ACTIVE SESSION
+          // ---------------------------------------------------
+
+          if (data.session) {
+
+            showMessage(
+              "Account created successfully! Redirecting...",
+              "success"
+            );
+
+
+            setTimeout(function() {
+
+              window.location.href =
+                "index.html";
+
+            }, 1200);
+
+
+            return;
+          }
+
+
+          // ---------------------------------------------------
+          // EMAIL CONFIRMATION REQUIRED
+          // ---------------------------------------------------
+
+          showMessage(
+            "Account created! Please check your email to confirm your account, then log in.",
+            "success"
+          );
+
+
+          signupButton.disabled = false;
+
+          signupButton.textContent =
+            "Create Account";
+
+
+        } catch (error) {
+
+          console.error(
+            "AniVora signup error:",
+            error
+          );
+
+
+          showMessage(
+            error.message ||
+            "Unable to create account.",
+            "error"
+          );
+
+
+          signupButton.disabled = false;
+
+          signupButton.textContent =
+            "Create Account";
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+  </html>
