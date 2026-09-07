@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AniVora Video Creator</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #08080d;
+  --panel: #11111a;
+  --panel2: #171722;
+  --border: #292938;
+  --text: #f5f5fa;
+  --muted: #9292a5;
+  --accent: #8b5cf6;
+  --accent2: #a78bfa;
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 250px;
+  background: #0d0d14;
+  border-right: 1px solid var(--border);
+  padding: 22px 15px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  margin-bottom: 35px;
+  padding-left: 10px;
+}
+
+.logo span {
+  color: var(--accent2);
+}
+
+.nav-title {
+  color: #66667a;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 10px;
+  margin: 18px 0 8px;
+}
+
+.nav a {
+  display: block;
+  text-decoration: none;
+  color: #aaaabb;
+  padding: 12px 12px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  transition: .2s;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: white;
+  background: #1c192b;
+}
+
+.nav a.active {
+  border-left: 3px solid var(--accent);
+}
+
+.logout {
+  position: absolute;
+  bottom: 20px;
+  left: 15px;
+  right: 15px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #aaaabb;
+  padding: 11px;
+  border-radius: 10px;
+}
+
+/* MAIN */
+
+.main {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: rgba(8,8,13,.92);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+
+.topbar h1 {
+  font-size: 20px;
+}
+
+.user-info {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.content {
+  padding: 28px;
+  max-width: 1500px;
+  margin: auto;
+}
+
+/* HERO */
+
+.hero {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(139,92,246,.2), transparent 35%),
+    linear-gradient(135deg, #151320, #0e0e15);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px;
+  margin-bottom: 22px;
+}
+
+.hero h2 {
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+
+.hero p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* PROJECT */
+
+.project-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.project-bar select {
+  flex: 1;
+  max-width: 500px;
+  background: var(--panel);
+  color: white;
+  border: 1px solid var(--border);
+  padding: 13px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.btn {
+  border: none;
+  padding: 12px 17px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--panel2);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  background: rgba(239,68,68,.12);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,.25);
+}
+
+/* GRID */
+
+.workspace {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin-bottom: 6px;
+  font-size: 17px;
+}
+
+.card-subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+/* FORM */
+
+label {
+  display: block;
+  color: #c9c9d5;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  background: #0c0c13;
+  border: 1px solid var(--border);
+  color: white;
+  border-radius: 10px;
+  padding: 12px;
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+textarea {
+  min-height: 180px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field {
+  margin-bottom: 17px;
+}
+
+/* SCENES */
+
+.scenes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scene {
+  background: #0c0c13;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px;
+}
+
+.scene.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(139,92,246,.15);
+}
+
+.scene-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.scene-number {
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.scene-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.small-btn {
+  border: 1px solid var(--border);
+  background: #161620;
+  color: #ccc;
+  border-radius: 7px;
+  padding: 6px 9px;
+  font-size: 12px;
+}
+
+.small-btn:hover {
+  border-color: var(--accent);
+}
+
+.scene textarea {
+  min-height: 90px;
+  margin-bottom: 10px;
+}
+
+.scene-bottom {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
+}
+
+.scene-bottom input {
+  height: 42px;
+}
+
+/* SETTINGS */
+
+.setting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.setting {
+  background: #0c0c13;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.setting select {
+  margin-top: 7px;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toggle-row:last-child {
+  border-bottom: none;
+}
+
+.toggle-text strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.toggle-text small {
+  color: var(--muted);
+}
+
+.switch {
+  position: relative;
+  width: 45px;
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #30303d;
+  border-radius: 30px;
+  transition: .2s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: .2s;
+}
+
+.switch input:checked + .slider {
+  background: var(--accent);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(21px);
+}
+
+/* GENERATION */
+
+.generate-box {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(139,92,246,.18), transparent 35%),
+    #11111a;
+  border: 1px solid #322a4b;
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.generate-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.status {
+  margin-top: 15px;
+  padding: 13px;
+  border-radius: 10px;
+  display: none;
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+.status.show {
+  display: block;
+}
+
+.status.info {
+  background: rgba(139,92,246,.1);
+  border: 1px solid rgba(139,92,246,.25);
+}
+
+.status.success {
+  background: rgba(34,197,94,.1);
+  border: 1px solid rgba(34,197,94,.25);
+  color: #86efac;
+}
+
+.status.error {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+
+.progress {
+  height: 8px;
+  background: #282834;
+  border-radius: 20px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .4s;
+}
+
+/* VIDEO RESULT */
+
+.video-result {
+  display: none;
+  margin-top: 18px;
+  background: #0c0c13;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+}
+
+.video-result.show {
+  display: block;
+}
+
+.video-result h4 {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 500px;
+  display: block;
+  background: #000;
+  border-radius: 10px;
+}
+
+.video-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.video-actions a {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* EMPTY */
+
+.empty {
+  text-align: center;
+  padding: 30px 15px;
+  color: var(--muted);
+}
+
+.loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px;
+}
+
+/* MOBILE */
+
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .mobile-header {
+    display: flex;
+    height: 62px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 17px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-logo {
+    font-size: 21px;
+    font-weight: 800;
+  }
+
+  .mobile-logo span {
+    color: var(--accent2);
+  }
+
+  .topbar {
+    height: 60px;
+    padding: 0 17px;
+  }
+
+  .content {
+    padding: 17px;
+  }
+
+  .hero {
+    padding: 20px;
+  }
+
+  .hero h2 {
+    font-size: 23px;
+  }
+
+  .project-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .project-bar select {
+    max-width: none;
+  }
+
+  .setting-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scene-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .video-actions {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      Ani<span>Vora</span>
+    </div>
+
+    <div class="nav-title">Workspace</div>
+
+    <nav class="nav">
+
+      <a href="dashboard.html">
+        🏠 Dashboard
+      </a>
+
+      <a href="dashboard.html#projects">
+        📁 Projects
+      </a>
+
+      <a href="writer.html">
+        ✍️ AniVora Writer
+      </a>
+
+      <a href="video.html" class="active">
+        🎬 Video Creator
+      </a>
+
+    </nav>
+
+    <div class="nav-title">Creation Tools</div>
+
+    <nav class="nav">
+
+      <a href="dashboard.html">
+        👤 Character Creator
+      </a>
+
+      <a href="dashboard.html">
+        🎞️ Scene Builder
+      </a>
+
+      <a href="dashboard.html">
+        🎨 AniVora Art
+      </a>
+
+      <a href="dashboard.html">
+        🎙️ AI Voice
+      </a>
+
+      <a href="dashboard.html">
+        🎵 Music & SFX
+      </a>
+
+      <a href="dashboard.html">
+        🧠 Story Memory
+      </a>
+
+    </nav>
+
+    <button class="logout" id="logoutBtn">
+      Log out
+    </button>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="mobile-header">
+
+      <div class="mobile-logo">
+        Ani<span>Vora</span>
+      </div>
+
+      <button class="small-btn" id="mobileLogout">
+        Logout
+      </button>
+
+    </div>
+
+    <header class="topbar">
+
+      <h1>Video Creator</h1>
+
+      <div class="user-info" id="userEmail">
+        Loading account...
+      </div>
+
+    </header>
+
+    <section class="content">
+
+      <div class="hero">
+
+        <h2>🎬 Create Your Anime Video</h2>
+
+        <p>
+          Turn your story into scenes, visuals, voices,
+          music and a complete cinematic video.
+        </p>
+
+      </div>
+
+      <div class="project-bar">
+
+        <select id="projectSelect">
+          <option value="">Loading projects...</option>
+        </select>
+
+        <button
+          class="btn btn-secondary"
+          id="loadProjectBtn">
+          Load Project
+        </button>
+
+      </div>
+
+      <div class="workspace">
+
+        <div>
+
+          <div class="card">
+
+            <h3>Video Information</h3>
+
+            <div class="card-subtitle">
+              Give your video a title and review the script.
+            </div>
+
+            <div class="field">
+
+              <label for="videoTitle">
+                Video Title
+              </label>
+
+              <input
+                id="videoTitle"
+                type="text"
+                placeholder="My Anime Story">
+
+            </div>
+
+            <div class="field">
+
+              <label for="scriptInput">
+                Script
+              </label>
+
+              <textarea
+                id="scriptInput"
+                placeholder="Your story script will appear here..."></textarea>
+
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <h3>🎞️ Scenes</h3>
+
+            <div class="card-subtitle">
+              Build the scenes that will become your video.
+            </div>
+
+            <div
+              class="scenes"
+              id="scenesContainer">
+
+              <div class="empty">
+                No scenes yet. Add your first scene.
+              </div>
+
+            </div>
+
+            <button
+              class="btn btn-secondary"
+              id="addSceneBtn"
+              style="margin-top:15px;width:100%;">
+              + Add Scene
+            </button>
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div class="card">
+
+            <h3>⚙️ Video Settings</h3>
+
+            <div class="card-subtitle">
+              Choose how AniVora should build your video.
+            </div>
+
+            <div class="setting-grid">
+
+              <div class="setting">
+
+                <label>Aspect Ratio</label>
+
+                <select id="aspectRatio">
+
+                  <option value="16:9">
+                    16:9 — YouTube
+                  </option>
+
+                  <option value="9:16">
+                    9:16 — Shorts/TikTok
+                  </option>
+
+                  <option value="1:1">
+                    1:1 — Square
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div class="setting">
+
+                <label>Resolution</label>
+
+                <select id="resolution">
+
+                  <option value="1080p">
+                    1080p
+                  </option>
+
+                  <option value="720p">
+                    720p
+                  </option>
+
+                  <option value="480p">
+                    480p
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div class="setting">
+
+                <label>Frame Rate</label>
+
+                <select id="frameRate">
+
+                  <option value="24">
+                    24 FPS
+                  </option>
+
+                  <option value="30">
+                    30 FPS
+                  </option>
+
+                  <option value="60">
+                    60 FPS
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div class="setting">
+
+                <label>Voice</label>
+
+                <select id="voice">
+
+                  <option value="none">
+                    No Voice
+                  </option>
+
+                  <option value="female">
+                    Female
+                  </option>
+
+                  <option value="male">
+                    Male
+                  </option>
+
+                  <option value="narrator">
+                    Narrator
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div class="setting">
+
+                <label>Music</label>
+
+                <select id="music">
+
+                  <option value="none">
+                    No Music
+                  </option>
+
+                  <option value="cinematic">
+                    Cinematic
+                  </option>
+
+                  <option value="emotional">
+                    Emotional
+                  </option>
+
+                  <option value="action">
+                    Action
+                  </option>
+
+                  <option value="fantasy">
+                    Fantasy
+                  </option>
+
+                  <option value="dark">
+                    Dark
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+            <div class="toggle-row">
+
+              <div class="toggle-text">
+
+                <strong>Automatic Voice</strong>
+
+                <small>
+                  Generate narration automatically.
+                </small>
+
+              </div>
+
+              <label class="switch">
+
+                <input
+                  type="checkbox"
+                  id="autoVoice">
+
+                <span class="slider"></span>
+
+              </label>
+
+            </div>
+
+            <div class="toggle-row">
+
+              <div class="toggle-text">
+
+                <strong>Sound Effects</strong>
+
+                <small>
+                  Add cinematic scene effects.
+                </small>
+
+              </div>
+
+              <label class="switch">
+
+                <input
+                  type="checkbox"
+                  id="soundEffects"
+                  checked>
+
+                <span class="slider"></span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+          <div class="generate-box">
+
+            <h3>🚀 Generate Video</h3>
+
+            <p
+              style="
+                color:var(--muted);
+                margin-top:8px;
+                line-height:1.5;
+                font-size:13px;
+              ">
+
+              AniVora will create your video job,
+              send the first scene to the video generation
+              engine and monitor the generation automatically.
+
+            </p>
+
+            <button
+              class="btn btn-primary generate-btn"
+              id="generateBtn">
+
+              🎬 Generate Video
+
+            </button>
+
+            <div
+              class="status"
+              id="statusBox">
+
+              <div id="statusText"></div>
+
+              <div class="progress">
+
+                <div
+                  class="progress-bar"
+                  id="progressBar">
+                </div>
+
+              </div>
+
+            </div>
+
+            <div
+              class="video-result"
+              id="videoResult">
+
+              <h4>🎉 Your Video Is Ready</h4>
+
+              <video
+                id="videoPlayer"
+                class="video-player"
+                controls
+                playsinline>
+              </video>
+
+              <div class="video-actions">
+
+                <a
+                  id="openVideoBtn"
+                  class="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer">
+
+                  🔗 Open Video
+
+                </a>
+
+                <a
+                  id="downloadVideoBtn"
+                  class="btn btn-primary"
+                  download>
+
+                  ⬇️ Download Video
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+
+/* ==========================================================
+   SUPABASE
+   ========================================================== */
+
+const SUPABASE_URL =
+  "https://rurwrecfmbsobqsqiepo.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+
+let currentUser = null;
+let currentProject = null;
+let projects = [];
+let scenes = [];
+let selectedScene = null;
+
+let currentJobId = null;
+let pollingTimer = null;
+let generationRunning = false;
+
+
+/* ==========================================================
+   ELEMENTS
+   ========================================================== */
+
+const projectSelect =
+  document.getElementById("projectSelect");
+
+const loadProjectBtn =
+  document.getElementById("loadProjectBtn");
+
+const videoTitle =
+  document.getElementById("videoTitle");
+
+const scriptInput =
+  document.getElementById("scriptInput");
+
+const scenesContainer =
+  document.getElementById("scenesContainer");
+
+const addSceneBtn =
+  document.getElementById("addSceneBtn");
+
+const generateBtn =
+  document.getElementById("generateBtn");
+
+const statusBox =
+  document.getElementById("statusBox");
+
+const statusText =
+  document.getElementById("statusText");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const userEmail =
+  document.getElementById("userEmail");
+
+const videoResult =
+  document.getElementById("videoResult");
+
+const videoPlayer =
+  document.getElementById("videoPlayer");
+
+const openVideoBtn =
+  document.getElementById("openVideoBtn");
+
+const downloadVideoBtn =
+  document.getElementById("downloadVideoBtn");
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+function showStatus(
+  message,
+  type = "info",
+  progress = 0
+) {
+
+  statusBox.className =
+    `status show ${type}`;
+
+  statusText.textContent =
+    message;
+
+  const safeProgress =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(progress) || 0
+      )
+    );
+
+  progressBar.style.width =
+    `${safeProgress}%`;
+}
+
+
+/* ==========================================================
+   AUTH
+   ========================================================== */
+
+async function checkAuth() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (
+    error ||
+    !data ||
+    !data.session
+  ) {
+
+    window.location.href =
+      "login.html";
+
+    return false;
+  }
+
+  currentUser =
+    data.session.user;
+
+  userEmail.textContent =
+    currentUser.email ||
+    "Account";
+
+  return true;
+}
+
+
+/* ==========================================================
+   LOAD PROJECTS
+   ========================================================== */
+
+async function loadProjects() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("projects")
+      .select("*")
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+  if (error) {
+
+    console.error(error);
+
+    projectSelect.innerHTML =
+      `<option value="">
+        Could not load projects
+      </option>`;
+
+    return;
+  }
+
+  projects =
+    data || [];
+
+  projectSelect.innerHTML =
+    "";
+
+  if (
+    projects.length === 0
+  ) {
+
+    projectSelect.innerHTML =
+      `<option value="">
+        No projects found
+      </option>`;
+
+    return;
+  }
+
+  projects.forEach(
+    project => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        project.id;
+
+      option.textContent =
+        project.title ||
+        "Untitled Project";
+
+      projectSelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const requestedProject =
+    params.get("project");
+
+  if (
+    requestedProject &&
+    projects.some(
+      p =>
+        p.id === requestedProject
+    )
+  ) {
+
+    projectSelect.value =
+      requestedProject;
+
+  }
+
+  await loadSelectedProject();
+}
+
+
+/* ==========================================================
+   LOAD SELECTED PROJECT
+   ========================================================== */
+
+async function loadSelectedProject() {
+
+  const projectId =
+    projectSelect.value;
+
+  if (!projectId) {
+    return;
+  }
+
+  currentProject =
+    projects.find(
+      p =>
+        p.id === projectId
+    );
+
+  if (!currentProject) {
+    return;
+  }
+
+  videoTitle.value =
+    currentProject.title ||
+    "";
+
+  await loadScript(
+    projectId
+  );
+
+  await loadScenes(
+    projectId
+  );
+}
+
+
+/* ==========================================================
+   LOAD SCRIPT
+   ========================================================== */
+
+async function loadScript(
+  projectId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("scripts")
+      .select("*")
+      .eq(
+        "project_id",
+        projectId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      )
+      .limit(1);
+
+  if (error) {
+
+    console.warn(
+      "Could not load script:",
+      error
+    );
+
+    scriptInput.value =
+      "";
+
+    return;
+  }
+
+  if (
+    data &&
+    data.length > 0
+  ) {
+
+    const script =
+      data[0];
+
+    scriptInput.value =
+      script.content ||
+      script.script ||
+      script.text ||
+      "";
+
+  } else {
+
+    scriptInput.value =
+      "";
+
+  }
+}
+
+
+/* ==========================================================
+   LOAD SCENES
+   ========================================================== */
+
+async function loadScenes(
+  projectId
+) {
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("video_scenes")
+        .select("*")
+        .eq(
+          "project_id",
+          projectId
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .order(
+          "scene_order",
+          {
+            ascending: true
+          }
+        );
+
+    if (
+      error ||
+      !data
+    ) {
+
+      scenes =
+        [];
+
+      renderScenes();
+
+      return;
+    }
+
+    scenes =
+      data.map(
+        (scene, index) => ({
+
+          id:
+            scene.id,
+
+          order:
+            scene.scene_order ||
+            index + 1,
+
+          description:
+            scene.description ||
+            "",
+
+          duration:
+            scene.duration ||
+            5,
+
+          imageUrl:
+            scene.image_url ||
+            null
+
+        })
+      );
+
+    renderScenes();
+
+  } catch (error) {
+
+    console.warn(
+      "video_scenes table unavailable."
+    );
+
+    scenes =
+      [];
+
+    renderScenes();
+
+  }
+}
+
+
+/* ==========================================================
+   RENDER SCENES
+   ========================================================== */
+
+function renderScenes() {
+
+  scenesContainer.innerHTML =
+    "";
+
+  if (
+    scenes.length === 0
+  ) {
+
+    scenesContainer.innerHTML =
+      `<div class="empty">
+        No scenes yet. Add your first scene.
+      </div>`;
+
+    return;
+  }
+
+  scenes.forEach(
+    (scene, index) => {
+
+      const wrapper =
+        document.createElement(
+          "div"
+        );
+
+      wrapper.className =
+        "scene";
+
+      if (
+        selectedScene ===
+        scene.id
+      ) {
+
+        wrapper.classList.add(
+          "selected"
+        );
+
+      }
+
+      wrapper.onclick =
+        () => {
+
+          selectedScene =
+            scene.id;
+
+          renderScenes();
+
+        };
+
+
+      wrapper.innerHTML = `
+
+        <div class="scene-head">
+
+          <div class="scene-number">
+            Scene ${index + 1}
+          </div>
+
+          <div class="scene-actions">
+
+            <button
+              class="small-btn"
+              onclick="moveScene(event, ${index}, -1)">
+              ↑
+            </button>
+
+            <button
+              class="small-btn"
+              onclick="moveScene(event, ${index}, 1)">
+              ↓
+            </button>
+
+            <button
+              class="small-btn"
+              onclick="deleteScene(event, ${index})">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+        <textarea
+          placeholder="Describe what happens in this scene..."
+          onchange="updateScene(${index}, 'description', this.value)"
+          onclick="event.stopPropagation()"
+        >${escapeHtml(scene.description)}</textarea>
+
+        <div class="scene-bottom">
+
+          <div>
+
+            <label>
+              Duration
+            </label>
+
+            <input
+              type="number"
+              min="1"
+              max="300"
+              value="${scene.duration}"
+              onchange="updateScene(${index}, 'duration', this.value)"
+              onclick="event.stopPropagation()"
+            >
+
+          </div>
+
+          <div>
+
+            <label>
+              Visual
+            </label>
+
+            <input
+              type="text"
+              placeholder="Optional image URL"
+              value="${escapeAttribute(scene.imageUrl || '')}"
+              onchange="updateScene(${index}, 'imageUrl', this.value)"
+              onclick="event.stopPropagation()"
+            >
+
+          </div>
+
+        </div>
+
+      `;
+
+      scenesContainer.appendChild(
+        wrapper
+      );
+
+    }
+  );
+}
+
+
+/* ==========================================================
+   ESCAPE
+   ========================================================== */
+
+function escapeHtml(
+  value
+) {
+
+  return String(value)
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+}
+
+function escapeAttribute(
+  value
+) {
+
+  return escapeHtml(
+    value
+  );
+}
+
+
+/* ==========================================================
+   ADD SCENE
+   ========================================================== */
+
+addSceneBtn.addEventListener(
+  "click",
+  () => {
+
+    const newScene = {
+
+      id:
+        "local_" +
+        Date.now(),
+
+      order:
+        scenes.length + 1,
+
+      description:
+        "",
+
+      duration:
+        5,
+
+      imageUrl:
+        null
+
+    };
+
+    scenes.push(
+      newScene
+    );
+
+    selectedScene =
+      newScene.id;
+
+    renderScenes();
+
+  }
+);
+
+
+/* ==========================================================
+   UPDATE SCENE
+   ========================================================== */
+
+window.updateScene =
+  function(
+    index,
+    field,
+    value
+  ) {
+
+    if (
+      !scenes[index]
+    ) {
+
+      return;
+    }
+
+    if (
+      field ===
+      "duration"
+    ) {
+
+      let duration =
+        Number(value);
+
+      if (
+        !Number.isFinite(
+          duration
+        ) ||
+        duration < 1
+      ) {
+
+        duration =
+          5;
+
+      }
+
+      scenes[index].duration =
+        duration;
+
+    } else {
+
+      scenes[index][field] =
+        value;
+
+    }
+
+  };
+
+
+/* ==========================================================
+   DELETE SCENE
+   ========================================================== */
+
+window.deleteScene =
+  function(
+    event,
+    index
+  ) {
+
+    event.stopPropagation();
+
+    scenes.splice(
+      index,
+      1
+    );
+
+    scenes.forEach(
+      (
+        scene,
+        i
+      ) => {
+
+        scene.order =
+          i + 1;
+
+      }
+    );
+
+    selectedScene =
+      null;
+
+    renderScenes();
+
+  };
+
+
+/* ==========================================================
+   MOVE SCENE
+   ========================================================== */
+
+window.moveScene =
+  function(
+    event,
+    index,
+    direction
+  ) {
+
+    event.stopPropagation();
+
+    const newIndex =
+      index + direction;
+
+    if (
+      newIndex < 0 ||
+      newIndex >=
+      scenes.length
+    ) {
+
+      return;
+    }
+
+    [
+      scenes[index],
+      scenes[newIndex]
+    ] = [
+      scenes[newIndex],
+      scenes[index]
+    ];
+
+    scenes.forEach(
+      (
+        scene,
+        i
+      ) => {
+
+        scene.order =
+          i + 1;
+
+      }
+    );
+
+    renderScenes();
+
+  };
+
+
+/* ==========================================================
+   LOAD PROJECT BUTTON
+   ========================================================== */
+
+loadProjectBtn.addEventListener(
+  "click",
+  async () => {
+
+    showStatus(
+      "Loading project...",
+      "info",
+      10
+    );
+
+    await loadSelectedProject();
+
+    showStatus(
+      "Project loaded.",
+      "success",
+      100
+    );
+
+  }
+);
+
+
+/* ==========================================================
+   GET CURRENT SESSION
+   ========================================================== */
+
+async function getCurrentSession() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (
+    error ||
+    !data ||
+    !data.session
+  ) {
+
+    window.location.href =
+      "login.html";
+
+    return null;
+  }
+
+  return data.session;
+}
+
+
+/* ==========================================================
+   START REAL FAL GENERATION
+   ========================================================== */
+
+async function startFalGeneration(
+  jobId,
+  session
+) {
+
+  showStatus(
+    "Starting AI video generation...",
+    "info",
+    70
+  );
+
+  const response =
+    await fetch(
+      "/api/start-video-generation",
+      {
+
+        method:
+          "POST",
+
+        headers: {
+
+          "Content-Type":
+            "application/json",
+
+          "Authorization":
+            `Bearer ${session.access_token}`
+
+        },
+
+        body:
+          JSON.stringify({
+            jobId
+          })
+
+      }
+    );
+
+  const result =
+    await response.json();
+
+  if (
+    !response.ok ||
+    !result.success
+  ) {
+
+    throw new Error(
+      result.error ||
+      "Could not start AI video generation."
+    );
+
+  }
+
+  showStatus(
+    "AI video generation has started. Preparing your scene...",
+    "info",
+    75
+  );
+
+  return result;
+}
+
+
+/* ==========================================================
+   CHECK GENERATION STATUS
+   ========================================================== */
+
+async function checkGenerationStatus(
+  jobId,
+  session
+) {
+
+  const response =
+    await fetch(
+      `/api/check-video-generation?jobId=${encodeURIComponent(jobId)}`,
+      {
+
+        method:
+          "GET",
+
+        headers: {
+
+          "Authorization":
+            `Bearer ${session.access_token}`
+
+        }
+
+      }
+    );
+
+  const result =
+    await response.json();
+
+  if (
+    !response.ok
+  ) {
+
+    throw new Error(
+      result.error ||
+      "Could not check video generation status."
+    );
+
+  }
+
+  return result;
+}
+
+
+/* ==========================================================
+   POLL VIDEO GENERATION
+   ========================================================== */
+
+async function pollVideoGeneration(
+  jobId,
+  session
+) {
+
+  if (
+    pollingTimer
+  ) {
+
+    clearTimeout(
+      pollingTimer
+    );
+
+    pollingTimer =
+      null;
+
+  }
+
+  try {
+
+    const result =
+      await checkGenerationStatus(
+        jobId,
+        session
+      );
+
+    console.log(
+      "Video generation status:",
+      result
+    );
+
+
+    const status =
+      result.status ||
+      "generating";
+
+    const progress =
+      Number(
+        result.progress || 75
+      );
+
+
+    if (
+      status ===
+        "generating" ||
+      status ===
+        "processing" ||
+      status ===
+        "queued"
+    ) {
+
+      let message =
+        "Your AI video is being generated...";
+
+      if (
+        progress < 85
+      ) {
+
+        message =
+          "AI is generating your scene...";
+
+      } else if (
+        progress < 95
+      ) {
+
+        message =
+          "AI video is almost ready...";
+
+      } else {
+
+        message =
+          "Finishing your video...";
+
+      }
+
+      showStatus(
+        message,
+        "info",
+        progress
+      );
+
+      pollingTimer =
+        setTimeout(
+          () => {
+
+            pollVideoGeneration(
+              jobId,
+              session
+            );
+
+          },
+          5000
+        );
+
+      return;
+    }
+
+
+    if (
+      status ===
+        "completed" ||
+      status ===
+        "ready"
+    ) {
+
+      const videoUrl =
+        result.videoUrl ||
+        result.video_url ||
+        result.video?.url;
+
+      if (!videoUrl) {
+
+        throw new Error(
+          "Video generation completed, but no video URL was returned."
+        );
+
+      }
+
+      handleCompletedVideo(
+        videoUrl
+      );
+
+      return;
+    }
+
+
+    if (
+      status ===
+        "failed" ||
+      status ===
+        "error"
+    ) {
+
+      throw new Error(
+        result.errorMessage ||
+        result.error ||
+        "The AI video generation failed."
+      );
+
+    }
+
+
+    showStatus(
+      "Video generation is still processing...",
+      "info",
+      progress
+    );
+
+    pollingTimer =
+      setTimeout(
+        () => {
+
+          pollVideoGeneration(
+            jobId,
+            session
+          );
+
+        },
+        5000
+      );
+
+  } catch (error) {
+
+    console.error(
+      "Polling error:",
+      error
+    );
+
+    showStatus(
+      error.message ||
+      "Could not check video generation.",
+      "error",
+      0
+    );
+
+    generationRunning =
+      false;
+
+    generateBtn.disabled =
+      false;
+
+    generateBtn.textContent =
+      "🎬 Generate Video";
+
+  }
+
+}
+
+
+/* ==========================================================
+   SHOW COMPLETED VIDEO
+   ========================================================== */
+
+function handleCompletedVideo(
+  videoUrl
+) {
+
+  if (
+    pollingTimer
+  ) {
+
+    clearTimeout(
+      pollingTimer
+    );
+
+    pollingTimer =
+      null;
+
+  }
+
+  videoPlayer.src =
+    videoUrl;
+
+  openVideoBtn.href =
+    videoUrl;
+
+  downloadVideoBtn.href =
+    videoUrl;
+
+  videoResult.classList.add(
+    "show"
+  );
+
+  showStatus(
+    "🎉 Your video is ready! You can preview it below.",
+    "success",
+    100
+  );
+
+  generateBtn.disabled =
+    false;
+
+  generateBtn.textContent =
+    "🎬 Generate Another Video";
+
+  generationRunning =
+    false;
+
+}
+
+
+/* ==========================================================
+   GENERATE VIDEO
+   ========================================================== */
+
+generateBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      generationRunning
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      !currentUser
+    ) {
+
+      showStatus(
+        "Please log in first.",
+        "error",
+        0
+      );
+
+      return;
+    }
+
+
+    if (
+      !currentProject
+    ) {
+
+      showStatus(
+        "Please select a project first.",
+        "error",
+        0
+      );
+
+      return;
+    }
+
+
+    if (
+      !videoTitle.value.trim()
+    ) {
+
+      showStatus(
+        "Please enter a video title.",
+        "error",
+        0
+      );
+
+      videoTitle.focus();
+
+      return;
+    }
+
+
+    if (
+      scenes.length === 0
+    ) {
+
+      showStatus(
+        "Please add at least one scene.",
+        "error",
+        0
+      );
+
+      return;
+    }
+
+
+    const invalidScene =
+      scenes.find(
+        scene =>
+          !scene.description ||
+          !scene.description.trim()
+      );
+
+    if (
+      invalidScene
+    ) {
+
+      showStatus(
+        "Every scene needs a description.",
+        "error",
+        0
+      );
+
+      return;
+    }
+
+
+    const session =
+      await getCurrentSession();
+
+    if (!session) {
+      return;
+    }
+
+
+    const payload = {
+
+      projectId:
+        currentProject.id,
+
+      userId:
+        currentUser.id,
+
+      title:
+        videoTitle.value.trim(),
+
+      script:
+        scriptInput.value.trim(),
+
+      scenes:
+        scenes.map(
+          (
+            scene,
+            index
+          ) => ({
+
+            order:
+              index + 1,
+
+            description:
+              scene.description.trim(),
+
+            duration:
+              Number(
+                scene.duration
+              ) || 5,
+
+            imageUrl:
+              scene.imageUrl ||
+              null
+
+          })
+        ),
+
+      settings: {
+
+        aspectRatio:
+          document.getElementById(
+            "aspectRatio"
+          ).value,
+
+        resolution:
+          document.getElementById(
+            "resolution"
+          ).value,
+
+        frameRate:
+          Number(
+            document.getElementById(
+              "frameRate"
+            ).value
+          ),
+
+        voice:
+          document.getElementById(
+            "voice"
+          ).value,
+
+        autoVoice:
+          document.getElementById(
+            "autoVoice"
+          ).checked,
+
+        music:
+          document.getElementById(
+            "music"
+          ).value,
+
+        soundEffects:
+          document.getElementById(
+            "soundEffects"
+          ).checked
+
+      }
+
+    };
+
+
+    generationRunning =
+      true;
+
+    currentJobId =
+      null;
+
+    generateBtn.disabled =
+      true;
+
+    generateBtn.textContent =
+      "⏳ Creating Video Job...";
+
+    videoResult.classList.remove(
+      "show"
+    );
+
+    videoPlayer.removeAttribute(
+      "src"
+    );
+
+    videoPlayer.load();
+
+
+    showStatus(
+      "Sending your video to AniVora...",
+      "info",
+      15
+    );
+
+
+    try {
+
+      /* ------------------------------------------------------
+         STEP 1 — CREATE DATABASE JOB
+         ------------------------------------------------------ */
+
+      const createResponse =
+        await fetch(
+          "/api/generate-video",
+          {
+
+            method:
+              "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${session.access_token}`
+
+            },
+
+            body:
+              JSON.stringify(
+                payload
+              )
+
+          }
+        );
+
+
+      const createResult =
+        await createResponse.json();
+
+
+      if (
+        !createResponse.ok
+      ) {
+
+        throw new Error(
+          createResult.error ||
+          "Video job creation failed."
+        );
+
+      }
+
+
+      if (
+        !createResult.success
+      ) {
+
+        throw new Error(
+          createResult.error ||
+          "Could not create video job."
+        );
+
+      }
+
+
+      currentJobId =
+        createResult.jobId;
+
+
+      console.log(
+        "AniVora video job created:",
+        createResult
+      );
+
+
+      /* ------------------------------------------------------
+         STEP 2 — START FAL.AI
+         ------------------------------------------------------ */
+
+      generateBtn.textContent =
+        "⏳ Starting AI Generation...";
+
+
+      await startFalGeneration(
+        currentJobId,
+        session
+      );
+
+
+      /* ------------------------------------------------------
+         STEP 3 — MONITOR GENERATION
+         ------------------------------------------------------ */
+
+      generateBtn.textContent =
+        "⏳ Generating Video...";
+
+
+      await pollVideoGeneration(
+        currentJobId,
+        session
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Generate video error:",
+        error
+      );
+
+      if (
+        pollingTimer
+      ) {
+
+        clearTimeout(
+          pollingTimer
+        );
+
+        pollingTimer =
+          null;
+
+      }
+
+      showStatus(
+        error.message ||
+        "Something went wrong while generating your video.",
+        "error",
+        0
+      );
+
+      generateBtn.disabled =
+        false;
+
+      generateBtn.textContent =
+        "🎬 Generate Video";
+
+      generationRunning =
+        false;
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   LOGOUT
+   ========================================================== */
+
+async function logout() {
+
+  if (
+    pollingTimer
+  ) {
+
+    clearTimeout(
+      pollingTimer
+    );
+
+  }
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href =
+    "login.html";
+
+}
+
+document
+  .getElementById(
+    "logoutBtn"
+  )
+  .addEventListener(
+    "click",
+    logout
+  );
+
+document
+  .getElementById(
+    "mobileLogout"
+  )
+  .addEventListener(
+    "click",
+    logout
+  );
+
+
+/* ==========================================================
+   INITIALIZE
+   ========================================================== */
+
+(async function init() {
+
+  const authenticated =
+    await checkAuth();
+
+  if (
+    !authenticated
+  ) {
+
+    return;
+
+  }
+
+  await loadProjects();
+
+})();
+</script>
+
+</body>
+  </html>
