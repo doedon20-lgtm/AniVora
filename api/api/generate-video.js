@@ -1,103 +1,38 @@
-/*
- * AniVora Video Generator API
- * File: /api/generate-video.js
- *
- * Purpose:
- * - Authenticate the AniVora user
- * - Validate the video-generation request
- * - Prepare a structured video job
- * - Return a job ID to video.html
- *
- * IMPORTANT:
- * This version intentionally does NOT hard-code a deprecated
- * video provider. It creates the AniVora video job structure
- * that we can connect to the final production video provider.
- */
+const SUPABASE_URL =
+  process.env.SUPABASE_URL ||
+  "https://rurwrecfmbsobqsqiepo.supabase.co";
 
-const crypto = require("crypto");
+const SUPABASE_ANON_KEY =
+  process.env.SUPABASE_ANON_KEY ||
+  "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
 
 module.exports = async function handler(req, res) {
-  // ---------------------------------------------------------
-  // CORS
-  // ---------------------------------------------------------
-
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "POST, OPTIONS"
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  // ---------------------------------------------------------
-  // METHOD CHECK
-  // ---------------------------------------------------------
-
   if (req.method !== "POST") {
     return res.status(405).json({
       success: false,
-      error: "Method not allowed. Use POST."
+      error: "Method not allowed."
     });
   }
 
   try {
-    // -------------------------------------------------------
-    // ENVIRONMENT
-    // -------------------------------------------------------
-
-    const SUPABASE_URL =
-      process.env.SUPABASE_URL ||
-      "https://rurwrecfmbsobqsqiepo.supabase.co";
-
-    const SUPABASE_ANON_KEY =
-      process.env.SUPABASE_ANON_KEY ||
-      "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
-
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      return res.status(500).json({
-        success: false,
-        error: "Supabase server configuration is missing."
-      });
-    }
-
-    // -------------------------------------------------------
+    // --------------------------------------------------
     // AUTHENTICATION
-    // -------------------------------------------------------
+    // --------------------------------------------------
 
-    const authorization = req.headers.authorization || "";
+    const authHeader = req.headers.authorization || "";
 
-    if (!authorization.startsWith("Bearer ")) {
+    if (!authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        error: "Authentication required."
+        error: "You must be logged in."
       });
     }
 
-    const accessToken =
-      authorization.substring("Bearer ".length).trim();
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid authentication token."
-      });
-    }
-
-    /*
-     * Verify the Supabase access token by asking Supabase
-     * for the currently authenticated user.
-     */
+    const accessToken = authHeader.replace("Bearer ", "").trim();
 
     const userResponse = await fetch(
       `${SUPABASE_URL}/auth/v1/user`,
       {
-        method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           apikey: SUPABASE_ANON_KEY
@@ -108,22 +43,22 @@ module.exports = async function handler(req, res) {
     if (!userResponse.ok) {
       return res.status(401).json({
         success: false,
-        error: "Your login session is invalid or has expired."
+        error: "Your login session has expired."
       });
     }
 
-    const authenticatedUser = await userResponse.json();
+    const user = await userResponse.json();
 
-    if (!authenticatedUser || !authenticatedUser.id) {
+    if (!user || !user.id) {
       return res.status(401).json({
         success: false,
         error: "Unable to verify your account."
       });
     }
 
-    // -------------------------------------------------------
-    // REQUEST BODY
-    // -------------------------------------------------------
+    // --------------------------------------------------
+    // REQUEST DATA
+    // --------------------------------------------------
 
     const body =
       typeof req.body === "string"
@@ -132,340 +67,130 @@ module.exports = async function handler(req, res) {
 
     const {
       projectId,
-      userId,
       title,
       script,
       scenes,
       settings
     } = body;
 
-    // -------------------------------------------------------
-    // USER ID SECURITY CHECK
-    // -------------------------------------------------------
-
-    /*
-     * Never trust the userId supplied by the browser.
-     * Compare it against the authenticated Supabase user.
-     */
-
-    if (userId && userId !== authenticatedUser.id) {
-      return res.status(403).json({
-        success: false,
-        error: "User authentication mismatch."
-      });
-    }
-
-    const ownerId = authenticatedUser.id;
-
-    // -------------------------------------------------------
-    // BASIC VALIDATION
-    // -------------------------------------------------------
-
     if (!projectId) {
       return res.status(400).json({
         success: false,
-        error: "A project ID is required."
+        error: "Project ID is required."
       });
     }
 
-    if (!title || !String(title).trim()) {
+    if (!title || !title.trim()) {
       return res.status(400).json({
         success: false,
-        error: "A video title is required."
+        error: "Video title is required."
       });
     }
 
     if (!Array.isArray(scenes) || scenes.length === 0) {
       return res.status(400).json({
         success: false,
-        error: "Add at least one scene before generating a video."
+        error: "Add at least one scene first."
       });
     }
 
-    // -------------------------------------------------------
-    // NORMALIZE SETTINGS
-    // -------------------------------------------------------
+    // --------------------------------------------------
+    // CALCULATE DURATION
+    // --------------------------------------------------
 
-    const requestedSettings = settings || {};
+    const totalDuration = scenes.reduce((total, scene) => {
+      const duration = Number(scene.duration);
 
-    const allowedAspectRatios = [
-      "16:9",
-      "9:16",
-      "1:1"
-    ];
+      return total + (
+        Number.isFinite(duration) && duration > 0
+          ? duration
+          : 5
+      );
+    }, 0);
 
-    const allowedResolutions = [
-      "1080p",
-      "720p",
-      "480p"
-    ];
+    // --------------------------------------------------
+    // CREATE VIDEO JOB
+    // --------------------------------------------------
 
-    const allowedFrameRates = [
-      24,
-      30,
-      60,
-      "24",
-      "30",
-      "60"
-    ];
-
-    const allowedVoices = [
-      "none",
-      "female",
-      "male",
-      "narrator"
-    ];
-
-    const allowedMusic = [
-      "none",
-      "cinematic",
-      "emotional",
-      "action",
-      "fantasy",
-      "dark"
-    ];
-
-    const aspectRatio =
-      allowedAspectRatios.includes(
-        requestedSettings.aspectRatio
-      )
-        ? requestedSettings.aspectRatio
-        : "16:9";
-
-    const resolution =
-      allowedResolutions.includes(
-        requestedSettings.resolution
-      )
-        ? requestedSettings.resolution
-        : "720p";
-
-    const frameRate =
-      allowedFrameRates.includes(
-        requestedSettings.frameRate
-      )
-        ? Number(requestedSettings.frameRate)
-        : 24;
-
-    const voice =
-      allowedVoices.includes(
-        requestedSettings.voice
-      )
-        ? requestedSettings.voice
-        : "none";
-
-    const music =
-      allowedMusic.includes(
-        requestedSettings.music
-      )
-        ? requestedSettings.music
-        : "none";
-
-    const autoVoice =
-      requestedSettings.autoVoice === true;
-
-    const soundEffects =
-      requestedSettings.soundEffects === true;
-
-    // -------------------------------------------------------
-    // NORMALIZE SCENES
-    // -------------------------------------------------------
-
-    const normalizedScenes = scenes
-      .map((scene, index) => {
-        const description =
-          scene && scene.description
-            ? String(scene.description).trim()
-            : "";
-
-        let duration =
-          Number(scene && scene.duration);
-
-        if (!Number.isFinite(duration) || duration <= 0) {
-          duration = 5;
-        }
-
-        /*
-         * Prevent accidentally huge scene durations.
-         */
-
-        duration = Math.min(duration, 300);
-
-        return {
-          id:
-            scene && scene.id
-              ? String(scene.id)
-              : `scene_${index + 1}`,
-
-          order:
-            Number.isFinite(Number(scene && scene.order))
-              ? Number(scene.order)
-              : index + 1,
-
-          description,
-
-          duration,
-
-          imageUrl:
-            scene && scene.imageUrl
-              ? String(scene.imageUrl)
-              : null
-        };
-      })
-      .filter(scene => scene.description.length > 0);
-
-    if (normalizedScenes.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error:
-          "Your scenes need descriptions before a video can be generated."
-      });
-    }
-
-    // -------------------------------------------------------
-    // TOTAL DURATION
-    // -------------------------------------------------------
-
-    const totalDuration = normalizedScenes.reduce(
-      (total, scene) => total + scene.duration,
-      0
-    );
-
-    // -------------------------------------------------------
-    // CREATE JOB ID
-    // -------------------------------------------------------
-
-    const jobId =
-      `avideo_${Date.now()}_${crypto
-        .randomBytes(6)
-        .toString("hex")}`;
-
-    // -------------------------------------------------------
-    // BUILD VIDEO JOB
-    // -------------------------------------------------------
-
-    const videoJob = {
-      id: jobId,
-
-      provider: "pending",
-
+    const job = {
+      user_id: user.id,
+      project_id: projectId,
+      title: title.trim(),
+      script: script || "",
       status: "queued",
-
       progress: 0,
-
-      createdAt: new Date().toISOString(),
-
-      userId: ownerId,
-
-      projectId: String(projectId),
-
-      title: String(title).trim(),
-
-      script:
-        script
-          ? String(script).trim()
-          : "",
-
-      totalDuration,
-
-      sceneCount: normalizedScenes.length,
-
-      scenes: normalizedScenes,
-
-      settings: {
-        aspectRatio,
-        resolution,
-        frameRate,
-        voice,
-        autoVoice,
-        music,
-        soundEffects
-      }
+      total_duration: totalDuration,
+      scene_count: scenes.length,
+      settings: settings || {},
+      scenes: scenes,
+      video_url: null,
+      error_message: null
     };
 
-    // -------------------------------------------------------
-    // PREPARE SCENE JOBS
-    // -------------------------------------------------------
+    const insertResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/video_jobs`,
+      {
+        method: "POST",
 
-    const sceneJobs = normalizedScenes.map(
-      (scene, index) => ({
-        jobId,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          apikey: SUPABASE_ANON_KEY,
+          "Content-Type": "application/json",
+          Prefer: "return=representation"
+        },
 
-        sceneId: scene.id,
-
-        sceneNumber: index + 1,
-
-        description: scene.description,
-
-        duration: scene.duration,
-
-        imageUrl: scene.imageUrl,
-
-        status: "queued",
-
-        progress: 0,
-
-        clipUrl: null
-      })
+        body: JSON.stringify(job)
+      }
     );
 
-    // -------------------------------------------------------
-    // RESPONSE
-    // -------------------------------------------------------
+    if (!insertResponse.ok) {
+      const errorText = await insertResponse.text();
 
-    /*
-     * At this stage the backend has successfully validated
-     * and prepared the complete AniVora video job.
-     *
-     * We intentionally return the job structure instead of
-     * pretending an MP4 already exists.
-     */
+      console.error(
+        "Supabase video job error:",
+        errorText
+      );
+
+      return res.status(500).json({
+        success: false,
+        error: "Could not create the video generation job."
+      });
+    }
+
+    const createdJobs = await insertResponse.json();
+
+    const createdJob = createdJobs[0];
+
+    // --------------------------------------------------
+    // SUCCESS
+    // --------------------------------------------------
 
     return res.status(202).json({
       success: true,
 
       message:
-        "Your AniVora video generation job has been created.",
+        "AniVora video generation has been queued.",
 
-      jobId,
+      jobId: createdJob.id,
 
-      status: "queued",
+      status: createdJob.status,
 
-      progress: 0,
+      progress: createdJob.progress,
 
-      provider: "pending",
-
-      video: {
-        id: jobId,
-
-        title: videoJob.title,
-
-        projectId: videoJob.projectId,
-
-        totalDuration,
-
-        sceneCount: normalizedScenes.length,
-
-        settings: videoJob.settings,
-
-        scenes: sceneJobs
-      },
-
-      nextStep:
-        "Connect the AniVora video rendering provider to process the queued scenes."
+      videoUrl: null
     });
 
   } catch (error) {
     console.error(
-      "AniVora generate-video error:",
+      "AniVora Video API Error:",
       error
     );
 
     return res.status(500).json({
       success: false,
       error:
-        error && error.message
-          ? error.message
-          : "An unexpected error occurred while creating the video job."
+        error.message ||
+        "Something went wrong while creating your video."
     });
   }
 };
