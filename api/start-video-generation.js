@@ -1,5 +1,3 @@
-// AniVora → fal.ai real video generation
-
 import { fal } from "@fal-ai/client";
 
 const SUPABASE_URL =
@@ -10,7 +8,7 @@ const SUPABASE_ANON_KEY =
   process.env.SUPABASE_ANON_KEY ||
   "sb_publishable_slKGnhr4gZJchooJEWE0tQ_2Wdz4t3O";
 
-const FAL_MODEL = "fal-ai/vidu/q3/text-to-video";
+const MODEL = "fal-ai/vidu/q3/text-to-video";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,26 +19,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    // ----------------------------------
-    // Check FAL key
-    // ----------------------------------
-
+    // -----------------------------
+    // FAL KEY
+    // -----------------------------
     if (!process.env.FAL_KEY) {
       return res.status(500).json({
         success: false,
-        error: "FAL_KEY is not configured."
+        error: "FAL_KEY is missing from Vercel."
       });
     }
 
-    // Configure fal server-side.
     fal.config({
       credentials: process.env.FAL_KEY
     });
 
-    // ----------------------------------
-    // Check user authorization
-    // ----------------------------------
-
+    // -----------------------------
+    // USER AUTH
+    // -----------------------------
     const authHeader = req.headers.authorization || "";
 
     if (!authHeader.startsWith("Bearer ")) {
@@ -53,10 +48,6 @@ export default async function handler(req, res) {
     const accessToken = authHeader
       .replace("Bearer ", "")
       .trim();
-
-    // ----------------------------------
-    // Verify Supabase user
-    // ----------------------------------
 
     const userResponse = await fetch(
       `${SUPABASE_URL}/auth/v1/user`,
@@ -84,10 +75,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // ----------------------------------
-    // Get job ID
-    // ----------------------------------
-
+    // -----------------------------
+    // REQUEST
+    // -----------------------------
     const { jobId } = req.body || {};
 
     if (!jobId) {
@@ -97,15 +87,14 @@ export default async function handler(req, res) {
       });
     }
 
-    // ----------------------------------
-    // Get AniVora video job
-    // ----------------------------------
-
+    // -----------------------------
+    // GET VIDEO JOB
+    // -----------------------------
     const jobResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/video_jobs` +
-      `?id=eq.${encodeURIComponent(jobId)}` +
-      `&user_id=eq.${encodeURIComponent(user.id)}` +
-      `&select=*`,
+        `?id=eq.${encodeURIComponent(jobId)}` +
+        `&user_id=eq.${encodeURIComponent(user.id)}` +
+        `&select=*`,
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
@@ -132,10 +121,9 @@ export default async function handler(req, res) {
 
     const job = jobs[0];
 
-    // ----------------------------------
-    // Read scenes
-    // ----------------------------------
-
+    // -----------------------------
+    // GET SCENES
+    // -----------------------------
     const scenes = Array.isArray(job.scenes)
       ? job.scenes
       : [];
@@ -143,14 +131,13 @@ export default async function handler(req, res) {
     if (!scenes.length) {
       return res.status(400).json({
         success: false,
-        error: "This video job has no scenes."
+        error: "Your video job has no scenes."
       });
     }
 
-    // ----------------------------------
-    // Read settings
-    // ----------------------------------
-
+    // -----------------------------
+    // SETTINGS
+    // -----------------------------
     const settings =
       job.settings &&
       typeof job.settings === "object"
@@ -171,87 +158,76 @@ export default async function handler(req, res) {
         ? settings.resolution
         : "720p";
 
-    // Q3 supports 1–16 seconds.
-    function safeDuration(value) {
-      const duration = Number(value || 5);
-
-      return Math.max(
-        1,
-        Math.min(16, Math.round(duration))
-      );
-    }
-
-    // ----------------------------------
-    // Limit initial batch
-    //
-    // We submit up to 3 scenes at once.
-    // This prevents accidentally creating
-    // a huge bill from one test.
-    // ----------------------------------
-
-    const selectedScenes = scenes
+    // -----------------------------
+    // TEST SAFETY
+    // Only submit ONE scene initially.
+    // -----------------------------
+    const scene = scenes
       .slice()
       .sort(
         (a, b) =>
           Number(a.order || 0) -
           Number(b.order || 0)
+      )[0];
+
+    const duration = Math.max(
+      1,
+      Math.min(
+        16,
+        Math.round(Number(scene.duration || 5))
       )
-      .slice(0, 3);
+    );
 
-    const providerRequests = [];
-
-    // ----------------------------------
-    // Submit scenes to fal.ai
-    // ----------------------------------
-
-    for (let i = 0; i < selectedScenes.length; i++) {
-      const scene = selectedScenes[i];
-
-      const description =
-        String(
-          scene.description ||
+    const description =
+      String(
+        scene.description ||
           scene.prompt ||
-          `Anime scene ${i + 1}`
-        ).trim();
+          "An anime cinematic scene."
+      ).trim();
 
-      const prompt =
-        `Anime cinematic scene. ` +
-        `${description}. ` +
-        `High quality animation, expressive characters, ` +
-        `dynamic camera movement, detailed background, ` +
-        `consistent anime visual style.`;
+    const prompt =
+      `Anime cinematic animation. ${description}. ` +
+      `Detailed characters, expressive animation, ` +
+      `beautiful environment, cinematic camera movement, ` +
+      `high quality anime visual style.`;
 
-      const result = await fal.queue.submit(
-        FAL_MODEL,
-        {
-          input: {
-            prompt,
-            duration: safeDuration(scene.duration),
-            aspect_ratio: aspectRatio,
-            resolution,
-            audio: false
-          }
+    // -----------------------------
+    // SUBMIT REAL FAL JOB
+    // -----------------------------
+    const submitted = await fal.queue.submit(
+      MODEL,
+      {
+        input: {
+          prompt: prompt.slice(0, 2000),
+          duration,
+          aspect_ratio: aspectRatio,
+          resolution,
+          audio: false
         }
-      );
+      }
+    );
 
-      providerRequests.push({
-        sceneIndex: i,
-        sceneOrder: scene.order || i + 1,
-        requestId: result.request_id
-      });
+    const requestId = submitted.request_id;
+
+    if (!requestId) {
+      throw new Error(
+        "fal.ai did not return a request ID."
+      );
     }
 
-    // ----------------------------------
-    // Save provider information
-    // ----------------------------------
-
-    const updatedSettings = {
+    // -----------------------------
+    // SAVE FAL REQUEST ID
+    // -----------------------------
+    const newSettings = {
       ...settings,
 
       provider: "fal",
-      model: FAL_MODEL,
 
-      providerRequests,
+      model: MODEL,
+
+      falRequestId: requestId,
+
+      falSceneOrder: scene.order || 1,
 
       generationStartedAt:
         new Date().toISOString()
@@ -259,8 +235,8 @@ export default async function handler(req, res) {
 
     const updateResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/video_jobs` +
-      `?id=eq.${encodeURIComponent(job.id)}` +
-      `&user_id=eq.${encodeURIComponent(user.id)}`,
+        `?id=eq.${encodeURIComponent(job.id)}` +
+        `&user_id=eq.${encodeURIComponent(user.id)}`,
       {
         method: "PATCH",
 
@@ -274,7 +250,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           status: "generating",
           progress: 75,
-          settings: updatedSettings,
+          settings: newSettings,
           updated_at: new Date().toISOString()
         })
       }
@@ -285,20 +261,16 @@ export default async function handler(req, res) {
 
       return res.status(500).json({
         success: false,
-        error: "Video jobs could not be updated.",
+        error: "Could not save fal.ai request.",
         details
       });
     }
-
-    // ----------------------------------
-    // Success
-    // ----------------------------------
 
     return res.status(202).json({
       success: true,
 
       message:
-        "AniVora video generation has started.",
+        "Real AI video generation has started.",
 
       jobId: job.id,
 
@@ -308,12 +280,9 @@ export default async function handler(req, res) {
 
       provider: "fal",
 
-      model: FAL_MODEL,
+      model: MODEL,
 
-      scenesSubmitted:
-        providerRequests.length,
-
-      providerRequests
+      requestId
     });
 
   } catch (error) {
@@ -326,7 +295,7 @@ export default async function handler(req, res) {
       success: false,
       error:
         error.message ||
-        "Unable to start video generation."
+        "Failed to start AI video generation."
     });
   }
-      }
+  }
