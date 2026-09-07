@@ -104,7 +104,7 @@ export default async function handler(req, res) {
     }
 
     // --------------------------------------------------
-    // VERIFY USER
+    // VERIFY SUPABASE USER
     // --------------------------------------------------
 
     const userResponse =
@@ -133,7 +133,10 @@ export default async function handler(req, res) {
         error:
           "Invalid or expired session.",
         details:
-          details.slice(0, 1000)
+          details.slice(
+            0,
+            1000
+          )
       });
     }
 
@@ -162,16 +165,19 @@ export default async function handler(req, res) {
     ) {
 
       try {
+
         body =
           JSON.parse(body);
+
       } catch {
+
         return sendJson(res, 400, {
           success: false,
           error:
             "Request body is not valid JSON."
         });
-      }
 
+      }
     }
 
     body =
@@ -224,7 +230,10 @@ export default async function handler(req, res) {
         error:
           "Unable to retrieve video job.",
         details:
-          details.slice(0, 3000)
+          details.slice(
+            0,
+            3000
+          )
       });
     }
 
@@ -360,7 +369,7 @@ export default async function handler(req, res) {
       );
 
     // --------------------------------------------------
-    // CALL FAL DIRECTLY
+    // CALL FAL.AI DIRECTLY
     // --------------------------------------------------
 
     const falResponse =
@@ -384,7 +393,8 @@ export default async function handler(req, res) {
               aspect_ratio:
                 aspectRatio,
               resolution,
-              audio: false
+              audio:
+                false
             })
         }
       );
@@ -402,13 +412,19 @@ export default async function handler(req, res) {
       falText
     );
 
+    // --------------------------------------------------
+    // PARSE FAL RESPONSE
+    // --------------------------------------------------
+
     let falData;
 
     try {
 
       falData =
         falText
-          ? JSON.parse(falText)
+          ? JSON.parse(
+              falText
+            )
           : {};
 
     } catch {
@@ -418,12 +434,19 @@ export default async function handler(req, res) {
         error:
           "fal.ai returned an invalid response.",
         details:
-          falText.slice(0, 3000),
+          falText.slice(
+            0,
+            3000
+          ),
         httpStatus:
           falResponse.status
       });
 
     }
+
+    // --------------------------------------------------
+    // FAL ERROR
+    // --------------------------------------------------
 
     if (!falResponse.ok) {
 
@@ -431,15 +454,24 @@ export default async function handler(req, res) {
         success: false,
         error:
           "fal.ai rejected the video generation request.",
+
         details:
           falData?.detail ||
           falData?.message ||
           falData?.error ||
-          falText.slice(0, 3000),
+          falText.slice(
+            0,
+            3000
+          ),
+
         httpStatus:
           falResponse.status
       });
     }
+
+    // --------------------------------------------------
+    // REQUEST ID
+    // --------------------------------------------------
 
     const requestId =
       falData?.request_id ||
@@ -451,10 +483,14 @@ export default async function handler(req, res) {
         success: false,
         error:
           "fal.ai did not return a request ID.",
+
         details:
           JSON.stringify(
             falData
-          ).slice(0, 3000)
+          ).slice(
+            0,
+            3000
+          )
       });
     }
 
@@ -530,11 +566,18 @@ export default async function handler(req, res) {
 
       return sendJson(res, 500, {
         success: false,
+
         error:
           "AI generation started, but AniVora could not save the generation request.",
+
         details:
-          details.slice(0, 3000),
-        requestId
+          details.slice(
+            0,
+            3000
+          ),
+
+        requestId:
+          requestId
       });
     }
 
@@ -565,11 +608,16 @@ export default async function handler(req, res) {
       model:
         MODEL,
 
-      requestId
+      requestId:
+        requestId
 
     });
 
   } catch (error) {
+
+    // --------------------------------------------------
+    // FATAL ERROR
+    // --------------------------------------------------
 
     console.error(
       "START VIDEO GENERATION FATAL ERROR:",
@@ -592,7 +640,5 @@ export default async function handler(req, res) {
         )
 
     });
-
   }
-
-            }
+        }
