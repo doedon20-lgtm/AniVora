@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f8ff">
+  <meta name="description" content="AniVora is your creative workspace for AI video, images, storytelling, editing and voice.">
+  <title>AniVora — Your Creative Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="AniVora home">
+      <span class="brand-mark">A</span>
+      <span>AniVora</span>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle"
+      aria-label="Toggle navigation" aria-expanded="false">
+      ☰
+    </button>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#create">Create</a>
+      <a href="#explore">Explore</a>
+      <a href="#features">Features</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="login-link" href="login.html">Log in</a>
+      <a class="button button-primary button-small" href="create-account.html">
+        Get started
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="create">
+      <div class="hero-content">
+        <span class="eyebrow">
+          <span class="status-dot"></span>
+          YOUR CREATIVE WORKSPACE
+        </span>
+
+        <h1>Ideas become<br>
+          <span class="gradient-text">experiences.</span>
+        </h1>
+
+        <p class="hero-description">
+          Turn your imagination into videos, images, stories and more.
+          One creative space. Endless possibilities.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#creator" class="button button-primary">
+            Start creating <span aria-hidden="true">↗</span>
+          </a>
+          <a href="#explore" class="button button-secondary">
+            Explore creations
+          </a>
+        </div>
+
+        <div class="hero-note">
+          <span>✦</span> Imagine it. Create it. Make it yours.
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-glow"></div>
+
+        <div class="hero-video-frame">
+          <video
+            class="hero-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=80">
+            <source
+              src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+              type="video/mp4">
+          </video>
+
+          <div class="video-overlay">
+            <span class="preview-badge">VIDEO PREVIEW</span>
+            <div>
+              <p class="video-title">A world of possibilities</p>
+              <p class="video-subtitle">Your next idea starts here</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-card floating-card-top">
+          <span class="floating-icon purple-icon">✦</span>
+          <div>
+            <strong>AI creativity</strong>
+            <small>Ideas without limits</small>
+          </div>
+        </div>
+
+        <div class="floating-card floating-card-bottom">
+          <span class="floating-icon blue-icon">▶</span>
+          <div>
+            <strong>Video studio</strong>
+            <small>Bring stories to life</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="creator-section section-wrap" id="creator">
+      <div class="section-heading">
+        <span class="eyebrow">YOUR NEXT CREATION</span>
+        <h2>What will you create?</h2>
+        <p>Choose a creative mode and start with your idea.</p>
+      </div>
+
+      <div class="creator-panel">
+        <div class="mode-tabs" role="tablist" aria-label="Creation modes">
+          <button class="mode-tab active" type="button"
+            data-mode="video" role="tab" aria-selected="true">
+            <span>▶</span> AI Video
+          </button>
+          <button class="mode-tab" type="button"
+            data-mode="image" role="tab" aria-selected="false">
+            <span>▧</span> Image
+          </button>
+          <button class="mode-tab" type="button"
+            data-mode="story" role="tab" aria-selected="false">
+            <span>✎</span> Storytelling
+          </button>
+          <button class="mode-tab" type="button"
+            data-mode="editing" role="tab" aria-selected="false">
+            <span>✂</span> AI Editing
+          </button>
+          <button class="mode-tab" type="button"
+            data-mode="voice" role="tab" aria-selected="false">
+            <span>♫</span> Voice
+          </button>
+        </div>
+
+        <form id="creationForm">
+          <label class="prompt-label" for="promptInput">
+            Describe what you want to create
+          </label>
+
+          <textarea
+            id="promptInput"
+            name="prompt"
+            rows="4"
+            maxlength="2000"
+            placeholder="Describe your video idea, scene, style or story..."
+            required></textarea>
+
+          <div class="prompt-footer">
+            <span id="promptCount">0 / 2000</span>
+            <button type="button" class="text-button" id="clearPrompt">
+              Clear prompt
+            </button>
+          </div>
+
+          <div class="examples-heading">
+            <span>Need inspiration?</span>
+            <span class="examples-hint">Try an idea</span>
+          </div>
+
+          <div class="prompt-examples">
+            <button type="button" class="example-chip"
+              data-prompt="Create a cinematic video of a futuristic city at sunset, with glowing lights and smooth camera movement.">
+              🌆 Futuristic city
+            </button>
+            <button type="button" class="example-chip"
+              data-prompt="Create a peaceful nature scene with misty mountains, flowing water and warm morning sunlight.">
+              🌿 Nature film
+            </button>
+            <button type="button" class="example-chip"
+              data-prompt="Write a short inspiring story about a young creator who turns a small idea into something extraordinary.">
+              ✨ Inspiring story
+            </button>
+            <button type="button" class="example-chip"
+              data-prompt="Create a stylish product advertisement with elegant lighting, close-up shots and smooth transitions.">
+              🎬 Product advert
+            </button>
+          </div>
+
+          <div class="generation-options">
+            <div class="option-group">
+              <label for="styleSelect">Creative style</label>
+              <select id="styleSelect" name="style">
+                <option value="cinematic">Cinematic</option>
+                <option value="realistic">Realistic</option>
+                <option value="animated">Animation</option>
+                <option value="artistic">Artistic</option>
+                <option value="dreamlike">Dreamlike</option>
+              </select>
+            </div>
+
+            <div class="option-group">
+              <label for="aspectSelect">Aspect ratio</label>
+              <select id="aspectSelect" name="aspectRatio">
+                <option value="16:9">Landscape · 16:9</option>
+                <option value="9:16">Vertical · 9:16</option>
+                <option value="1:1">Square · 1:1</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="button button-primary generate-button" type="submit">
+            <span id="generateIcon">✦</span>
+            <span id="generateLabel">Create with AniVora</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+          <p class="form-disclaimer">
+            Your prompt will be prepared for the selected creation mode.
+            Actual generation requires a connected generation service.
+          </p>
+
+          <div class="notice" id="formNotice" role="status" aria-live="polite" hidden></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="explore-section section-wrap" id="explore">
+      <div class="section-heading section-heading-row">
+        <div>
+          <span class="eyebrow">A LITTLE INSPIRATION</span>
+          <h2>Explore the possibilities.</h2>
+          <p>Discover the kinds of scenes and stories you can create.</p>
+        </div>
+        <span class="section-side-note">VIDEO SHOWCASE ✦</span>
+      </div>
+
+      <div class="showcase-grid">
+        <article class="showcase-card">
+          <div class="showcase-media">
+            <video controls muted loop playsinline preload="metadata"
+              poster="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=800&q=80">
+              <source
+                src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+                type="video/mp4">
+              Your browser does not support video.
+            </video>
+            <span class="media-tag">NATURE</span>
+          </div>
+          <div class="showcase-info">
+            <div>
+              <h3>Nature in motion</h3>
+              <p>Light, colour and peaceful scenes.</p>
+            </div>
+            <button class="use-example" type="button"
+              data-prompt="Create a cinematic nature video with golden sunlight, flowers moving in a gentle breeze and a calm atmosphere.">
+              Try idea ↗
+            </button>
+          </div>
+        </article>
+
+        <article class="showcase-card">
+          <div class="showcase-media">
+            <video controls muted loop playsinline preload="metadata"
+              poster="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=800&q=80">
+              <source
+                src="https://www.w3schools.com/html/mov_bbb.mp4"
+                type="video/mp4">
+              Your browser does not support video.
+            </video>
+            <span class="media-tag">STORY</span>
+          </div>
+          <div class="showcase-info">
+            <div>
+              <h3>Tell your story</h3>
+              <p>Turn a simple concept into a scene.</p>
+            </div>
+            <button class="use-example" type="button"
+              data-prompt="Create a short cinematic story with a memorable opening, expressive characters and an uplifting ending.">
+              Try idea ↗
+            </button>
+          </div>
+        </article>
+
+        <article class="showcase-card">
+          <div class="showcase-media">
+            <video controls muted loop playsinline preload="metadata"
+              poster="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80">
+              <source
+                src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+                type="video/webm">
+              Your browser does not support video.
+            </video>
+            <span class="media-tag">CREATIVE</span>
+          </div>
+          <div class="showcase-info">
+            <div>
+              <h3>Visual experiments</h3>
+              <p>Explore different moods and styles.</p>
+            </div>
+            <button class="use-example" type="button"
+              data-prompt="Create an artistic visual sequence with vibrant colours, dramatic lighting and smooth transitions.">
+              Try idea ↗
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <p class="demo-caption">
+        These are external demo clips used to preview the interface.
+        They are not AI-generated AniVora creations.
+      </p>
+    </section>
+
+    <section class="features-section section-wrap" id="features">
+      <div class="section-heading">
+        <span class="eyebrow">ONE CREATIVE SPACE</span>
+        <h2>Everything begins with an idea.</h2>
+        <p>Explore the creative tools planned for the AniVora workspace.</p>
+      </div>
+
+      <div class="features-grid">
+        <article class="feature-card">
+          <span class="feature-icon feature-purple">▶</span>
+          <h3>AI Video</h3>
+          <p>Turn text prompts and creative concepts into video projects.</p>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon feature-blue">▧</span>
+          <h3>Image Creation</h3>
+          <p>Develop visual concepts, artwork and image ideas.</p>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon feature-pink">✎</span>
+          <h3>Storytelling</h3>
+          <p>Shape your ideas into scripts, scenes and engaging stories.</p>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon feature-cyan">♫</span>
+          <h3>Voice & Editing</h3>
+          <p>Prepare projects for voice, editing and creative finishing.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing-section section-wrap">
+      <div class="closing-card">
+        <div>
+          <span class="eyebrow">YOUR IDEA. YOUR WORLD.</span>
+          <h2>Ready to make something?</h2>
+          <p>Start with a thought. Build it into something meaningful.</p>
+        </div>
+        <a href="#creator" class="button button-white">
+          Start creating <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="index.html">
+      <span class="brand-mark">A</span>
+      <span>AniVora</span>
+    </a>
+    <p>Ideas become experiences.</p>
+    <span>© <span id="currentYear"></span> AniVora</span>
+  </footer>
+
+  <script>
+    const promptInput = document.getElementById("promptInput");
+    const promptCount = document.getElementById("promptCount");
+    const creationForm = document.getElementById("creationForm");
+    const formNotice = document.getElementById("formNotice");
+    const generateLabel = document.getElementById("generateLabel");
+    const generateIcon = document.getElementById("generateIcon");
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    let selectedMode = "video";
+
+    const modeLabels = {
+      video: "Create video",
+      image: "Create image",
+      story: "Create story",
+      editing: "Prepare editing",
+      voice: "Create voice"
+    };
+
+    const modePlaceholders = {
+      video: "Describe your video idea, scene, style or story...",
+      image: "Describe the image, artwork or visual you want to create...",
+      story: "Describe the story, characters or script you want to write...",
+      editing: "Describe the footage or project you want to edit...",
+      voice: "Write the words or describe the voice you want to create..."
+    };
+
+    function updatePromptCount() {
+      promptCount.textContent = `${promptInput.value.length} / 2000`;
+    }
+
+    function showNotice(message, type = "info") {
+      formNotice.hidden = false;
+      formNotice.className = `notice notice-${type}`;
+      formNotice.textContent = message;
+    }
+
+    function usePrompt(prompt) {
+      promptInput.value = prompt;
+      updatePromptCount();
+      document.getElementById("creator").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+      promptInput.focus();
+      formNotice.hidden = true;
+    }
+
+    document.querySelectorAll(".mode-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        selectedMode = tab.dataset.mode;
+
+        document.querySelectorAll(".mode-tab").forEach((item) => {
+          const isActive = item === tab;
+          item.classList.toggle("active", isActive);
+          item.setAttribute("aria-selected", String(isActive));
+        });
+
+        promptInput.placeholder = modePlaceholders[selectedMode];
+        generateLabel.textContent = modeLabels[selectedMode];
+        generateIcon.textContent =
+          selectedMode === "video" ? "▶" :
+          selectedMode === "image" ? "▧" :
+          selectedMode === "story" ? "✎" :
+          selectedMode === "editing" ? "✂" : "♫";
+
+        formNotice.hidden = true;
+      });
+    });
+
+    promptInput.addEventListener("input", updatePromptCount);
+
+    document.getElementById("clearPrompt").addEventListener("click", () => {
+      promptInput.value = "";
+      updatePromptCount();
+      formNotice.hidden = true;
+      promptInput.focus();
+    });
+
+    document.querySelectorAll(".example-chip, .use-example").forEach((button) => {
+      button.addEventListener("click", () => {
+        usePrompt(button.dataset.prompt);
+      });
+    });
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("nav-open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.textContent = isOpen ? "✕" : "☰";
+    });
+
+    navLinks.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("nav-open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.textContent = "☰";
+      });
+    });
+
+    creationForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const prompt = promptInput.value.trim();
+
+      if (!prompt) {
+        showNotice("Please describe what you want to create first.", "error");
+        promptInput.focus();
+        return;
+      }
+
+      const request = {
+        mode: selectedMode,
+        prompt,
+        style: document.getElementById("styleSelect").value,
+        aspectRatio: document.getElementById("aspectSelect").value
+      };
+
+      /*
+        BACKEND CONNECTION REQUIRED:
+        This page currently prepares the request but does not send it to
+        an AI generation service.
+
+        Connect this request to AniVora's EXISTING generation workflow
+        before claiming that videos, images, or voices can be generated.
+        Do not put private API keys in this browser-side JavaScript.
+      */
+
+      console.log("AniVora creation request:", request);
+
+      showNotice(
+        `Your ${selectedMode} request is ready. The generation service is not connected to this form yet.`,
+        "info"
+      );
+    });
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    updatePromptCount();
+  </script>
+</body>
+      </html>
