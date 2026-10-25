@@ -202,3 +202,116 @@ select:focus {
     aspect-ratio: 16 / 10;
   }
 }
+
+/* AniVora: light blue + purple video showcase */
+body {
+  background: linear-gradient(135deg, #edf6ff, #e7eaff 55%, #f3eaff);
+  color: #191744;
+}
+
+.topbar {
+  background: rgba(239, 247, 255, 0.96);
+  border-color: #d6e3ff;
+}
+
+.hero {
+  background:
+    radial-gradient(ellipse at 85% 20%, #cbbcff 0%, transparent 42%),
+    radial-gradient(ellipse at 10% 90%, #c4e5ff 0%, transparent 45%),
+    linear-gradient(135deg, #edf6ff, #e2eaff 65%, #eee5ff);
+}
+
+.marquee-section,
+.explore-section,
+.plans-section {
+  background: #edf5ff;
+  border-color: #d7e3ff;
+}
+
+.studio-section,
+.tools-section {
+  background: linear-gradient(145deg, #e2efff, #f0eaff);
+}
+
+.button-primary {
+  background: linear-gradient(120deg, #8d6aff, #6338e8);
+}
+
+.creator-panel,
+.preview-panel,
+.tool-card {
+  border-color: #d4dfff;
+  box-shadow: 0 16px 40px rgba(67, 64, 151, 0.1);
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.showcase-card {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #c8d8f5;
+}
+
+.showcase-large {
+  grid-column: 1 / -1;
+  min-height: 390px;
+}
+
+.showcase-card > video,
+.showcase-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showcase-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(20, 15, 58, 0.86),
+    rgba(28, 24, 68, 0.05) 75%
+  );
+  pointer-events: none;
+}
+
+.showcase-type,
+.showcase-caption,
+.showcase-action {
+  z-index: 2;
+}
+
+.showcase-action {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(107, 65, 224, 0.9);
+}
+
+.showcase-note {
+  color: #626b91;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+@media (max-width: 600px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .showcase-large {
+    grid-column: auto;
+    min-height: 300px;
+  }
+
+  .showcase-card {
+    min-height: 260px;
+  }
+}
