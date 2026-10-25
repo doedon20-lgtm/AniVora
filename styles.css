@@ -1,0 +1,204 @@
+
+/* AniVora — Light Blue + Purple Video Studio */
+
+:root {
+  --ink: #171844;
+  --muted: #626b91;
+  --purple: #7546f5;
+  --purple-dark: #5930d8;
+  --purple-pale: #eee8ff;
+  --line: #d5e2ff;
+  --surface: #f5f8ff;
+  --background: #e5efff;
+  --shadow: 0 16px 45px rgba(71, 68, 174, 0.12);
+}
+
+body {
+  color: var(--ink);
+  background: linear-gradient(145deg, #edf5ff 0%, #e0ebff 50%, #f1eaff 100%);
+}
+
+.topbar {
+  background: rgba(240, 247, 255, 0.94);
+  border-color: #d7e3ff;
+}
+
+.desktop-nav a:hover,
+.desktop-nav a.active,
+.sign-in,
+.text-link,
+.text-button,
+.tool-link {
+  color: var(--purple);
+}
+
+.brand-mark {
+  background: linear-gradient(135deg, #9d8aff, #663bea);
+}
+
+.button-primary {
+  background: linear-gradient(120deg, #8b68ff, #6539e7);
+  box-shadow: 0 8px 22px rgba(103, 57, 231, 0.24);
+}
+
+.hero {
+  background:
+    radial-gradient(ellipse at 85% 25%, #cbbcff 0%, transparent 40%),
+    radial-gradient(ellipse at 10% 90%, #c5e3ff 0%, transparent 45%),
+    linear-gradient(135deg, #edf6ff, #e0eaff 65%, #eee5ff);
+}
+
+.hero-glow {
+  background: #b6a1ff;
+  opacity: 0.4;
+}
+
+.hero h1 span {
+  background: linear-gradient(100deg, #8155ff, #5324d4, #a34cf4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.marquee-section,
+.explore-section,
+.plans-section {
+  background: #edf5ff;
+  border-color: #d5e2ff;
+}
+
+.studio-section,
+.tools-section {
+  background: linear-gradient(150deg, #e4efff, #f0eaff);
+}
+
+.creator-panel,
+.preview-panel,
+.tool-card {
+  border-color: #d4dfff;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 16px 40px rgba(67, 64, 151, 0.09);
+}
+
+.panel-tabs {
+  background: #e7edff;
+}
+
+.panel-tab.active {
+  color: #653be4;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(90, 63, 175, 0.13);
+}
+
+textarea,
+select {
+  border-color: #d1dcf5;
+  background: #fbfdff;
+}
+
+textarea:focus,
+select:focus {
+  border-color: #8b6bfa;
+  box-shadow: 0 0 0 3px rgba(117, 70, 245, 0.13);
+}
+
+.preview-tag,
+.icon-purple {
+  color: #653be4;
+  background: #ece5ff;
+}
+
+.showcase-card {
+  min-height: 310px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(36, 31, 91, 0.13);
+}
+
+.showcase-card > img {
+  transition: transform 0.8s ease;
+}
+
+.showcase-card:hover > img {
+  transform: scale(1.08);
+}
+
+.showcase-action {
+  border-color: #ffffff70;
+  background: rgba(106, 62, 226, 0.72);
+}
+
+.showcase-action:hover {
+  background: #6338e8;
+}
+
+.tool-card:hover {
+  border-color: #a994ff;
+  box-shadow: 0 18px 45px rgba(91, 58, 207, 0.15);
+}
+
+.plans-note {
+  background: #f3f7ff;
+  border-color: #d5e2ff;
+}
+
+.footer {
+  background: #e6efff;
+  border-color: #d2def7;
+}
+
+.cta-section {
+  background:
+    radial-gradient(ellipse at 50% 0%, #7958ed 0%, transparent 60%),
+    linear-gradient(125deg, #201847, #4830a0);
+}
+
+/* Make video gallery cards wider and cinematic */
+.showcase-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.showcase-card {
+  aspect-ratio: 16 / 10;
+  min-height: 0;
+}
+
+.showcase-card > video,
+.showcase-card > img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+
+@media (max-width: 760px) {
+  .showcase-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .showcase-card {
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+  }
+
+  .showcase-large {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 380px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .showcase-large {
+    grid-column: auto;
+  }
+
+  .showcase-card {
+    aspect-ratio: 16 / 10;
+  }
+}
