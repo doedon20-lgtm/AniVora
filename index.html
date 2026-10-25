@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="AniVora — create AI videos, images, stories and visual experiences.">
+  <title>AniVora — Create Beyond Imagination</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AniVora home">
+      <span class="brand-mark">A<span>✦</span></span>
+      <span>AniVora</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a class="active" href="#create">Create</a>
+      <a href="#explore">Explore</a>
+      <a href="#tools">AI tools</a>
+      <a href="#pricing">Plans</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="sign-in" href="login.html">Log in</a>
+      <a class="button button-primary header-cta" href="create-account.html">Get started <span>↗</span></a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="create">
+      <div class="hero-glow"></div>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> YOUR AI CREATIVE STUDIO</div>
+        <h1>Your imagination.<br><span>Without limits.</span></h1>
+        <p class="hero-description">
+          Turn a simple idea into videos, images and stories.
+          Create something extraordinary with AniVora.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary button-large" href="#studio">Start creating <span>↗</span></a>
+          <a class="button button-light button-large" href="#explore"><span class="play-icon">▶</span> Explore creations</a>
+        </div>
+
+        <div class="hero-note">
+          <span class="sparkle">✦</span>
+          Your idea is the starting point. You direct the creation.
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="AI creative showcase">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="floating-card floating-top">
+          <span class="mini-icon">✦</span>
+          <span><strong>Imagine anything</strong><small>Bring your ideas to life</small></span>
+        </div>
+        <div class="hero-art">
+          <img
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1100&q=85"
+            alt="Dreamlike mountain landscape"
+          >
+          <div class="art-shade"></div>
+          <div class="art-label"><span class="live-dot"></span> MADE FOR CREATORS</div>
+          <div class="art-caption">
+            <span>01 / YOUR NEXT IDEA</span>
+            <strong>Make the impossible<br>feel real.</strong>
+          </div>
+        </div>
+        <div class="floating-card floating-bottom">
+          <div class="avatar-stack"><span>A</span><span>✦</span><span>V</span></div>
+          <span><strong>One creative space</strong><small>Ideas become experiences</small></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="marquee-section" aria-label="Creative capabilities">
+      <div class="marquee-track">
+        <span>AI VIDEO <i>✦</i></span><span>IMAGE CREATION <i>✦</i></span>
+        <span>STORYTELLING <i>✦</i></span><span>AI EDITING <i>✦</i></span>
+        <span>VOICE <i>✦</i></span><span>AI VIDEO <i>✦</i></span>
+        <span>IMAGE CREATION <i>✦</i></span><span>STORYTELLING <i>✦</i></span>
+        <span>AI EDITING <i>✦</i></span><span>VOICE <i>✦</i></span>
+      </div>
+    </section>
+
+    <section class="section studio-section" id="studio">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">YOUR CREATIVE WORKSPACE</span>
+          <h2>What will you create?</h2>
+          <p>Choose a starting point. You bring the idea; AniVora helps shape it.</p>
+        </div>
+      </div>
+
+      <div class="creator-layout">
+        <div class="creator-panel">
+          <div class="panel-tabs" role="tablist" aria-label="Creation type">
+            <button class="panel-tab active" type="button" data-mode="video" role="tab" aria-selected="true">▶ Video</button>
+            <button class="panel-tab" type="button" data-mode="image" role="tab" aria-selected="false">▧ Image</button>
+            <button class="panel-tab" type="button" data-mode="story" role="tab" aria-selected="false">✎ Story</button>
+          </div>
+
+          <form id="creationForm">
+            <label class="field-label" for="prompt">Describe your idea</label>
+            <textarea id="prompt" name="prompt" maxlength="4000" placeholder="A cinematic shot of a futuristic city floating above the clouds at sunset..." required></textarea>
+            <div class="prompt-footer">
+              <span id="promptCount">0 / 4000</span>
+              <button class="text-button" type="button" id="examplePrompt">✦ Try an example</button>
+            </div>
+
+            <div class="field-row" id="videoOptions">
+              <div class="field-group">
+                <label class="field-label" for="aspectRatio">Aspect ratio</label>
+                <select id="aspectRatio" name="aspect_ratio">
+                  <option value="16:9">Landscape · 16:9</option>
+                  <option value="9:16">Portrait · 9:16</option>
+                  <option value="1:1">Square · 1:1</option>
+                  <option value="4:3">Classic · 4:3</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="duration">Duration</label>
+                <select id="duration" name="duration">
+                  <option value="5">5 seconds</option>
+                  <option value="10">10 seconds</option>
+                  <option value="15">15 seconds</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="style">Visual direction</label>
+                <select id="style" name="style">
+                  <option value="cinematic">Cinematic</option>
+                  <option value="realistic">Photorealistic</option>
+                  <option value="anime">Anime</option>
+                  <option value="fantasy">Fantasy</option>
+                  <option value="3d">3D animation</option>
+                  <option value="artistic">Artistic</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="quality">Quality preference</label>
+                <select id="quality" name="quality">
+                  <option value="standard">Standard</option>
+                  <option value="high">High detail</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="button button-primary generate-button" id="generateButton" type="submit">
+              <span id="generateIcon">✦</span>
+              <span id="generateLabel">Create video</span>
+              <span class="button-arrow">↗</span>
+            </button>
+            <p class="form-disclaimer">Generation availability depends on your connected AniVora service and enabled models.</p>
+            <div id="generationStatus" class="generation-status" role="status" aria-live="polite" hidden></div>
+          </form>
+        </div>
+
+        <aside class="preview-panel">
+          <div class="preview-header">
+            <div><span class="preview-dot"></span> CREATIVE PREVIEW</div>
+            <span class="preview-tag">ANI VORA</span>
+          </div>
+          <div class="preview-canvas" id="previewCanvas">
+            <img id="previewImage" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85" alt="Example cinematic landscape preview">
+            <div class="preview-overlay">
+              <span class="preview-overline" id="previewOverline">YOUR IDEA STARTS HERE</span>
+              <h3 id="previewTitle">Imagine.<br>Create. Repeat.</h3>
+              <p id="previewDescription">Your next creation begins with a prompt.</p>
+            </div>
+            <span class="preview-watermark">✦ AniVora</span>
+          </div>
+          <div class="preview-bottom">
+            <span><i></i> Creative possibilities</span>
+            <span>01 / 04</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section explore-section" id="explore">
+      <div class="section-heading heading-with-link">
+        <div>
+          <span class="eyebrow">A LITTLE INSPIRATION</span>
+          <h2>Ideas in motion.</h2>
+          <p>Explore visual directions for your next creation.</p>
+        </div>
+        <a class="text-link" href="#studio">Create your own <span>↗</span></a>
+      </div>
+
+      <div class="showcase-grid">
+        <article class="showcase-card showcase-large">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85" alt="Sunlight over a dramatic mountain valley">
+          <div class="showcase-shade"></div>
+          <span class="showcase-type">CINEMATIC WORLDS</span>
+          <div class="showcase-caption"><h3>Worlds beyond reality</h3><p>Big ideas. Bigger horizons.</p></div>
+          <button class="showcase-action" type="button" data-prompt="A cinematic journey through an enormous mountain valley at golden hour, drifting clouds, dramatic sunlight, realistic camera movement.">Use this idea ↗</button>
+        </article>
+
+        <article class="showcase-card">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=85" alt="Purple and blue galaxy in space">
+          <div class="showcase-shade"></div>
+          <span class="showcase-type">COSMIC DREAMS</span>
+          <div class="showcase-caption"><h3>Somewhere in space</h3><p>Make the unreal feel real.</p></div>
+          <button class="showcase-action" type="button" data-prompt="A beautiful nebula swirling in deep space, luminous purple and blue gas clouds, distant stars, slow cinematic camera movement.">Use this idea ↗</button>
+        </article>
+
+        <article class="showcase-card">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=85" alt="Night sky full of stars">
+          <div class="showcase-shade"></div>
+          <span class="showcase-type">VISUAL STORIES</span>
+          <div class="showcase-caption"><h3>Stories in the stars</h3><p>Every frame tells a story.</p></div>
+          <button class="showcase-action" type="button" data-prompt="A quiet night under a sky filled with stars, soft moonlight over a remote landscape, atmospheric, dreamy, cinematic wide shot.">Use this idea ↗</button>
+        </article>
+      </div>
+      <p class="showcase-note">These are inspiration images, not generated video results.</p>
+    </section>
+
+    <section class="section tools-section" id="tools">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">ONE CREATIVE HOME</span>
+          <h2>More ways to make it yours.</h2>
+          <p>Build your creative workflow one tool at a time.</p>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <a class="tool-card" href="#studio" data-tool-mode="video">
+          <span class="tool-icon icon-purple">▶</span><span class="tool-label">VIDEO STUDIO</span>
+          <h3>Turn words into motion</h3><p>Start with a scene, a story or a moment you want to bring to life.</p><span class="tool-link">Start creating ↗</span>
+        </a>
+        <a class="tool-card" href="#studio" data-tool-mode="image">
+          <span class="tool-icon icon-orange">▧</span><span class="tool-label">IMAGE STUDIO</span>
+          <h3>Make the image you imagine</h3><p>Explore concepts, characters, visual styles and creative directions.</p><span class="tool-link">Explore images ↗</span>
+        </a>
+        <a class="tool-card" href="#studio" data-tool-mode="story">
+          <span class="tool-icon icon-blue">✎</span><span class="tool-label">STORY STUDIO</span>
+          <h3>Give your ideas a voice</h3><p>Develop stories and scripts that can become your next production.</p><span class="tool-link">Write a story ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="cta-glow"></div>
+      <span class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
+      <h2>Don't just imagine it.<br><span>Make it happen.</span></h2>
+      <p>Start with an idea. Build something that feels like you.</p>
+      <a class="button button-white button-large" href="#studio">Enter the creative studio <span>↗</span></a>
+    </section>
+
+    <section class="section plans-section" id="pricing">
+      <div class="section-heading">
+        <div><span class="eyebrow">YOUR CREATIVE JOURNEY</span><h2>Make room for your ideas.</h2><p>Explore the platform and its capabilities as they become available.</p></div>
+      </div>
+      <div class="plans-note">
+        <span class="plans-symbol">✦</span>
+        <div><strong>Start exploring AniVora</strong><p>Available tools, generation limits and paid plans will be shown when the corresponding services are configured. No made-up pricing or generation promises.</p></div>
+        <a class="button button-light" href="create-account.html">Get started ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="#"><span class="brand-mark">A<span>✦</span></span><span>AniVora</span></a>
+    <p>Made for people who imagine more.</p>
+    <div class="footer-links"><a href="#create">Create</a><a href="#explore">Explore</a><a href="#tools">AI tools</a><a href="login.html">Log in</a></div>
+    <span class="copyright">© <span id="year"></span> AniVora</span>
+  </footer>
+
+  <script>
+    (() => {
+      const $ = (selector) => document.querySelector(selector);
+      const prompt = $("#prompt");
+      const form = $("#creationForm");
+      const status = $("#generationStatus");
+      const generateButton = $("#generateButton");
+      const generateLabel = $("#generateLabel");
+      const generateIcon = $("#generateIcon");
+      const tabs = [...document.querySelectorAll(".panel-tab")];
+      let mode = "video";
+
+      const examples = {
+        video: "A cinematic shot of a futuristic city floating above the clouds at sunset, golden light, gentle camera movement, incredible detail.",
+        image: "A beautiful futuristic city above the clouds at sunset, intricate architecture, cinematic lighting, highly detailed concept art.",
+        story: "Write an inspiring short science-fiction story about a young inventor who discovers a hidden world above the clouds."
+      };
+
+      function updateMode(nextMode) {
+        mode = nextMode;
+        tabs.forEach((tab) => {
+          const selected = tab.dataset.mode === mode;
+          tab.classList.toggle("active", selected);
+          tab.setAttribute("aria-selected", String(selected));
+        });
+        $("#videoOptions").hidden = mode !== "video";
+        generateLabel.textContent = mode === "video" ? "Create video" : mode === "image" ? "Create image" : "Generate story";
+        generateIcon.textContent = mode === "story" ? "✎" : "✦";
+        prompt.placeholder = examples[mode];
+        $("#previewOverline").textContent = mode === "video" ? "YOUR IDEA STARTS HERE" : mode === "image" ? "PICTURE YOUR POSSIBILITIES" : "YOUR STORY STARTS HERE";
+        $("#previewTitle").innerHTML = mode === "video" ? "Imagine.<br>Create. Repeat." : mode === "image" ? "Picture it.<br>Bring it to life." : "Every idea<br>has a story.";
+        $("#previewDescription").textContent = mode === "video" ? "Your next creation begins with a prompt." : mode === "image" ? "Describe the image you want to create." : "Turn a spark of imagination into a story.";
+      }
+
+      tabs.forEach((tab) => tab.addEventListener("click", () => updateMode(tab.dataset.mode)));
+
+      prompt.addEventListener("input", () => {
+        $("#promptCount").textContent = `${prompt.value.length} / 4000`;
+      });
+
+      $("#examplePrompt").addEventListener("click", () => {
+        prompt.value = examples[mode];
+        prompt.dispatchEvent(new Event("input"));
+        prompt.focus();
+      });
+
+      document.querySelectorAll("[data-prompt]").forEach((button) => {
+        button.addEventListener("click", () => {
+          updateMode("video");
+          prompt.value = button.dataset.prompt;
+          prompt.dispatchEvent(new Event("input"));
+          $("#studio").scrollIntoView({ behavior: "smooth" });
+        });
+      });
+
+      document.querySelectorAll("[data-tool-mode]").forEach((link) => {
+        link.addEventListener("click", () => updateMode(link.dataset.toolMode));
+      });
+
+      const menuToggle = $("#menuToggle");
+      menuToggle.addEventListener("click", () => {
+        const open = document.querySelector(".desktop-nav").classList.toggle("nav-open");
+        menuToggle.setAttribute("aria-expanded", String(open));
+        menuToggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+      });
+
+      document.querySelectorAll(".desktop-nav a").forEach((link) => {
+        link.addEventListener("click", () => {
+          document.querySelector(".desktop-nav").classList.remove("nav-open");
+          menuToggle.setAttribute("aria-expanded", "false");
+        });
+      });
+
+      $("#year").textContent = new Date().getFullYear();
+
+      /*
+       * This interface does not guess backend routes or API keys.
+       * Connect the existing AniVora generation integration here.
+       * Until connected, it reports that generation is not wired up.
+       */
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!prompt.value.trim()) {
+          prompt.focus();
+          return;
+        }
+
+        status.hidden = false;
+        status.className = "generation-status status-warning";
+        status.textContent = "The interface is ready, but the generation handler must be connected to your existing AniVora API integration.";
+        generateButton.disabled = false;
+      });
+    })();
+  </script>
+</body>
+</html>
