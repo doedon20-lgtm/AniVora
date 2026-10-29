@@ -553,6 +553,44 @@ input,textarea,select{background:#0b0b0f;border-color:#34313a;border-radius:11px
 @media(max-width:650px){header{height:60px;padding:0 13px}.brand{gap:9px}.logo{width:36px;height:36px}.brand-text h1{font-size:16px}.header-actions{gap:6px}.header-actions .btn{padding:8px 10px;font-size:11px}.layout>aside{top:60px}.layout>aside .nav-item{font-size:11px;padding:8px 10px}.layout>aside .nav-item:nth-child(2),.layout>aside .nav-item:nth-child(3),.layout>aside .nav-item:nth-child(6){display:none}main{padding:17px 13px}.studio-welcome{padding:17px;border-radius:21px;margin-bottom:25px}.welcome-copy h2{font-size:31px}.welcome-composer{padding:12px;margin-top:18px}.composer-controls{gap:7px}.composer-tool{order:2}.composer-presets{order:3;flex-basis:100%}.composer-send{margin-left:auto}.quick-tools{margin-right:-4px}.quick-tools button{font-size:11px;padding:9px 12px}.direct-section{margin:25px 0}.section-heading h3{font-size:18px}.section-heading p{font-size:11px}.video-inspiration-grid{grid-template-columns:1fr 1fr;gap:9px}.inspiration-card{aspect-ratio:4/5;border-radius:15px}.inspiration-card.inspiration-wide{grid-column:1/-1;aspect-ratio:16/9}.inspiration-label{left:10px;bottom:10px;font-size:12px}.inspiration-label span{width:25px;height:25px}.video-tool-grid{gap:8px}.video-tool-grid button{min-height:112px;padding:12px}.workspace{grid-template-columns:1fr}.page-title h2{font-size:22px}.card{padding:15px}.project-row{grid-template-columns:1fr}.project-row>.btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.inspiration-card video{display:none}.inspiration-card{transition:none!important}}
 
+
+/* First functional clip-editor milestone */
+.real-editor{margin:30px 0 36px}
+.editor-badge{font-size:10px;letter-spacing:1px;color:#f3a0de;border:1px solid #613052;background:#281426;border-radius:999px;padding:7px 10px;white-space:nowrap}
+.editor-shell{border:1px solid #302a36;border-radius:19px;overflow:hidden;background:#111115}
+.editor-topbar,.editor-playback,.editor-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px}
+.editor-topbar{border-bottom:1px solid #2c2830}
+.editor-topbar>div{display:flex;align-items:center;gap:9px;min-width:0}
+.editor-topbar b{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor-live-dot{width:8px;height:8px;background:#a7f34a;border-radius:50%;box-shadow:0 0 12px #a7f34a55}
+.editor-import{border-radius:10px;padding:9px 12px;background:#302033;color:#ffb2e8;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.editor-stage{position:relative;display:grid;place-items:center;min-height:210px;aspect-ratio:16/9;max-height:520px;background:radial-gradient(ellipse at center,#211d27,#09090c 72%);overflow:hidden}
+#editorVideo{width:100%;height:100%;max-height:520px;object-fit:contain;display:none}
+.editor-empty{display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;padding:22px;color:#a6a0ad}
+.editor-empty>span{display:grid;place-items:center;width:48px;height:48px;border:1px solid #514056;background:#29182b;border-radius:50%;font-size:20px;color:#ff75d5}
+.editor-empty b{font-size:13px;color:#eee8f1}.editor-empty small{font-size:11px;line-height:1.5;max-width:250px}
+.editor-title-overlay{position:absolute;left:8%;right:8%;top:50%;transform:translateY(-50%);text-align:center;color:white;font-size:clamp(20px,4vw,46px);font-weight:900;line-height:1.1;text-wrap:balance;text-shadow:0 3px 14px #000,0 1px 4px #000;pointer-events:none;display:none}
+.editor-title-overlay.pos-top{top:12%;transform:none}.editor-title-overlay.pos-bottom{top:auto;bottom:12%;transform:none}
+.editor-playback{justify-content:flex-start;flex-wrap:wrap;border-bottom:1px solid #2b2830}
+.editor-playback button,.editor-footer button{border:0;border-radius:10px;padding:10px 13px;background:linear-gradient(120deg,#ed25b7,#a449ff);color:#fff;font-weight:750;font-size:12px}
+.editor-playback button:disabled,.editor-footer button:disabled{opacity:.4;cursor:not-allowed}
+#editorTime{font-variant-numeric:tabular-nums;font-size:11px;color:#b7b0bd;white-space:nowrap}
+#editorSeek{flex:1;min-width:100px;accent-color:#ee35bd}
+.editor-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
+.editor-control{display:flex;flex-direction:column;gap:8px;min-width:0}
+.editor-control label{font-size:11px;color:#d2cbd8;display:flex;justify-content:space-between;gap:8px}
+.editor-control label span{color:#f19cdd;font-variant-numeric:tabular-nums}
+.editor-control input[type=range]{width:100%;accent-color:#ed35bc}
+.editor-control input[type=text],.editor-control select{width:100%;min-width:0;border:1px solid #37313d;border-radius:9px;padding:10px;background:#0b0b0f;color:#f8f4fa;font-size:12px}
+.editor-control input:disabled,.editor-control select:disabled{opacity:.45}
+.editor-footer{align-items:flex-start;border-top:1px solid #2b2830}
+.editor-footer>div{display:flex;flex-direction:column;gap:6px}
+.editor-footer b{font-size:12px}.editor-footer small{max-width:420px;color:#9b95a2;font-size:10px;line-height:1.5}
+.editor-footer button{white-space:nowrap}
+.editor-progress{height:4px;background:#2b2630}.editor-progress div{height:100%;width:0;background:linear-gradient(90deg,#ed25b7,#a449ff);transition:width .15s}
+.editor-message{padding:0 15px 14px;color:#a59eab;font-size:10px;line-height:1.5}
+@media(max-width:600px){.editor-controls{grid-template-columns:1fr;gap:12px;padding:13px}.editor-stage{min-height:180px}.editor-topbar,.editor-playback,.editor-footer{padding:11px}.editor-footer{flex-direction:column}.editor-footer button{width:100%}.editor-import{padding:8px;font-size:11px}}
+
 </style>
 </head>
 
@@ -676,6 +714,28 @@ input,textarea,select{background:#0b0b0f;border-color:#34313a;border-radius:11px
           <button type="button" data-video-tool="Edit Video"><span>✂</span><b>Edit Video</b><small>Refine footage and scenes</small></button>
           <button type="button" data-video-tool="Motion Graphics"><span>✦</span><b>Motion Graphics</b><small>Dynamic titles and transitions</small></button>
           <button type="button" data-video-tool="Script to Video"><span>▤</span><b>Script to Video</b><small>Turn a story into scenes</small></button>
+        </div>
+      </section>
+
+      <section class="real-editor" id="clipEditor">
+        <div class="section-heading"><div><h3>Video editor</h3><p>Import a clip, trim it, add a title, and export a rendered video.</p></div><span class="editor-badge">EDITOR BETA</span></div>
+        <div class="editor-shell">
+          <div class="editor-topbar"><div><span class="editor-live-dot"></span><b id="editorFileName">No clip imported</b></div><label class="editor-import" for="editorFileInput">＋ Import video</label><input id="editorFileInput" type="file" accept="video/*" hidden></div>
+          <div class="editor-stage" id="editorStage">
+            <video id="editorVideo" playsinline preload="metadata"></video>
+            <div class="editor-title-overlay" id="editorTitleOverlay">Your title goes here</div>
+            <div class="editor-empty" id="editorEmpty"><span>▶</span><b>Your preview appears here</b><small>Import a video file from your device to begin editing.</small></div>
+          </div>
+          <div class="editor-playback"><button type="button" id="editorPlay" disabled>▶ Play</button><span id="editorTime">00:00 / 00:00</span><input id="editorSeek" type="range" min="0" max="100" value="0" disabled aria-label="Seek through video"></div>
+          <div class="editor-controls">
+            <div class="editor-control"><label for="editorTrimStart">Trim start <span id="trimStartLabel">0.0s</span></label><input id="editorTrimStart" type="range" min="0" max="100" value="0" disabled></div>
+            <div class="editor-control"><label for="editorTrimEnd">Trim end <span id="trimEndLabel">0.0s</span></label><input id="editorTrimEnd" type="range" min="0" max="100" value="100" disabled></div>
+            <div class="editor-control"><label for="editorTitleText">Title overlay</label><input id="editorTitleText" type="text" maxlength="100" placeholder="Type a title..." disabled></div>
+            <div class="editor-control"><label for="editorTitlePosition">Title position</label><select id="editorTitlePosition" disabled><option value="center">Center</option><option value="top">Top</option><option value="bottom">Bottom</option></select></div>
+          </div>
+          <div class="editor-footer"><div><b id="editorDuration">0.0s selected</b><small>Export records the trimmed preview with your title overlay. Audio and advanced effects are not included in this first editor milestone.</small></div><button id="editorExport" type="button" disabled>↓ Export video</button></div>
+          <div class="editor-progress" id="editorProgress" hidden><div id="editorProgressBar"></div></div>
+          <p class="editor-message" id="editorMessage" role="status">Your imported file stays in this browser session; it is not uploaded to cloud storage.</p>
         </div>
       </section>
 
@@ -1057,6 +1117,96 @@ input,textarea,select{background:#0b0b0f;border-color:#34313a;border-radius:11px
       useQuickPrompt(tool);
     }));
     document.querySelectorAll("[data-scroll-tool]").forEach(button=>button.addEventListener("click",()=>workspace?.scrollIntoView({behavior:"smooth",block:"start"})));
+  });
+
+
+  /* Local clip editor: trim, title overlay, and WebM render */
+  document.addEventListener("DOMContentLoaded", () => {
+    const $ = id => document.getElementById(id);
+    const input=$("editorFileInput"), video=$("editorVideo"), empty=$("editorEmpty");
+    const play=$("editorPlay"), seek=$("editorSeek"), trimStart=$("editorTrimStart"), trimEnd=$("editorTrimEnd");
+    const titleInput=$("editorTitleText"), titleOverlay=$("editorTitleOverlay"), titlePosition=$("editorTitlePosition");
+    const exportButton=$("editorExport"), message=$("editorMessage"), progress=$("editorProgress"), progressBar=$("editorProgressBar");
+    let objectUrl=null, recording=false, rafId=null;
+    const fmt = n => {n=Math.max(0,Number(n)||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0");};
+    const startTime=()=>Number(trimStart.value)/100*(video.duration||0);
+    const endTime=()=>Number(trimEnd.value)/100*(video.duration||0);
+    const updateLabels=()=>{
+      $("trimStartLabel").textContent=startTime().toFixed(1)+"s";
+      $("trimEndLabel").textContent=endTime().toFixed(1)+"s";
+      $("editorDuration").textContent=Math.max(0,endTime()-startTime()).toFixed(1)+"s selected";
+      $("editorTime").textContent=fmt(video.currentTime)+" / "+fmt(video.duration);
+      if(Number(trimStart.value)>=Number(trimEnd.value)) trimEnd.value=Math.min(100,Number(trimStart.value)+1);
+      if(video.currentTime<startTime()||video.currentTime>endTime()) video.currentTime=startTime();
+    };
+    const updateOverlay=()=>{
+      titleOverlay.textContent=titleInput.value.trim();
+      titleOverlay.style.display=titleInput.value.trim()?"block":"none";
+      titleOverlay.classList.toggle("pos-top",titlePosition.value==="top");
+      titleOverlay.classList.toggle("pos-bottom",titlePosition.value==="bottom");
+    };
+    input.addEventListener("change",()=>{
+      const file=input.files&&input.files[0]; if(!file)return;
+      if(!file.type.startsWith("video/")){message.textContent="Please choose a supported video file.";return;}
+      if(objectUrl) URL.revokeObjectURL(objectUrl);
+      objectUrl=URL.createObjectURL(file); video.src=objectUrl; video.style.display="block"; empty.style.display="none";
+      $("editorFileName").textContent=file.name; message.textContent="Loaded locally: "+file.name+". Nothing has been uploaded.";
+      video.onloadedmetadata=()=>{
+        [play,seek,trimStart,trimEnd,titleInput,titlePosition,exportButton].forEach(el=>el.disabled=false);
+        seek.max=video.duration||100; seek.value=0; trimStart.value=0;trimEnd.value=100;
+        video.currentTime=0; updateLabels(); updateOverlay();
+      };
+      video.onerror=()=>{message.textContent="This video format could not be previewed by your browser. Try MP4 (H.264) or WebM.";};
+    });
+    play.addEventListener("click",async()=>{
+      if(video.paused){if(video.currentTime<startTime()||video.currentTime>=endTime())video.currentTime=startTime();try{await video.play();play.textContent="❚❚ Pause";}catch(e){message.textContent="Playback was blocked by the browser. Tap Play again.";}}
+      else{video.pause();play.textContent="▶ Play";}
+    });
+    video.addEventListener("timeupdate",()=>{
+      seek.value=video.currentTime||0;updateLabels();
+      if(!recording&&video.currentTime>=endTime()){video.pause();play.textContent="▶ Play";}
+    });
+    seek.addEventListener("input",()=>{video.currentTime=Number(seek.value);});
+    trimStart.addEventListener("input",()=>{if(Number(trimStart.value)>=Number(trimEnd.value))trimEnd.value=Math.min(100,Number(trimStart.value)+1);updateLabels();});
+    trimEnd.addEventListener("input",()=>{if(Number(trimEnd.value)<=Number(trimStart.value))trimStart.value=Math.max(0,Number(trimEnd.value)-1);updateLabels();});
+    titleInput.addEventListener("input",updateOverlay);titlePosition.addEventListener("change",updateOverlay);
+    exportButton.addEventListener("click",async()=>{
+      if(recording||!video.src||!Number.isFinite(video.duration)){return;}
+      if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){message.textContent="This browser cannot render video from the editor. Please try a recent version of Chrome.";return;}
+      const from=startTime(),to=endTime();if(to-from<0.2){message.textContent="Choose a trim range of at least 0.2 seconds.";return;}
+      recording=true;exportButton.disabled=true;play.disabled=true;progress.hidden=false;progressBar.style.width="0%";
+      message.textContent="Rendering your trimmed video. Keep this tab open until export finishes.";
+      const canvas=document.createElement("canvas");canvas.width=1280;canvas.height=720;
+      const ctx=canvas.getContext("2d");const stream=canvas.captureStream(30);
+      let recorder;
+      try{
+        const mime=["video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"].find(t=>MediaRecorder.isTypeSupported(t));
+        if(!mime)throw new Error("WebM recording is not supported by this browser.");
+        recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:5000000});
+        const chunks=[];recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+        const finished=new Promise((resolve,reject)=>{recorder.onstop=resolve;recorder.onerror=()=>reject(new Error("The browser stopped rendering unexpectedly."));});
+        const draw=()=>{
+          ctx.fillStyle="#08080c";ctx.fillRect(0,0,canvas.width,canvas.height);
+          const vw=video.videoWidth||1,vh=video.videoHeight||1,scale=Math.min(canvas.width/vw,canvas.height/vh),w=vw*scale,h=vh*scale;
+          try{ctx.drawImage(video,(canvas.width-w)/2,(canvas.height-h)/2,w,h);}catch(e){}
+          const title=titleInput.value.trim();
+          if(title){const size=Math.max(28,Math.min(64,canvas.width/(Math.max(8,title.length)*.55)));ctx.font="900 "+size+"px Arial";ctx.textAlign="center";ctx.textBaseline=titlePosition.value==="top"?"top":titlePosition.value==="bottom"?"bottom":"middle";const y=titlePosition.value==="top"?55:titlePosition.value==="bottom"?canvas.height-55:canvas.height/2;ctx.lineWidth=5;ctx.strokeStyle="#000000cc";ctx.strokeText(title,canvas.width/2,y,canvas.width*.84);ctx.fillStyle="#ffffff";ctx.fillText(title,canvas.width/2,y,canvas.width*.84);}
+          const pct=Math.min(100,Math.max(0,(video.currentTime-from)/(to-from)*100));progressBar.style.width=pct+"%";
+          if(recording)rafId=requestAnimationFrame(draw);
+        };
+        video.pause();video.currentTime=from;await new Promise(resolve=>{const once=()=>{video.removeEventListener("seeked",once);resolve();};video.addEventListener("seeked",once);});
+        recorder.start(250);draw();await video.play();
+        await new Promise((resolve,reject)=>{
+          const timer=setInterval(()=>{if(video.currentTime>=to){clearInterval(timer);resolve();}},50);
+          recorder.addEventListener("error",()=>{clearInterval(timer);reject(new Error("Recording failed."));},{once:true});
+        });
+        video.pause();recording=false;if(rafId)cancelAnimationFrame(rafId);recorder.stop();await finished;
+        const blob=new Blob(chunks,{type:mime});if(!blob.size)throw new Error("The rendered file was empty.");
+        const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(($("videoTitle")?.value||"anivora-edit").trim().replace(/[^a-z0-9-_]+/gi,"-")||"anivora-edit")+".webm";document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),60000);progressBar.style.width="100%";message.textContent="Export complete. Your WebM video has been downloaded. Audio is not included in this first export version.";
+      }catch(error){recording=false;if(rafId)cancelAnimationFrame(rafId);if(recorder&&recorder.state!=="inactive")try{recorder.stop();}catch(e){}message.textContent="Export failed: "+(error.message||"Unknown error")+". Your source file remains unchanged.";}
+      finally{recording=false;exportButton.disabled=false;play.disabled=false;video.pause();play.textContent="▶ Play";if(video.src)video.currentTime=from;stream.getTracks().forEach(t=>t.stop());}
+    });
   });
 
   /* =====================================================
