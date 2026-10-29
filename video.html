@@ -498,7 +498,62 @@
         align-items: flex-start;
       }
     }
-  </style>
+  
+/* Cinematic, mobile-first video studio */
+body{background:#09090c;color:#f8f7fb}
+header{height:66px;padding:0 22px;background:rgba(10,10,13,.96);backdrop-filter:blur(18px);border-color:#27252d}
+.logo{background:linear-gradient(135deg,#ef22b9,#8d4dff);box-shadow:0 0 26px #e923b92b}
+.layout{grid-template-columns:220px minmax(0,1fr);background:#09090c}
+aside{background:#0b0b0e;border-color:#24232a}
+.nav-item.active,.nav-item:hover{background:#241222;border-color:#46233f}
+main{max-width:1480px;padding:24px clamp(14px,2.8vw,36px)}
+.studio-welcome{position:relative;overflow:hidden;padding:clamp(18px,3vw,30px);border:1px solid #39313d;border-radius:27px;background:radial-gradient(ellipse at 90% 0%,#54153f 0%,transparent 40%),linear-gradient(135deg,#1b1a20,#111115 65%,#241022);margin-bottom:30px}
+.studio-welcome:after{content:"";position:absolute;right:-110px;top:-160px;width:340px;height:340px;border-radius:50%;border:1px solid #ff59d322;box-shadow:0 0 0 30px #ff59d30a,0 0 0 60px #ff59d306;pointer-events:none}
+.welcome-copy,.welcome-composer,.quick-tools{position:relative;z-index:1}
+.welcome-kicker{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:1.8px;font-weight:800;color:#f38bd9;margin-bottom:13px}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#f52fbc;box-shadow:0 0 12px #f52fbc}
+.welcome-copy h2{font-size:clamp(28px,4vw,44px);letter-spacing:-1.5px;line-height:1.08;margin-bottom:10px}
+.welcome-copy h2 span{background:linear-gradient(100deg,#ff4cc8,#a98aff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.welcome-copy p,.section-heading p{color:#9c98a5;font-size:13px;line-height:1.6}
+.welcome-composer{margin-top:23px;border:1px solid #49404c;border-radius:20px;padding:15px;background:linear-gradient(135deg,#1c1b21,#121216)}
+.welcome-composer label{font-size:14px;color:#f5f1f7;font-weight:700}
+#quickVideoPrompt{min-height:76px;resize:vertical;border:0;background:transparent;padding:8px 0;font-size:14px;line-height:1.65;color:#f7f4fa}
+#quickVideoPrompt:focus{box-shadow:none}
+.composer-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.composer-tool,.composer-presets button{border:1px solid #38333e;background:#27242c;color:#d8d2de;border-radius:999px;padding:9px 12px;font-size:11px}
+.composer-presets{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.composer-send{width:42px;height:42px;flex:0 0 42px;border:0;border-radius:50%;background:linear-gradient(135deg,#ff3dc6,#b34dff);color:white;font-size:25px}
+.quick-tools{display:flex;gap:9px;overflow-x:auto;padding-top:14px;scrollbar-width:none}
+.quick-tools button{flex:0 0 auto;border:1px solid #302d35;background:#1b1a1f;color:#e5e0e9;border-radius:999px;padding:10px 14px;font-size:12px}
+.quick-tools button:hover,.composer-tool:hover,.composer-presets button:hover{border-color:#b84e9e;background:#2a1a2a}
+.direct-section{margin:28px 0 32px}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.section-heading h3{font-size:20px;letter-spacing:-.4px;margin-bottom:4px}
+.view-all{color:#f19cdd;text-decoration:none;font-size:12px;white-space:nowrap}
+.video-inspiration-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:14px}
+.inspiration-card{position:relative;display:block;min-width:0;aspect-ratio:4/3;overflow:hidden;border:1px solid #34313a;border-radius:20px;background:#18171d;padding:0;text-align:left}
+.inspiration-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s ease}
+.inspiration-card:hover video{transform:scale(1.06)}
+.inspiration-shade{position:absolute;inset:0;background:linear-gradient(0deg,#09080ee8 0%,#09080e05 68%)}
+.inspiration-label{position:absolute;left:14px;bottom:13px;display:flex;align-items:center;gap:9px;color:white;font-size:14px;font-weight:750}
+.inspiration-label span{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#ffffff25;backdrop-filter:blur(10px)}
+.video-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.video-tool-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;min-height:125px;padding:14px;border:1px solid #2c2932;border-radius:15px;background:linear-gradient(145deg,#17161c,#101014);color:#f6f2f9}
+.video-tool-grid button>span{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#3b1b39;color:#ff83d8;font-size:18px}
+.video-tool-grid button b{font-size:12px}.video-tool-grid button small{font-size:10px;color:#9994a1;line-height:1.4}
+.video-tool-grid button:hover{border-color:#9b438a;transform:translateY(-2px)}
+#videoCreator{scroll-margin-top:84px;margin-top:36px}
+.workspace{grid-template-columns:minmax(0,1.35fr) minmax(270px,.8fr);gap:16px}
+.card{background:#111115;border-color:#2a2830;border-radius:17px}
+input,textarea,select{background:#0b0b0f;border-color:#34313a;border-radius:11px}
+.btn-primary,.generate-button{background:linear-gradient(120deg,#ed25b7,#a449ff);border:0}
+.generate-box{background:radial-gradient(ellipse at 100% 0%,#4d153e,transparent 60%),#141116;border-color:#3d2a3b;border-radius:17px}
+.video-wrapper{border-radius:12px;overflow:hidden}.status-box{border-color:#38303b;background:#17131a}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.layout>aside{display:flex;gap:7px;overflow-x:auto;white-space:nowrap;padding:9px 12px;border-right:0;border-bottom:1px solid #25232b;position:sticky;top:66px;z-index:15}.layout>aside .nav-title{display:none}.layout>aside .nav-item{width:auto;flex:0 0 auto;margin:0;padding:9px 12px;font-size:12px}.video-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){header{height:60px;padding:0 13px}.brand{gap:9px}.logo{width:36px;height:36px}.brand-text h1{font-size:16px}.header-actions{gap:6px}.header-actions .btn{padding:8px 10px;font-size:11px}.layout>aside{top:60px}.layout>aside .nav-item{font-size:11px;padding:8px 10px}.layout>aside .nav-item:nth-child(2),.layout>aside .nav-item:nth-child(3),.layout>aside .nav-item:nth-child(6){display:none}main{padding:17px 13px}.studio-welcome{padding:17px;border-radius:21px;margin-bottom:25px}.welcome-copy h2{font-size:31px}.welcome-composer{padding:12px;margin-top:18px}.composer-controls{gap:7px}.composer-tool{order:2}.composer-presets{order:3;flex-basis:100%}.composer-send{margin-left:auto}.quick-tools{margin-right:-4px}.quick-tools button{font-size:11px;padding:9px 12px}.direct-section{margin:25px 0}.section-heading h3{font-size:18px}.section-heading p{font-size:11px}.video-inspiration-grid{grid-template-columns:1fr 1fr;gap:9px}.inspiration-card{aspect-ratio:4/5;border-radius:15px}.inspiration-card.inspiration-wide{grid-column:1/-1;aspect-ratio:16/9}.inspiration-label{left:10px;bottom:10px;font-size:12px}.inspiration-label span{width:25px;height:25px}.video-tool-grid{gap:8px}.video-tool-grid button{min-height:112px;padding:12px}.workspace{grid-template-columns:1fr}.page-title h2{font-size:22px}.card{padding:15px}.project-row{grid-template-columns:1fr}.project-row>.btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.inspiration-card video{display:none}.inspiration-card{transition:none!important}}
+
+</style>
 </head>
 
 <body>
@@ -572,17 +627,59 @@
 
     <main>
 
-      <div class="page-title">
-
-        <div>
-          <h2>Video Creator</h2>
-          <p>
-            Turn your story scenes into animated video.
-          </p>
+      <section class="studio-welcome" id="studioHome">
+        <div class="welcome-copy">
+          <span class="welcome-kicker"><span class="pulse-dot"></span> YOUR CREATIVE STUDIO</span>
+          <h2>Make something <span>cinematic.</span></h2>
+          <p>Create videos, direct scenes, and transform your footage with AniVora.</p>
         </div>
+        <div class="welcome-composer">
+          <label for="quickVideoPrompt">What are we making today?</label>
+          <textarea id="quickVideoPrompt" placeholder="A cinematic night drive through a neon city, rain on the windshield, smooth tracking shot..."></textarea>
+          <div class="composer-controls">
+            <button class="composer-tool" type="button" data-scroll-tool="videoCreator">＋ Use project</button>
+            <div class="composer-presets">
+              <button type="button" data-video-preset="Short Film" data-prompt="Create a cinematic short film with dramatic lighting, realistic camera movement and atmospheric depth.">Short Film</button>
+              <button type="button" data-video-preset="Product Ad" data-prompt="Create a premium cinematic product advertisement with macro details, studio lighting and smooth camera movement.">Product Ad</button>
+              <button type="button" data-video-preset="Music Video" data-prompt="Create a cinematic music video with rhythmic cuts, colored lighting and fluid camera movement.">Music Video</button>
+            </div>
+            <button class="composer-send" id="startFromPrompt" type="button" aria-label="Use prompt">↑</button>
+          </div>
+        </div>
+        <div class="quick-tools">
+          <button type="button" data-video-tool="Text to Video">✦ Text to Video</button>
+          <button type="button" data-video-tool="Image to Video">▧ Image to Video</button>
+          <button type="button" data-video-tool="Edit Video">✂ Edit Video</button>
+          <button type="button" data-video-tool="Script to Video">▤ Script to Video</button>
+        </div>
+      </section>
 
-      </div>
+      <section class="direct-section">
+        <div class="section-heading"><div><h3>Direct Your Videos</h3><p>Choose a starting point and make it your own.</p></div><a href="#videoCreator" class="view-all">Create yours ↗</a></div>
+        <div class="video-inspiration-grid">
+          <button class="inspiration-card inspiration-wide" type="button" data-video-preset="Short Film" data-prompt="Create a cinematic short film with dramatic lighting, realistic camera movement, atmospheric depth, and a strong opening shot.">
+            <video muted autoplay loop playsinline preload="metadata" poster="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=80"><source src="https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_25fps.mp4" type="video/mp4"></video><span class="inspiration-shade"></span><span class="inspiration-label"><span>▶</span> Short Film</span>
+          </button>
+          <button class="inspiration-card" type="button" data-video-preset="Product Ad" data-prompt="Create a premium cinematic product advertisement with macro details, studio lighting, smooth camera orbit, and elegant motion graphics.">
+            <video muted autoplay loop playsinline preload="metadata" poster="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=700&q=80"><source src="https://videos.pexels.com/video-files/854671/854671-hd_1920_1080_25fps.mp4" type="video/mp4"></video><span class="inspiration-shade"></span><span class="inspiration-label"><span>✧</span> Product Ads</span>
+          </button>
+          <button class="inspiration-card" type="button" data-video-preset="Music Video" data-prompt="Create a cinematic music video with expressive performance, rhythmic cuts, colored stage lighting, and fluid camera movement.">
+            <video muted autoplay loop playsinline preload="metadata" poster="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=700&q=80"><source src="https://videos.pexels.com/video-files/856857/856857-hd_1920_1080_30fps.mp4" type="video/mp4"></video><span class="inspiration-shade"></span><span class="inspiration-label"><span>♫</span> Music Video</span>
+          </button>
+        </div>
+      </section>
 
+      <section class="direct-section tools-discovery">
+        <div class="section-heading"><div><h3>Video tools</h3><p>From first idea to final cut.</p></div></div>
+        <div class="video-tool-grid">
+          <button type="button" data-video-tool="Image to Video"><span>▧</span><b>Image to Video</b><small>Bring still images to life</small></button>
+          <button type="button" data-video-tool="Edit Video"><span>✂</span><b>Edit Video</b><small>Refine footage and scenes</small></button>
+          <button type="button" data-video-tool="Motion Graphics"><span>✦</span><b>Motion Graphics</b><small>Dynamic titles and transitions</small></button>
+          <button type="button" data-video-tool="Script to Video"><span>▤</span><b>Script to Video</b><small>Turn a story into scenes</small></button>
+        </div>
+      </section>
+
+      <div class="page-title" id="videoCreator"><div><h2>Video workspace</h2><p>Build your scenes, configure output, and generate from your project.</p></div></div>
       <div class="workspace">
 
         <!-- LEFT -->
@@ -929,6 +1026,38 @@
 </div>
 
 <script>
+
+  /* Discovery controls feed into the existing project/video generator */
+  document.addEventListener("DOMContentLoaded", () => {
+    const quickPrompt = document.getElementById("quickVideoPrompt");
+    const scriptField = document.getElementById("videoScript");
+    const titleField = document.getElementById("videoTitle");
+    const workspace = document.getElementById("videoCreator");
+    function useQuickPrompt(preset) {
+      const prompt = quickPrompt.value.trim();
+      if (prompt && scriptField) scriptField.value = prompt;
+      if (preset && titleField && !titleField.value.trim()) titleField.value = preset;
+      workspace?.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    document.getElementById("startFromPrompt")?.addEventListener("click",()=>useQuickPrompt("AI Video"));
+    document.querySelectorAll("[data-video-preset]").forEach(button=>button.addEventListener("click",()=>{
+      if(button.dataset.prompt) quickPrompt.value=button.dataset.prompt;
+      useQuickPrompt(button.dataset.videoPreset||"AI Video");
+    }));
+    document.querySelectorAll("[data-video-tool]").forEach(button=>button.addEventListener("click",()=>{
+      const tool=button.dataset.videoTool;
+      const starters={
+        "Text to Video":"Create a cinematic video from this idea: ",
+        "Image to Video":"Animate the reference image with realistic movement and cinematic camera motion: ",
+        "Edit Video":"Edit my footage with realistic motion, clean transitions, color grading, and polished pacing: ",
+        "Script to Video":"Turn this script into a sequence of cinematic scenes: ",
+        "Motion Graphics":"Add polished motion graphics, animated titles, smooth transitions, and visual effects: "
+      };
+      quickPrompt.value=(starters[tool]||"")+quickPrompt.value.trim();
+      useQuickPrompt(tool);
+    }));
+    document.querySelectorAll("[data-scroll-tool]").forEach(button=>button.addEventListener("click",()=>workspace?.scrollIntoView({behavior:"smooth",block:"start"})));
+  });
 
   /* =====================================================
      SUPABASE
